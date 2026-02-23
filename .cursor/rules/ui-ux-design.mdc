@@ -1,0 +1,36 @@
+---
+description: Research and specification for UI/UX features. Use when designing new components or layouts.
+globs: "client/src/components/**/*,client/src/pages/**/*,**/*.css"
+---
+
+# UI/UX Design & Research (Template)
+
+This rule ensures that the AI doesn't just "guess" design, but follows modern standards and user intent.
+
+## 1. Research Phase
+- **Search**: Use web search to find modern UI patterns, competitor analysis, or UX best practices (e.g., Nielsen Norman Group).
+- **Synthesis**: Present 2-3 distinct design concepts (e.g., "Minimalist" vs "Data-Dense").
+- **STOP & WAIT**: Wait for the user to select a direction.
+
+## 2. Design Specification
+Once a direction is chosen, generate a detailed spec:
+- **Visuals**: Tailwind classes, spacing (`gap`, `padding`), typography, and shadows.
+- **Interactions**: Hover states, active states, loading skeletons, and transitions.
+- **Accessibility**: ARIA labels, semantic HTML, keyboard focus management, and contrast checks.
+- **RTL/LTR**: Ensure the layout works for the target language direction.
+
+## 3. Verification & Review
+- **Web Interface Guidelines**: Review UI code against industry standards (e.g., Vercel Web Interface Guidelines).
+- **Design Review Phase**: Before marking UI tasks [Complete], perform an audit of:
+    - Accessibility (ARIA, Semantic HTML, Contrast).
+    - Interaction Consistency (Hover/Active/Loading states).
+    - Visual Proof: Describe the component's appearance in the progress log.
+- **Tools**: Use `web_fetch` to retrieve latest guidelines from `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` when performing a deep audit.
+
+---
+
+## Project-Specific Configuration (EDIT THIS)
+*   **Primary Framework**: Tailwind CSS
+*   **Icon Library**: Lucide React
+*   **Accessibility Standard**: WCAG 2.1 Level AA
+*   **Language Focus**: Hebrew (RTL)

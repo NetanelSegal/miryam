@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design System — מרים סגל</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@400;500;600&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --accent-1: #6366f1; --accent-2: #a855f7; --bg: #0a0a0a; --bg-mid: #1a0a2e; }
+    * { box-sizing: border-box; }
+    .font-rubik { font-family: 'Rubik', sans-serif; }
+    .font-noto { font-family: 'Noto Sans Hebrew', sans-serif; }
+    .gradient-bg { background: linear-gradient(180deg, var(--bg) 0%, var(--bg-mid) 40%, #0f0f0f 100%); }
+    .gradient-text { background: linear-gradient(to left, var(--accent-2), var(--accent-1)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    .btn-cta { position: relative; display: inline-block; padding-bottom: 4px; }
+    .btn-cta::before { content: ''; position: absolute; bottom: 0; right: 0; left: 0; height: 2px; background: #52525b; }
+    .btn-cta::after { content: ''; position: absolute; bottom: 0; right: 50%; left: 50%; height: 2px; background: linear-gradient(to left, var(--accent-2), var(--accent-1)); transition: right 180ms ease-out, left 180ms ease-out; }
+    .btn-cta:hover::after { right: 0; left: 0; }
+
+    .card-top { border-top: 2px solid rgba(139,92,246,0.6); transition: transform 180ms ease-out, box-shadow 180ms ease-out; }
+    .card-top:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+    .card-accent { position: relative; overflow: hidden; transition: transform 180ms ease-out; }
+    .card-accent::before { content: ''; position: absolute; top: 0; right: 0; left: 0; height: 3px; background: linear-gradient(to left, var(--accent-2), var(--accent-1)); }
+    .card-accent:hover { transform: translateY(-4px); }
+    .card-side { position: relative; padding-right: 14px; transition: transform 180ms ease-out; }
+    .card-side::before { content: ''; position: absolute; top: 8px; right: 0; bottom: 8px; width: 3px; background: linear-gradient(to bottom, var(--accent-1), var(--accent-2)); border-radius: 2px; }
+    .card-side:hover { transform: translateY(-4px); }
+
+    .orb { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; }
+
+    .section-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.15em; color: #71717a; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
+
+    .img-placeholder { background: #18181b; display: flex; align-items: center; justify-content: center; color: #52525b; font-size: 0.75rem; overflow: hidden; position: relative; }
+    .img-placeholder img { width: 100%; height: 100%; object-fit: cover; }
+    .img-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent 60%); z-index: 1; }
+  </style>
+</head>
+<body class="gradient-bg text-white min-h-screen font-noto overflow-x-hidden">
+
+  <div class="orb w-80 h-80 bg-indigo-600/[0.12] -top-20 -right-20"></div>
+  <div class="orb w-64 h-64 bg-violet-600/[0.10] bottom-1/4 -left-16"></div>
+
+  <div class="relative max-w-5xl mx-auto px-6 py-16 space-y-24 z-10">
+
+    <!-- ========== HEADER ========== -->
+    <header class="space-y-2">
+      <p class="text-zinc-500 text-xs uppercase tracking-widest">Design System</p>
+      <h1 class="font-rubik text-4xl md:text-6xl font-bold gradient-text" style="letter-spacing:0.02em">מרים סגל</h1>
+      <p class="text-zinc-400 text-sm max-w-lg">מסמך שפה גרפית אחד — צבעים, טיפוגרפיה, כרטיסים, פריסות, תמונות, SVGs דקורטיביים.</p>
+    </header>
+
+    <!-- ========== 1. COLORS ========== -->
+    <section>
+      <p class="section-label">1 · צבעים</p>
+      <div class="flex flex-wrap gap-3">
+        <div class="w-20 h-20 rounded-none bg-[#0a0a0a] border border-white/10 flex items-end p-1"><span class="text-[10px] text-zinc-500">#0a0a0a</span></div>
+        <div class="w-20 h-20 rounded-none bg-[#1a0a2e] border border-white/10 flex items-end p-1"><span class="text-[10px] text-zinc-500">#1a0a2e</span></div>
+        <div class="w-20 h-20 rounded-none bg-[#0f0f0f] border border-white/10 flex items-end p-1"><span class="text-[10px] text-zinc-500">#0f0f0f</span></div>
+        <div class="w-20 h-20 rounded-none bg-[#6366f1] flex items-end p-1"><span class="text-[10px] text-white/70">#6366f1</span></div>
+        <div class="w-20 h-20 rounded-none bg-[#a855f7] flex items-end p-1"><span class="text-[10px] text-white/70">#a855f7</span></div>
+        <div class="w-20 h-20 rounded-none bg-[#fafafa] flex items-end p-1"><span class="text-[10px] text-zinc-800">#fafafa</span></div>
+        <div class="w-20 h-20 rounded-none bg-[#a1a1aa] flex items-end p-1"><span class="text-[10px] text-zinc-800">zinc-400</span></div>
+        <div class="w-20 h-20 rounded-none bg-[#71717a] flex items-end p-1"><span class="text-[10px] text-zinc-300">zinc-500</span></div>
+      </div>
+      <p class="text-zinc-500 text-xs mt-3">Dark Mode בלבד · אקסנט כחול→סגול · טקסט משני מינימום zinc-400</p>
+    </section>
+
+    <!-- ========== 2. TYPOGRAPHY ========== -->
+    <section>
+      <p class="section-label">2 · טיפוגרפיה</p>
+      <div class="space-y-6">
+        <div>
+          <p class="font-rubik text-5xl md:text-7xl font-bold gradient-text" style="letter-spacing:0.02em">Hero — Rubik 700</p>
+        </div>
+        <div>
+          <p class="font-rubik text-3xl font-semibold text-white">כותרת סקשן — Rubik 600</p>
+        </div>
+        <div>
+          <p class="font-rubik text-xl font-medium text-white">כותרת משנה — Rubik 500</p>
+        </div>
+        <div>
+          <p class="font-noto text-base text-zinc-400">טקסט גוף — Noto Sans Hebrew 400. זהו טקסט לדוגמה שממחיש את הפונט בעברית, כולל אורכים שונים של משפטים כדי להבין את הקריאות על רקע כהה.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 3. CTA BUTTON ========== -->
+    <section>
+      <p class="section-label">3 · כפתור CTA</p>
+      <div class="flex flex-wrap gap-12 items-end">
+        <div>
+          <a href="#" class="btn-cta font-noto text-lg font-medium text-white">היכנסו למסיבה</a>
+          <p class="text-zinc-500 text-xs mt-3">ברירת מחדל — קו ניטרלי</p>
+        </div>
+        <div>
+          <a href="#" class="btn-cta font-noto text-sm font-medium text-violet-300">לפרטים</a>
+          <p class="text-zinc-500 text-xs mt-3">קישור משני</p>
+        </div>
+      </div>
+      <p class="text-zinc-500 text-xs mt-3">Hover: גרדיאנט נכנס מהמרכז · 180ms ease-out</p>
+    </section>
+
+    <!-- ========== 4. CARDS ========== -->
+    <section>
+      <p class="section-label">4 · כרטיסים</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="card-top p-6 rounded-none bg-white/5">
+          <p class="font-rubik font-bold text-white mb-1">כרטיס רגיל</p>
+          <p class="text-zinc-400 text-sm">קו עליון 2px אקסנט</p>
+        </div>
+        <div class="card-accent p-6 rounded-none bg-white/5">
+          <p class="font-rubik font-bold text-white mb-1">כרטיס הדגשה</p>
+          <p class="text-zinc-400 text-sm">קו גרדיאנט 3px</p>
+        </div>
+        <div class="card-side p-6 rounded-none bg-white/5">
+          <p class="font-rubik font-bold text-white mb-1">כרטיס קו צד</p>
+          <p class="text-zinc-400 text-sm">מילון · הצבעות</p>
+        </div>
+      </div>
+
+      <p class="text-zinc-500 text-xs">פינות ישרות · Hover: translateY(-4px) + shadow · 180ms</p>
+    </section>
+
+    <!-- ========== 5. IMAGES ========== -->
+    <section>
+      <p class="section-label">5 · תמונות — סגנון פפראצי אקסקלוסיבי</p>
+
+      <!-- Hero image -->
+      <div class="mb-8">
+        <p class="text-zinc-500 text-xs mb-2 uppercase tracking-wider">Hero — 16:9 full-bleed + overlay</p>
+        <div class="img-placeholder w-full aspect-video rounded-none relative">
+          <img src="images/WhatsApp Image 2026-02-23 at 10.39.43.jpeg" alt="מרים סגל — סטודיו">
+          <div class="img-overlay"></div>
+          <div class="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
+            <p class="font-rubik text-3xl md:text-5xl font-bold text-white mb-2">מרים סגל</p>
+            <p class="text-zinc-300 text-sm">כותרת על תמונה — overlay כהה שומר קריאות</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Case Study + Profile -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="card-top rounded-none bg-white/5 overflow-hidden">
+          <div class="img-placeholder aspect-[4/3]"><img src="images/WhatsApp Image 2026-02-23 at 10.39.53.jpeg" alt="סטריט"></div>
+          <div class="p-4">
+            <p class="font-rubik font-bold text-white text-sm">קמפיין מותג</p>
+            <p class="text-zinc-400 text-xs mt-1">4:3 · תמונה בתוך כרטיס</p>
+          </div>
+        </div>
+        <div class="card-top rounded-none bg-white/5 overflow-hidden">
+          <div class="img-placeholder aspect-square"><img src="images/WhatsApp Image 2026-02-23 at 10.39.45.jpeg" alt="צחוק"></div>
+          <div class="p-4">
+            <p class="font-rubik font-bold text-white text-sm">פפראצי</p>
+            <p class="text-zinc-400 text-xs mt-1">1:1 · grid</p>
+          </div>
+        </div>
+        <div class="card-top rounded-none bg-white/5 overflow-hidden">
+          <div class="img-placeholder aspect-[3/4]"><img src="images/WhatsApp Image 2026-02-23 at 10.39.51.jpeg" alt="פרופיל"></div>
+          <div class="p-4">
+            <p class="font-rubik font-bold text-white text-sm">אודות</p>
+            <p class="text-zinc-400 text-xs mt-1">3:4 · portrait</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- UGC Grid -->
+      <p class="text-zinc-500 text-xs mb-2 uppercase tracking-wider">UGC — גלריה גמישה</p>
+      <div class="grid grid-cols-4 md:grid-cols-6 auto-rows-[100px] md:auto-rows-[120px] gap-2">
+        <div class="img-placeholder rounded-none col-span-2 row-span-3"><img src="images/WhatsApp Image 2026-02-23 at 10.39.48.jpeg" alt=""></div>
+        <div class="img-placeholder rounded-none col-span-2 row-span-2"><img src="images/WhatsApp Image 2026-02-23 at 10.39.38.jpeg" alt=""></div>
+        <div class="img-placeholder rounded-none col-span-2 row-span-2"><img src="images/WhatsApp Image 2026-02-23 at 10.39.47.jpeg" alt=""></div>
+        <div class="img-placeholder rounded-none col-span-1 row-span-2"><img src="images/WhatsApp Image 2026-02-23 at 10.39.50.jpeg" alt=""></div>
+        <div class="img-placeholder rounded-none col-span-2 row-span-2"><img src="images/WhatsApp Image 2026-02-23 at 10.39.55.jpeg" alt=""></div>
+        <div class="img-placeholder rounded-none col-span-1 row-span-2"><img src="images/WhatsApp Image 2026-02-23 at 10.39.56.jpeg" alt=""></div>
+        <div class="img-placeholder rounded-none col-span-2 row-span-1"><img src="images/WhatsApp Image 2026-02-23 at 10.39.43.jpeg" alt=""></div>
+        <div class="img-placeholder rounded-none col-span-2 row-span-2"><img src="images/WhatsApp Image 2026-02-23 at 10.39.53.jpeg" alt=""></div>
+        <div class="img-placeholder rounded-none col-span-1 row-span-1"><img src="images/WhatsApp Image 2026-02-23 at 10.39.45.jpeg" alt=""></div>
+        <div class="img-placeholder rounded-none col-span-1 row-span-1"><img src="images/WhatsApp Image 2026-02-23 at 10.39.51.jpeg" alt=""></div>
+      </div>
+    </section>
+
+    <!-- ========== 6. LAYOUTS ========== -->
+    <section>
+      <p class="section-label">6 · פריסות</p>
+
+      <!-- Bento -->
+      <p class="text-zinc-500 text-xs mb-3 uppercase tracking-wider">Bento Grid — כרטיסים בגדלים שונים</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 grid-rows-2 gap-3 mb-10">
+        <div class="card-accent rounded-none bg-white/5 col-span-2 row-span-2 overflow-hidden relative">
+          <img src="images/WhatsApp Image 2026-02-23 at 10.39.56.jpeg" alt="" class="w-full h-full object-cover">
+          <div class="img-overlay"></div>
+          <div class="absolute bottom-4 right-4 z-10">
+            <p class="font-rubik text-xl font-bold text-white">2×2</p>
+            <p class="text-zinc-300 text-sm mt-1">כרטיס ראשי</p>
+          </div>
+        </div>
+        <div class="card-top rounded-none bg-white/5 overflow-hidden relative">
+          <img src="images/WhatsApp Image 2026-02-23 at 10.39.48.jpeg" alt="" class="w-full h-full object-cover">
+          <div class="img-overlay"></div>
+          <p class="font-rubik font-bold text-white absolute bottom-2 right-3 z-10 text-sm">1×1</p>
+        </div>
+        <div class="card-top rounded-none bg-white/5 overflow-hidden relative">
+          <img src="images/WhatsApp Image 2026-02-23 at 10.39.50.jpeg" alt="" class="w-full h-full object-cover">
+          <div class="img-overlay"></div>
+          <p class="font-rubik font-bold text-white absolute bottom-2 right-3 z-10 text-sm">1×1</p>
+        </div>
+        <div class="card-top rounded-none bg-white/5 col-span-2 overflow-hidden relative" style="height:160px">
+          <img src="images/WhatsApp Image 2026-02-23 at 10.39.45.jpeg" alt="" class="w-full h-full object-cover object-top">
+          <div class="img-overlay"></div>
+          <p class="font-rubik font-bold text-white absolute bottom-2 right-3 z-10 text-sm">2×1</p>
+        </div>
+      </div>
+
+      <!-- Overlap -->
+      <p class="text-zinc-500 text-xs mb-3 uppercase tracking-wider">Overlap — כרטיסים חופפים 8–16px</p>
+      <div class="flex flex-col md:flex-row md:items-start gap-0 mb-10">
+        <div class="card-accent rounded-none bg-white/5 w-full md:w-72 z-10 relative overflow-hidden">
+          <div class="img-placeholder aspect-[4/3]"><img src="images/WhatsApp Image 2026-02-23 at 10.39.47.jpeg" alt=""></div>
+          <div class="p-4">
+            <p class="font-rubik font-bold text-white">כרטיס A</p>
+            <p class="text-zinc-400 text-sm mt-1">z-index גבוה</p>
+          </div>
+        </div>
+        <div class="card-top rounded-none bg-white/5 w-full md:w-72 md:-ms-4 md:mt-4 z-0 relative overflow-hidden">
+          <div class="img-placeholder aspect-[4/3]"><img src="images/WhatsApp Image 2026-02-23 at 10.39.55.jpeg" alt=""></div>
+          <div class="p-4">
+            <p class="font-rubik font-bold text-white">כרטיס B</p>
+            <p class="text-zinc-400 text-sm mt-1">חופף 16px</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Media Kit — נתוני קהל -->
+      <p class="text-zinc-500 text-xs mb-3 uppercase tracking-wider">נתוני קהל — Media Kit</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+        <div class="card-top p-5 rounded-none bg-white/[0.04]">
+          <p class="font-rubik text-3xl font-bold gradient-text">XXK</p>
+          <p class="text-zinc-400 text-xs mt-1">עוקבים</p>
+        </div>
+        <div class="card-top p-5 rounded-none bg-white/[0.04]">
+          <p class="font-rubik text-3xl font-bold gradient-text">X.X%</p>
+          <p class="text-zinc-400 text-xs mt-1">מעורבות</p>
+        </div>
+        <div class="card-top p-5 rounded-none bg-white/[0.04]">
+          <p class="font-rubik text-3xl font-bold text-white">XX-XX</p>
+          <p class="text-zinc-400 text-xs mt-1">גיל</p>
+        </div>
+        <div class="card-top p-5 rounded-none bg-white/[0.04]">
+          <p class="font-rubik text-3xl font-bold text-white">XX%</p>
+          <p class="text-zinc-400 text-xs mt-1">נשים</p>
+        </div>
+      </div>
+
+      <!-- Hero full-bleed -->
+      <p class="text-zinc-500 text-xs mb-3 uppercase tracking-wider">Hero — full-bleed</p>
+      <div class="img-placeholder w-full aspect-[21/9] rounded-none relative mb-10">
+        <img src="images/WhatsApp Image 2026-02-23 at 10.39.38.jpeg" alt="Hero">
+        <div class="img-overlay"></div>
+        <div class="absolute bottom-6 right-6 z-10">
+          <p class="font-rubik text-2xl md:text-4xl font-bold text-white">יום הולדת מסיבה</p>
+          <a href="#" class="btn-cta font-noto text-sm text-white inline-block mt-3">היכנסו למסיבה</a>
+        </div>
+      </div>
+
+      <!-- Marquee -->
+      <p class="text-zinc-500 text-xs mb-3 uppercase tracking-wider">Marquee — לוגואים</p>
+      <div class="flex gap-8 overflow-x-auto pb-2">
+        <div class="flex-shrink-0 w-24 h-10 bg-white/5 rounded-none flex items-center justify-center text-zinc-500 text-xs">לוגו</div>
+        <div class="flex-shrink-0 w-24 h-10 bg-white/5 rounded-none flex items-center justify-center text-zinc-500 text-xs">לוגו</div>
+        <div class="flex-shrink-0 w-24 h-10 bg-white/5 rounded-none flex items-center justify-center text-zinc-500 text-xs">לוגו</div>
+        <div class="flex-shrink-0 w-24 h-10 bg-white/5 rounded-none flex items-center justify-center text-zinc-500 text-xs">לוגו</div>
+        <div class="flex-shrink-0 w-24 h-10 bg-white/5 rounded-none flex items-center justify-center text-zinc-500 text-xs">לוגו</div>
+        <div class="flex-shrink-0 w-24 h-10 bg-white/5 rounded-none flex items-center justify-center text-zinc-500 text-xs">לוגו</div>
+      </div>
+    </section>
+
+    <!-- ========== 7. SVGs ========== -->
+    <section>
+      <p class="section-label">7 · SVGs דקורטיביים</p>
+
+      <p class="text-zinc-500 text-xs mb-4 uppercase tracking-wider">אזור כללי — אלגנטי, עדין</p>
+      <div class="flex flex-wrap gap-10 items-end mb-10">
+        <div>
+          <svg width="140" height="90" viewBox="0 0 200 140" fill="none"><path d="M30 70C30 40 60 15 100 25C140 35 170 55 170 85C170 115 140 130 100 125C60 120 30 100 30 70Z" fill="rgba(99,102,241,0.12)"/></svg>
+          <p class="text-zinc-500 text-xs mt-1">Blob</p>
+        </div>
+        <div>
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><path d="M12 12 L12 36 L36 36" stroke="rgba(168,85,247,0.2)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          <p class="text-zinc-500 text-xs mt-1">L-shape</p>
+        </div>
+        <div>
+          <svg width="100" height="20" viewBox="0 0 120 24" fill="none"><path d="M0 12 Q 30 4 60 12 T 120 12" stroke="rgba(99,102,241,0.15)" stroke-width="1" fill="none"/></svg>
+          <p class="text-zinc-500 text-xs mt-1">Flow line</p>
+        </div>
+        <div class="flex gap-1.5 items-center">
+          <span class="w-1.5 h-1.5 rounded-full bg-indigo-400/20"></span>
+          <span class="w-2 h-2 rounded-full bg-violet-400/15"></span>
+          <span class="w-1 h-1 rounded-full bg-indigo-400/25"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-violet-400/10"></span>
+          <p class="text-zinc-500 text-xs mr-2">Sparkles</p>
+        </div>
+      </div>
+
+      <p class="text-zinc-500 text-xs mb-4 uppercase tracking-wider">אזור יום הולדת — חגיגי, דינמי</p>
+      <div class="flex flex-wrap gap-10 items-end">
+        <div>
+          <svg width="160" height="100" viewBox="0 0 220 160" fill="none"><path d="M40 80C40 45 75 20 110 35C145 50 180 70 180 100C180 130 150 150 110 145C70 140 40 115 40 80Z" fill="rgba(168,85,247,0.18)"/></svg>
+          <p class="text-zinc-500 text-xs mt-1">Blob חגיגי</p>
+        </div>
+        <div>
+          <svg width="80" height="50" viewBox="0 0 100 60" fill="none">
+            <rect x="10" y="5" width="3" height="12" rx="1" fill="#6366f1" fill-opacity="0.3" transform="rotate(-15 11.5 11)"/>
+            <rect x="28" y="18" width="2" height="8" rx="1" fill="#a855f7" fill-opacity="0.25" transform="rotate(20 29 22)"/>
+            <rect x="48" y="8" width="2" height="10" rx="1" fill="#6366f1" fill-opacity="0.28" transform="rotate(-8 49 13)"/>
+            <rect x="68" y="22" width="3" height="6" rx="1" fill="#a855f7" fill-opacity="0.25" transform="rotate(25 69.5 25)"/>
+            <circle cx="55" cy="38" r="2" fill="#a855f7" fill-opacity="0.25"/>
+            <circle cx="78" cy="45" r="1.5" fill="#6366f1" fill-opacity="0.3"/>
+          </svg>
+          <p class="text-zinc-500 text-xs mt-1">Confetti</p>
+        </div>
+        <div>
+          <svg width="36" height="36" viewBox="0 0 32 32" fill="none"><path d="M16 2 L18.5 12 L28 16 L18.5 20 L16 30 L13.5 20 L4 16 L13.5 12 Z" fill="rgba(168,85,247,0.35)" stroke="rgba(168,85,247,0.2)" stroke-width="0.5"/></svg>
+          <p class="text-zinc-500 text-xs mt-1">Star</p>
+        </div>
+        <div>
+          <svg width="120" height="70" viewBox="0 0 200 120" fill="none">
+            <defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#a855f7"/></linearGradient></defs>
+            <path d="M0 20 Q 50 0 100 20 T 200 20 L200 100 Q 150 120 100 100 T 0 100 Z" stroke="url(#pg)" stroke-width="1.5" stroke-opacity="0.3" fill="none"/>
+          </svg>
+          <p class="text-zinc-500 text-xs mt-1">Frame party</p>
+        </div>
+      </div>
+
+      <p class="text-zinc-500 text-xs mt-6">אקסנט עדין בלבד · 2–4 לאזור · יום הולדת מאפשר opacity עד 0.35</p>
+    </section>
+
+    <!-- ========== 8. MOTION ========== -->
+    <section>
+      <p class="section-label">8 · Motion</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="card-top p-4 rounded-none bg-white/5 text-center">
+          <p class="font-rubik text-lg font-bold text-white">180ms</p>
+          <p class="text-zinc-400 text-xs">Hover</p>
+        </div>
+        <div class="card-top p-4 rounded-none bg-white/5 text-center">
+          <p class="font-rubik text-lg font-bold text-white">500ms</p>
+          <p class="text-zinc-400 text-xs">Scroll reveal</p>
+        </div>
+        <div class="card-top p-4 rounded-none bg-white/5 text-center">
+          <p class="font-rubik text-lg font-bold text-white">100ms</p>
+          <p class="text-zinc-400 text-xs">Stagger</p>
+        </div>
+        <div class="card-top p-4 rounded-none bg-white/5 text-center">
+          <p class="font-rubik text-lg font-bold text-white">300ms</p>
+          <p class="text-zinc-400 text-xs">Transition</p>
+        </div>
+      </div>
+      <p class="text-zinc-500 text-xs mt-3">ease-out לכרטיסים · ease-in-out למעברי דף · Scroll reveal ב-70–80% viewport</p>
+    </section>
+
+    <!-- ========== 9. BACKGROUNDS ========== -->
+    <section>
+      <p class="section-label">9 · רקעים</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-6 rounded-none bg-white/5 relative overflow-hidden h-32">
+          <div class="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-indigo-500/[0.12] blur-[40px]"></div>
+          <div class="absolute bottom-4 left-4 w-20 h-20 rounded-full bg-violet-500/[0.10] blur-[30px]"></div>
+          <p class="font-rubik font-bold text-white relative z-10">Orbs</p>
+          <p class="text-zinc-400 text-xs relative z-10 mt-1">2–4 עיגולי blur · אקסנט עדין</p>
+        </div>
+        <div class="p-6 rounded-none h-32" style="background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 48px 48px;">
+          <p class="font-rubik font-bold text-white">Grid קווים</p>
+          <p class="text-zinc-400 text-xs mt-1">1px · rgba(255,255,255,0.04) · אופציונלי</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="pt-8 border-t-2 border-violet-500/30 text-center space-y-1">
+      <p class="text-zinc-400 text-sm">מדריך מותג · מרים סגל</p>
+      <p class="text-zinc-600 text-xs">BRAND-GUIDE.md · design-system.html</p>
+    </footer>
+
+  </div>
+
+</body>
+</html>

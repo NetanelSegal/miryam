@@ -1,0 +1,33 @@
+---
+description: Managing architectural consistency and Single Source of Truth (SSOT). Use for refactoring or moving logic to shared packages.
+globs: "shared/src/**/*,**/utils/**/*,**/constants/**/*"
+---
+
+# Architectural Integrity & SSOT (Template)
+
+This rule ensures the codebase stays clean and avoids redundancy.
+
+## 1. SSOT Analysis
+- Before adding a constant, utility, or type, search the codebase (especially `shared/` or `utils/`) to see if it already exists.
+- **Rule**: NEVER duplicate logic. If it's used in 2+ places, move it to a shared location.
+
+## 2. Dependency Mapping
+- When refactoring a symbol, grep for its usage across the entire project.
+- Analyze the impact on both Frontend and Backend before making changes.
+
+## 3. Layered Architecture
+Ensure changes follow the established layers:
+- **Server**: Repository -> Service -> Controller.
+- **Client**: Component -> Hook -> Service.
+- **Shared**: Pure logic, constants, and schemas.
+
+## 4. Verification
+- Run type-checks across all workspaces to catch broken imports.
+- Ensure naming conventions are consistent with the rest of the project.
+
+---
+
+## Project-Specific Configuration (EDIT THIS)
+*   **Shared Package**: `@shirans/shared`
+*   **Logic Location**: `shared/src`
+*   **Architecture Pattern**: Clean Architecture / Layered
