@@ -18,25 +18,13 @@
 - [x] מילון — 5 מושגים, card-side, stagger animation
 - [x] הצבעות — כרטיסי תמונות, results bar chart, confetti
 
-## שלב 3.5: 🔑 מערכת הזדהות משתתפים (חדש!)
-מטרה: לזהות משתתפים בפעילויות כדי לדעת מי ניצח בסוף האירוע.
-ההזדהות חייבת להיות פשוטה מספיק לילדים.
-
-- [ ] **מסך הזדהות משתתף** — שם + 4 ספרות אחרונות של הטלפון (של ההורה). בלי סיסמה, בלי אימייל.
-  - Firebase Anonymous Auth מאחורי הקלעים
-  - שמירת פרופיל ב-Firestore (`participants` collection): name, phoneDigits, createdAt
-  - Session נשמר ב-sessionStorage — לא צריך להתחבר שוב באותו ביקור
-  - מסך הזדהות מופיע פעם אחת לפני הפעילות הראשונה (טריוויה/הצבעות)
-- [ ] **קישור הצבעות למשתתף** — כל הצבעה נשמרת עם participantId ב-Firestore
-  - מניעת הצבעה כפולה לפי participantId (ולא רק localStorage)
-  - שמירה: `votes` collection → { participantId, candidateId, timestamp }
-- [ ] **קישור טריוויה למשתתף** — תוצאת הטריוויה נשמרת עם participantId
-  - שמירה: `trivia_results` collection → { participantId, nickname, score, timestamp }
-  - מניעת ניסיון חוזר לפי participantId (ולא רק localStorage)
-- [ ] **לוח מנצחים באדמין** — עמוד אדמין שמציג:
-  - טריוויה: דירוג לפי ציון (מי ניצח)
-  - הצבעות: תוצאות סופיות (איזו תחפושת ניצחה + כמה הצביעו)
-  - רשימת כל המשתתפים
+## שלב 3.5: 🔑 מערכת הזדהות משתתפים
+- [x] **מסך הזדהות משתתף** — שם + 4 ספרות אחרונות של הטלפון. ParticipantGate component.
+- [x] **שכבת נתונים (store.ts)** — abstraction layer עם localStorage, מוכן להחלפה ל-Firebase
+- [x] **קישור הצבעות למשתתף** — מניעת הצבעה כפולה לפי participantId
+- [x] **קישור טריוויה למשתתף** — מניעת ניסיון חוזר לפי participantId
+- [x] **לוח מנצחים באדמין** — טאבים: סקירה, טריוויה leaderboard, תוצאות הצבעות, רשימת משתתפים
+- [x] **מסך Live מחובר לנתונים** — קורא מ-store במקום hardcoded data
 
 ## שלב 4: מסך אירוע + אדמין
 - [x] Event Display (/live) — מסך TV אוטומטי, 4 sections auto-rotate

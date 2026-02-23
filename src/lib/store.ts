@@ -1,7 +1,6 @@
 export interface Participant {
   id: string
   name: string
-  phoneDigits: string
   createdAt: number
 }
 
@@ -18,6 +17,17 @@ export interface VoteRecord {
   participantName: string
   candidateId: string
   timestamp: number
+}
+
+export interface CostumeEntry {
+  id: string
+  participantId: string
+  participantName: string
+  title: string
+  imageData: string
+  status: 'pending' | 'approved' | 'rejected'
+  submittedAt: number
+  reviewedAt?: number
 }
 
 export interface Blessing {
@@ -41,6 +51,7 @@ const KEYS = {
   participants: 'miryam_participants',
   triviaResults: 'miryam_trivia_results',
   votes: 'miryam_votes',
+  costumes: 'miryam_costumes',
   blessings: 'miryam_blessings',
   contacts: 'miryam_contacts',
 } as const
@@ -57,20 +68,10 @@ function setList<T>(key: string, items: T[]) {
 }
 
 // --- Participants ---
-export function findParticipant(name: string, phoneDigits: string): Participant | undefined {
-  return getList<Participant>(KEYS.participants).find(
-    p => p.name === name && p.phoneDigits === phoneDigits
-  )
-}
-
-export function createParticipant(name: string, phoneDigits: string): Participant {
-  const existing = findParticipant(name, phoneDigits)
-  if (existing) return existing
-
+export function createParticipant(name: string): Participant {
   const participant: Participant = {
     id: crypto.randomUUID(),
     name,
-    phoneDigits,
     createdAt: Date.now(),
   }
   const list = getList<Participant>(KEYS.participants)
@@ -127,6 +128,48 @@ export function getAllVotes(): VoteRecord[] {
   return getList<VoteRecord>(KEYS.votes).sort((a, b) => b.timestamp - a.timestamp)
 }
 
+// --- Costumes ---
+export function submitCostume(entry: Omit<CostumeEntry, 'id' | 'status' | 'submittedAt'>): CostumeEntry {
+  const costume: CostumeEntry = {
+    ...entry,
+    id: crypto.randomUUID(),
+    status: 'pending',
+    submittedAt: Date.now(),
+  }
+  const list = getList<CostumeEntry>(KEYS.costumes)
+  list.push(costume)
+  setList(KEYS.costumes, list)
+  return costume
+}
+
+export function getCostumeByParticipant(participantId: string): CostumeEntry | undefined {
+  return getList<CostumeEntry>(KEYS.costumes).find(c => c.participantId === participantId)
+}
+
+export function getApprovedCostumes(): CostumeEntry[] {
+  return getList<CostumeEntry>(KEYS.costumes)
+    .filter(c => c.status === 'approved')
+    .sort((a, b) => a.submittedAt - b.submittedAt)
+}
+
+export function getPendingCostumes(): CostumeEntry[] {
+  return getList<CostumeEntry>(KEYS.costumes)
+    .filter(c => c.status === 'pending')
+    .sort((a, b) => a.submittedAt - b.submittedAt)
+}
+
+export function getAllCostumes(): CostumeEntry[] {
+  return getList<CostumeEntry>(KEYS.costumes).sort((a, b) => b.submittedAt - a.submittedAt)
+}
+
+export function reviewCostume(costumeId: string, status: 'approved' | 'rejected'): void {
+  const list = getList<CostumeEntry>(KEYS.costumes)
+  const idx = list.findIndex(c => c.id === costumeId)
+  if (idx === -1) return
+  list[idx] = { ...list[idx]!, status, reviewedAt: Date.now() }
+  setList(KEYS.costumes, list)
+}
+
 // --- Blessings ---
 export function saveBlessing(blessing: Omit<Blessing, 'id' | 'timestamp'>): Blessing {
   const entry: Blessing = { ...blessing, id: crypto.randomUUID(), timestamp: Date.now() }
@@ -153,7 +196,7 @@ export function getAllContacts(): ContactSubmission[] {
   return getList<ContactSubmission>(KEYS.contacts).sort((a, b) => b.timestamp - a.timestamp)
 }
 
-// --- Stats (for admin + live display) ---
+// --- Stats ---
 export function getStats() {
   return {
     totalParticipants: getList<Participant>(KEYS.participants).length,
@@ -161,5 +204,7 @@ export function getStats() {
     totalVotes: getList<VoteRecord>(KEYS.votes).length,
     totalBlessings: getList<Blessing>(KEYS.blessings).length,
     totalContacts: getList<ContactSubmission>(KEYS.contacts).length,
+    totalCostumes: getList<CostumeEntry>(KEYS.costumes).length,
+    pendingCostumes: getList<CostumeEntry>(KEYS.costumes).filter(c => c.status === 'pending').length,
   }
 }
