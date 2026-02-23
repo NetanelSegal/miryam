@@ -4,7 +4,10 @@ import { BrowserRouter } from 'react-router'
 import { ParticipantProvider } from './contexts/ParticipantContext'
 import { ToastProvider } from './components/ui/Toast'
 import { App } from './App'
+import * as store from './lib/store'
 import './index.css'
+
+store.seedIfEmpty()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

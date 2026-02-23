@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router'
 import { Menu, X, ArrowRight } from 'lucide-react'
 import { getNavRoutes } from '@/config/routes'
+import { ShareButton } from '@/components/ui'
 
 interface NavbarProps {
   showBackHome?: boolean
@@ -29,13 +30,16 @@ export function Navbar({ showBackHome }: NavbarProps) {
           </Link>
         )}
 
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="p-2 text-text-secondary hover:text-white transition-colors"
-          aria-label={isOpen ? 'סגירת תפריט' : 'פתיחת תפריט'}
-        >
-          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        <div className="flex items-center gap-1">
+          <ShareButton />
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="p-2 text-text-secondary hover:text-white transition-colors"
+            aria-label={isOpen ? 'סגירת תפריט' : 'פתיחת תפריט'}
+          >
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </nav>
 
       {isOpen && (

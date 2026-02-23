@@ -235,3 +235,88 @@ export function getStats() {
     pendingCostumes: costumes.filter(c => c.status === 'pending').length,
   }
 }
+
+// --- Seed (demo data when empty) ---
+const SEED_FLAG = 'miryam_seeded'
+
+const PLACEHOLDER_IMAGE =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%236366f1'/%3E%3Cstop offset='100%25' style='stop-color:%23a855f7'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23g)' width='400' height='400'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-family='sans-serif' font-size='24'%3E🎭%3C/text%3E%3C/svg%3E"
+
+export function seedIfEmpty(): void {
+  if (typeof window === 'undefined') return
+  if (localStorage.getItem(SEED_FLAG)) return
+
+  const hasParticipants = getList<Participant>(KEYS.participants).length > 0
+  const hasBlessings = getList<Blessing>(KEYS.blessings).length > 0
+  const hasCostumes = getList<CostumeEntry>(KEYS.costumes).length > 0
+  if (hasParticipants || hasBlessings || hasCostumes) return
+
+  const now = Date.now()
+  const baseTime = now - 86400000 * 2
+
+  const seedParticipants: Participant[] = [
+    { id: 'seed-p1', name: 'יעל כהן', email: 'yael@example.com', createdAt: baseTime },
+    { id: 'seed-p2', name: 'דני לוי', email: 'dani@example.com', createdAt: baseTime + 3600000 },
+    { id: 'seed-p3', name: 'שרה אברהם', createdAt: baseTime + 7200000 },
+  ]
+  setList(KEYS.participants, seedParticipants)
+
+  const seedBlessings: Blessing[] = [
+    { id: 'seed-b1', name: 'יעל', message: 'מרים יקרה! מזל טוב! את מדהימה ואנחנו אוהבים אותך 💜', timestamp: baseTime },
+    { id: 'seed-b2', name: 'דני', message: 'יום הולדת שמח! מחכים לראות מה תעשי השנה', timestamp: baseTime + 1800000 },
+    { id: 'seed-b3', name: 'שרה', message: 'כל הכבוד על כל מה שהשגת! המשך להצליח!', timestamp: baseTime + 3600000 },
+    { id: 'seed-b4', name: 'מיכל', message: 'ברוכה הבאה לשנה חדשה מלאה בהצלחות 🎉', timestamp: baseTime + 5400000 },
+    { id: 'seed-b5', name: 'רועי', message: 'תודה על כל התוכן המדהים! יום הולדת שמח!', timestamp: baseTime + 7200000 },
+  ]
+  setList(KEYS.blessings, seedBlessings)
+
+  const seedCostumes: CostumeEntry[] = [
+    {
+      id: 'seed-c1',
+      participantId: 'seed-p1',
+      participantName: 'יעל כהן',
+      title: 'הנסיכה הקסומה',
+      imageData: PLACEHOLDER_IMAGE,
+      status: 'approved',
+      submittedAt: baseTime,
+      reviewedAt: baseTime + 60000,
+    },
+    {
+      id: 'seed-c2',
+      participantId: 'seed-p2',
+      participantName: 'דני לוי',
+      title: 'סופרמן',
+      imageData: PLACEHOLDER_IMAGE,
+      status: 'approved',
+      submittedAt: baseTime + 3600000,
+      reviewedAt: baseTime + 3660000,
+    },
+    {
+      id: 'seed-c3',
+      participantId: 'seed-p3',
+      participantName: 'שרה אברהם',
+      title: 'פיית הקשת',
+      imageData: PLACEHOLDER_IMAGE,
+      status: 'approved',
+      submittedAt: baseTime + 7200000,
+      reviewedAt: baseTime + 7260000,
+    },
+  ]
+  setList(KEYS.costumes, seedCostumes)
+
+  const seedVotes: VoteRecord[] = [
+    { participantId: 'seed-p1', participantName: 'יעל כהן', candidateId: 'seed-c2', timestamp: baseTime + 86400000 },
+    { participantId: 'seed-p2', participantName: 'דני לוי', candidateId: 'seed-c1', timestamp: baseTime + 86400000 + 3600000 },
+    { participantId: 'seed-p3', participantName: 'שרה אברהם', candidateId: 'seed-c1', timestamp: baseTime + 86400000 + 7200000 },
+  ]
+  setList(KEYS.votes, seedVotes)
+
+  const seedTriviaResults: TriviaResult[] = [
+    { participantId: 'seed-p1', participantName: 'יעל כהן', score: 9, totalQuestions: 10, timestamp: baseTime },
+    { participantId: 'seed-p2', participantName: 'דני לוי', score: 7, totalQuestions: 10, timestamp: baseTime + 1800000 },
+    { participantId: 'seed-p3', participantName: 'שרה אברהם', score: 10, totalQuestions: 10, timestamp: baseTime + 3600000 },
+  ]
+  setList(KEYS.triviaResults, seedTriviaResults)
+
+  localStorage.setItem(SEED_FLAG, '1')
+}
