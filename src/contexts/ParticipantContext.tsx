@@ -5,7 +5,7 @@ import {
 } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import { auth, googleProvider, db } from '@/lib/firebase'
-import { createParticipant, type Participant } from '@/lib/store'
+import { createParticipant, type Participant } from '@/lib/participants-store'
 
 interface ParticipantState {
   participant: Participant | null
@@ -26,7 +26,7 @@ export function useParticipant() {
   return ctx
 }
 
-function userToParticipant(user: User): Participant {
+async function userToParticipant(user: User): Promise<Participant> {
   return createParticipant({
     id: user.uid,
     name: user.displayName ?? 'אורח',
@@ -48,14 +48,18 @@ export function ParticipantProvider({ children }: { children: ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setFirebaseUser(user)
       if (user) {
-        const p = userToParticipant(user)
-        setParticipant(p)
+        userToParticipant(user)
+          .then((p) => {
+            setParticipant(p)
+            setLoading(false)
+          })
+          .catch(() => setLoading(false))
       } else {
         setParticipant(null)
         setIsAdmin(false)
         setAdminCheckLoading(false)
+        setLoading(false)
       }
-      setLoading(false)
     })
     return unsubscribe
   }, [])

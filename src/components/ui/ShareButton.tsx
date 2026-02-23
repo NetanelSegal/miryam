@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router'
-import { Share2, Copy, MessageCircle, QrCode } from 'lucide-react'
+import { Share2, Copy, MessageCircle, Download } from 'lucide-react'
 import QRCode from 'qrcode'
 import { Modal } from './Modal'
 import { Button } from './Button'
@@ -10,6 +10,7 @@ export function ShareButton() {
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null)
+  const [qrSvg, setQrSvg] = useState<string | null>(null)
   const location = useLocation()
 
   const url = typeof window !== 'undefined' ? `${window.location.origin}${location.pathname}` : ''
@@ -17,9 +18,18 @@ export function ShareButton() {
 
   useEffect(() => {
     if (open && url) {
-      QRCode.toDataURL(url, { width: 200, margin: 2 })
-        .then(setQrDataUrl)
-        .catch(() => setQrDataUrl(null))
+      Promise.all([
+        QRCode.toDataURL(url, { width: 256, margin: 2 }),
+        QRCode.toString(url, { margin: 2 }),
+      ])
+        .then(([dataUrl, svg]) => {
+          setQrDataUrl(dataUrl)
+          setQrSvg(svg)
+        })
+        .catch(() => {
+          setQrDataUrl(null)
+          setQrSvg(null)
+        })
     }
   }, [open, url])
 
@@ -30,6 +40,22 @@ export function ShareButton() {
       setTimeout(() => setCopied(false), 2000)
     } catch {
       /* silent */
+    }
+  }
+
+  const handleDownload = (format: 'png' | 'svg') => {
+    if (format === 'png' && qrDataUrl) {
+      const a = document.createElement('a')
+      a.href = qrDataUrl
+      a.download = `qrcode-miryam-${location.pathname.replace(/\//g, '-') || 'home'}.png`
+      a.click()
+    } else if (format === 'svg' && qrSvg) {
+      const blob = new Blob([qrSvg], { type: 'image/svg+xml' })
+      const a = document.createElement('a')
+      a.href = URL.createObjectURL(blob)
+      a.download = `qrcode-miryam-${location.pathname.replace(/\//g, '-') || 'home'}.svg`
+      a.click()
+      URL.revokeObjectURL(a.href)
     }
   }
 
@@ -44,9 +70,9 @@ export function ShareButton() {
       >
         <Share2 className="w-5 h-5" />
       </button>
-      <Modal open={open} onClose={() => setOpen(false)} title="שתפו את העמוד" size="sm">
-        <div className="space-y-4">
-          <div className="flex gap-2">
+      <Modal open={open} onClose={() => setOpen(false)} title="שתפו את העמוד" size="md">
+        <div className="flex flex-col items-center gap-6">
+          <div className="flex gap-2 w-full">
             <Button
               variant="primary"
               size="sm"
@@ -66,13 +92,31 @@ export function ShareButton() {
               WhatsApp
             </a>
           </div>
-          {qrDataUrl && (
-            <div className="flex flex-col items-center gap-2 pt-4 border-t border-white/10">
-              <QrCode className="w-5 h-5 text-text-muted" />
-              <Text variant="muted" size="sm">
-                סרקו לשיתוף
-              </Text>
-              <img src={qrDataUrl} alt="QR Code" className="w-40 h-40 bg-white p-2" />
+
+          {qrDataUrl && qrSvg && (
+            <div className="flex flex-col items-center gap-3 w-full py-4 border-y border-white/10">
+              <Text variant="muted" size="sm">סרקו לשיתוף</Text>
+              <div className="flex justify-center items-center min-h-[200px] bg-white p-4 rounded">
+                <img src={qrDataUrl} alt="QR Code" className="w-48 h-48" />
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  icon={<Download className="w-4 h-4" />}
+                  onClick={() => handleDownload('png')}
+                >
+                  הורד PNG
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  icon={<Download className="w-4 h-4" />}
+                  onClick={() => handleDownload('svg')}
+                >
+                  הורד SVG
+                </Button>
+              </div>
             </div>
           )}
         </div>

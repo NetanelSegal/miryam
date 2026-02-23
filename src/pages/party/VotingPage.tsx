@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { Check, Upload, Camera, Clock, X as XIcon, Trophy, Lock, Loader2 } from 'lucide-react'
 import { Heading, Text, Button, Input, Container, Card, Badge, EmptyState, VoteBar } from '@/components/ui'
@@ -14,11 +14,33 @@ import { subscribeToSettings } from '@/lib/settings-store'
 function VotingClosedView() {
   const participant = useRequiredParticipant()
   const { id: pid } = participant
-  const approvedCostumes = store.getApprovedCostumes()
-  const voteCounts = store.getVoteCounts()
-  const existingVote = useMemo(() => store.getVote(pid), [pid])
+  const [approvedCostumes, setApprovedCostumes] = useState<store.CostumeEntry[]>([])
+  const [voteCounts, setVoteCounts] = useState<Record<string, number>>({})
+  const [existingVote, setExistingVote] = useState<store.VoteRecord | undefined>(undefined)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    Promise.all([
+      store.getApprovedCostumes(),
+      store.getVoteCounts(),
+      store.getVote(pid),
+    ]).then(([costumes, counts, vote]) => {
+      setApprovedCostumes(costumes)
+      setVoteCounts(counts)
+      setExistingVote(vote)
+    }).finally(() => setLoading(false))
+  }, [pid])
+
   const votedFor = existingVote?.candidateId ?? null
   const maxVotes = Math.max(...Object.values(voteCounts), 1)
+
+  if (loading) {
+    return (
+      <Container size="md" className="py-12 flex justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
+      </Container>
+    )
+  }
 
   return (
     <Container size="md" className="py-8 md:py-12">
@@ -84,12 +106,27 @@ function VotingGame() {
   const { id: pid, name: pname } = participant
   const { fileInputRef, preview, selectedFile, handleFileChange, clearFile } = useFileUpload()
 
-  const [myCostume, setMyCostume] = useState(() => store.getCostumeByParticipant(pid))
-  const [approvedCostumes, setApprovedCostumes] = useState(() => store.getApprovedCostumes())
-  const existingVote = useMemo(() => store.getVote(pid), [pid])
-  const [hasVoted, setHasVoted] = useState(!!existingVote)
-  const [votedFor, setVotedFor] = useState<string | null>(existingVote?.candidateId ?? null)
-  const [voteCounts, setVoteCounts] = useState(() => store.getVoteCounts())
+  const [myCostume, setMyCostume] = useState<store.CostumeEntry | undefined>(undefined)
+  const [approvedCostumes, setApprovedCostumes] = useState<store.CostumeEntry[]>([])
+  const [hasVoted, setHasVoted] = useState(false)
+  const [votedFor, setVotedFor] = useState<string | null>(null)
+  const [voteCounts, setVoteCounts] = useState<Record<string, number>>({})
+  const [dataLoading, setDataLoading] = useState(true)
+
+  useEffect(() => {
+    Promise.all([
+      store.getCostumeByParticipant(pid),
+      store.getApprovedCostumes(),
+      store.getVote(pid),
+      store.getVoteCounts(),
+    ]).then(([costume, costumes, vote, counts]) => {
+      setMyCostume(costume)
+      setApprovedCostumes(costumes)
+      setHasVoted(!!vote)
+      setVotedFor(vote?.candidateId ?? null)
+      setVoteCounts(counts)
+    }).finally(() => setDataLoading(false))
+  }, [pid])
 
   const [title, setTitle] = useState('')
   const [uploading, setUploading] = useState(false)
@@ -100,7 +137,7 @@ function VotingGame() {
 
     try {
       const imageData = await compressImage(selectedFile)
-      const entry = store.submitCostume({
+      const entry = await store.submitCostume({
         participantId: pid,
         participantName: pname,
         title: title.trim(),
@@ -115,7 +152,7 @@ function VotingGame() {
     }
   }, [selectedFile, title, pid, pname, toast])
 
-  const handleVote = useCallback((costumeId: string) => {
+  const handleVote = useCallback(async (costumeId: string) => {
     if (hasVoted) return
     const costume = approvedCostumes.find(c => c.id === costumeId)
     if (costume?.participantId === pid) {
@@ -123,19 +160,24 @@ function VotingGame() {
       return
     }
 
-    store.castVote({ participantId: pid, participantName: pname, candidateId: costumeId })
+    await store.castVote({ participantId: pid, participantName: pname, candidateId: costumeId })
+    const counts = await store.getVoteCounts()
     setHasVoted(true)
     setVotedFor(costumeId)
-    setVoteCounts(store.getVoteCounts())
+    setVoteCounts(counts)
     confetti()
     toast('success', 'ההצבעה נרשמה! תודה 🎉')
   }, [hasVoted, pid, pname, approvedCostumes, toast])
 
-  const refreshCostumes = useCallback(() => {
-    setApprovedCostumes(store.getApprovedCostumes())
-    setVoteCounts(store.getVoteCounts())
-    const updated = store.getCostumeByParticipant(pid)
-    if (updated) setMyCostume(updated)
+  const refreshCostumes = useCallback(async () => {
+    const [costumes, counts, costume] = await Promise.all([
+      store.getApprovedCostumes(),
+      store.getVoteCounts(),
+      store.getCostumeByParticipant(pid),
+    ])
+    setApprovedCostumes(costumes)
+    setVoteCounts(counts)
+    if (costume) setMyCostume(costume)
   }, [pid])
 
   const maxVotes = Math.max(...Object.values(voteCounts), 1)
@@ -145,6 +187,14 @@ function VotingGame() {
     approved: { variant: 'success' as const, text: 'מאושרת!', icon: Check },
     rejected: { variant: 'error' as const, text: 'נדחתה', icon: XIcon },
   }[myCostume.status] : null
+
+  if (dataLoading) {
+    return (
+      <Container size="md" className="py-12 flex justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
+      </Container>
+    )
+  }
 
   return (
     <Container size="md" className="py-8 md:py-12">

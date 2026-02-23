@@ -1,5 +1,5 @@
-import { useState, useRef, type FormEvent } from 'react'
-import { Camera, Send, X } from 'lucide-react'
+import { useState, useRef, useEffect, type FormEvent } from 'react'
+import { Camera, Send, X, Loader2 } from 'lucide-react'
 import { Heading, Text, Button, Input, Container, Card } from '@/components/ui'
 import { useToast } from '@/components/ui/Toast'
 import { AnimateOnScroll, StaggerChildren, PageTransition } from '@/components/motion'
@@ -10,7 +10,12 @@ const MAX_MESSAGE_LENGTH = 280
 
 export function BlessingsPage() {
   const { toast } = useToast()
-  const [blessings, setBlessings] = useState<store.Blessing[]>(() => store.getAllBlessings())
+  const [blessings, setBlessings] = useState<store.Blessing[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    store.getAllBlessings().then(setBlessings).finally(() => setLoading(false))
+  }, [])
   const [showForm, setShowForm] = useState(false)
   const [name, setName] = useState('')
   const [message, setMessage] = useState('')
@@ -30,11 +35,11 @@ export function BlessingsPage() {
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     if (!name.trim() || !message.trim()) return
 
-    const saved = store.saveBlessing({
+    const saved = await store.saveBlessing({
       name: name.trim(),
       message: message.trim(),
       photoURL: photoPreview ?? undefined,
@@ -145,6 +150,11 @@ export function BlessingsPage() {
           </AnimateOnScroll>
         )}
 
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
+          </div>
+        ) : (
         <StaggerChildren staggerDelay={0.08} className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
           {blessings.map((b) => (
             <Card key={b.id} variant="top" hoverable={false} className="break-inside-avoid p-5">
@@ -159,6 +169,7 @@ export function BlessingsPage() {
             </Card>
           ))}
         </StaggerChildren>
+        )}
       </Container>
     </PageTransition>
   )

@@ -1,12 +1,12 @@
 import { useState, useCallback } from 'react'
 import {
   LayoutDashboard, Gamepad2, Vote,
-  Users, Camera, RefreshCw, LogOut, Shield, Settings,
+  Users, Camera, RefreshCw, LogOut, Shield, Settings, BarChart3, BookOpen, Loader2, MessageSquareHeart,
 } from 'lucide-react'
 import { Heading, Container, Button } from '@/components/ui'
 import { useParticipant } from '@/contexts/ParticipantContext'
 import { AnimateOnScroll, PageTransition } from '@/components/motion'
-import { useAutoRefresh } from '@/hooks'
+import { useAsyncAutoRefresh } from '@/hooks'
 import * as store from '@/lib/store'
 import { AdminOverview } from './admin/AdminOverview'
 import { AdminCostumes } from './admin/AdminCostumes'
@@ -15,39 +15,55 @@ import { AdminVotes } from './admin/AdminVotes'
 import { AdminParticipants } from './admin/AdminParticipants'
 import { AdminAdmins } from './admin/AdminAdmins'
 import { AdminSettings } from './admin/AdminSettings'
+import { AdminMediaKit } from './admin/AdminMediaKit'
+import { AdminDictionary } from './admin/AdminDictionary'
+import { AdminBlessings } from './admin/AdminBlessings'
 
-type Tab = 'overview' | 'trivia' | 'votes' | 'costumes' | 'participants' | 'admins' | 'settings'
+type Tab = 'overview' | 'trivia' | 'votes' | 'costumes' | 'blessings' | 'participants' | 'dictionary' | 'admins' | 'settings' | 'mediakit'
 
-function getAllData() {
+async function getAllData() {
+  const [stats, triviaResults, voteCounts, participants, pendingCostumes, approvedCostumes, allCostumes] =
+    await Promise.all([
+      store.getStats(),
+      store.getTriviaLeaderboard(),
+      store.getVoteCounts(),
+      store.getAllParticipants(),
+      store.getPendingCostumes(),
+      store.getApprovedCostumes(),
+      store.getAllCostumes(),
+    ])
   return {
-    stats: store.getStats(),
-    triviaResults: store.getTriviaLeaderboard(),
-    voteCounts: store.getVoteCounts(),
-    participants: store.getAllParticipants(),
-    pendingCostumes: store.getPendingCostumes(),
-    approvedCostumes: store.getApprovedCostumes(),
-    allCostumes: store.getAllCostumes(),
+    stats,
+    triviaResults,
+    voteCounts,
+    participants,
+    pendingCostumes,
+    approvedCostumes,
+    allCostumes,
   }
 }
 
 export function AdminPage() {
   const { signOut } = useParticipant()
   const [tab, setTab] = useState<Tab>('overview')
-  const [data, refreshData] = useAutoRefresh(getAllData, 5000)
+  const [data, loading, error, refreshData] = useAsyncAutoRefresh(getAllData, 5000)
 
-  const handleReview = useCallback((costumeId: string, status: 'approved' | 'rejected') => {
-    store.reviewCostume(costumeId, status)
+  const handleReview = useCallback(async (costumeId: string, status: 'approved' | 'rejected') => {
+    await store.reviewCostume(costumeId, status)
     refreshData()
   }, [refreshData])
 
   const tabItems: { id: Tab; label: string; icon: typeof Camera; badge?: number }[] = [
     { id: 'overview', label: 'סקירה', icon: LayoutDashboard },
-    { id: 'costumes', label: 'תחפושות', icon: Camera, badge: data.stats.pendingCostumes || undefined },
+    { id: 'costumes', label: 'תחפושות', icon: Camera, badge: data?.stats.pendingCostumes || undefined },
     { id: 'trivia', label: 'טריוויה', icon: Gamepad2 },
     { id: 'votes', label: 'הצבעות', icon: Vote },
+    { id: 'blessings', label: 'ברכות', icon: MessageSquareHeart },
     { id: 'participants', label: 'משתתפים', icon: Users },
+    { id: 'dictionary', label: 'מילון', icon: BookOpen },
     { id: 'admins', label: 'אדמינים', icon: Shield },
     { id: 'settings', label: 'הגדרות', icon: Settings },
+    { id: 'mediakit', label: 'Media Kit', icon: BarChart3 },
   ]
 
   return (
@@ -93,27 +109,40 @@ export function AdminPage() {
         </div>
 
         <AnimateOnScroll variant="fade-up">
-          {tab === 'overview' && (
-            <AdminOverview
-              stats={data.stats}
-              triviaResults={data.triviaResults}
-              voteCounts={data.voteCounts}
-              approvedCostumes={data.approvedCostumes}
-            />
-          )}
-          {tab === 'costumes' && (
-            <AdminCostumes
-              pendingCostumes={data.pendingCostumes}
-              approvedCostumes={data.approvedCostumes}
-              allCostumes={data.allCostumes}
-              onReview={handleReview}
-            />
-          )}
-          {tab === 'trivia' && <AdminTrivia triviaResults={data.triviaResults} />}
-          {tab === 'votes' && <AdminVotes approvedCostumes={data.approvedCostumes} voteCounts={data.voteCounts} />}
-          {tab === 'participants' && <AdminParticipants participants={data.participants} />}
+          {loading && !data ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
+            </div>
+          ) : error ? (
+            <div className="text-red-400 text-center py-8">{error.message}</div>
+          ) : data ? (
+            <>
+              {tab === 'overview' && (
+                <AdminOverview
+                  stats={data.stats}
+                  triviaResults={data.triviaResults}
+                  voteCounts={data.voteCounts}
+                  approvedCostumes={data.approvedCostumes}
+                />
+              )}
+              {tab === 'costumes' && (
+                <AdminCostumes
+                  pendingCostumes={data.pendingCostumes}
+                  approvedCostumes={data.approvedCostumes}
+                  allCostumes={data.allCostumes}
+                  onReview={handleReview}
+                />
+              )}
+              {tab === 'trivia' && <AdminTrivia triviaResults={data.triviaResults} />}
+              {tab === 'votes' && <AdminVotes approvedCostumes={data.approvedCostumes} voteCounts={data.voteCounts} />}
+              {tab === 'blessings' && <AdminBlessings />}
+              {tab === 'participants' && <AdminParticipants participants={data.participants} />}
+          {tab === 'dictionary' && <AdminDictionary />}
           {tab === 'admins' && <AdminAdmins />}
           {tab === 'settings' && <AdminSettings />}
+          {tab === 'mediakit' && <AdminMediaKit />}
+            </>
+          ) : null}
         </AnimateOnScroll>
       </Container>
     </PageTransition>

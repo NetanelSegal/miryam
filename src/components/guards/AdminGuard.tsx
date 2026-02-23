@@ -18,9 +18,15 @@ interface AdminGuardProps {
   children: React.ReactNode
 }
 
+const SKIP_ADMIN_AUTH = import.meta.env.VITE_SKIP_ADMIN_AUTH === 'true'
+
 export function AdminGuard({ children }: AdminGuardProps) {
   const { firebaseUser, isAdmin, adminCheckLoading, loading, signInWithGoogle, signOut } = useParticipant()
   const [signingIn, setSigningIn] = useState(false)
+
+  if (SKIP_ADMIN_AUTH) {
+    return <>{children}</>
+  }
 
   if (loading || adminCheckLoading) {
     return (

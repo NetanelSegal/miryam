@@ -38,8 +38,10 @@ function TriviaGame() {
 
     async function load() {
       try {
-        const existing = store.getTriviaResult(participantId)
-        const qs = await triviaStore.getAllQuestions()
+        const [existing, qs] = await Promise.all([
+          store.getTriviaResult(participantId),
+          triviaStore.getAllQuestions(),
+        ])
 
         if (cancelled) return
 
@@ -103,8 +105,7 @@ function TriviaGame() {
           participantName,
           score: newScore,
           totalQuestions: questions.length,
-        })
-        setPhase('result')
+        }).then(() => setPhase('result')).catch(() => setPhase('result'))
       } else {
         setCurrentQuestion(next)
         setSelectedAnswer(null)

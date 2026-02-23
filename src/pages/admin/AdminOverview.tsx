@@ -1,10 +1,10 @@
 import { Trophy, Crown } from 'lucide-react'
 import { Heading, Text, Card, StatCard, Badge, LeaderboardRow } from '@/components/ui'
 import { StaggerChildren } from '@/components/motion'
-import type { TriviaResult, CostumeEntry } from '@/lib/store'
+import type { TriviaResult, CostumeEntry, Stats } from '@/lib/store'
 
 interface AdminOverviewProps {
-  stats: ReturnType<typeof import('@/lib/store').getStats>
+  stats: Stats
   triviaResults: TriviaResult[]
   voteCounts: Record<string, number>
   approvedCostumes: CostumeEntry[]

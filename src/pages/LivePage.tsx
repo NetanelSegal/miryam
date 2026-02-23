@@ -128,17 +128,27 @@ function BirthdaySection() {
 
 export function LivePage() {
   const [activeIndex, setActiveIndex] = useState(0)
-  const [voteCounts, setVoteCounts] = useState(store.getVoteCounts())
-  const [blessings, setBlessings] = useState(store.getAllBlessings())
-  const [leaderboard, setLeaderboard] = useState(store.getTriviaLeaderboard())
-  const [costumes, setCostumes] = useState(store.getApprovedCostumes())
+  const [voteCounts, setVoteCounts] = useState<Record<string, number>>({})
+  const [blessings, setBlessings] = useState<store.Blessing[]>([])
+  const [leaderboard, setLeaderboard] = useState<store.TriviaResult[]>([])
+  const [costumes, setCostumes] = useState<store.CostumeEntry[]>([])
 
-  const refreshData = useCallback(() => {
-    setVoteCounts(store.getVoteCounts())
-    setBlessings(store.getAllBlessings())
-    setLeaderboard(store.getTriviaLeaderboard())
-    setCostumes(store.getApprovedCostumes())
+  const refreshData = useCallback(async () => {
+    const [counts, b, lb, c] = await Promise.all([
+      store.getVoteCounts(),
+      store.getAllBlessings(),
+      store.getTriviaLeaderboard(),
+      store.getApprovedCostumes(),
+    ])
+    setVoteCounts(counts)
+    setBlessings(b)
+    setLeaderboard(lb)
+    setCostumes(c)
   }, [])
+
+  useEffect(() => {
+    refreshData()
+  }, [refreshData])
 
   useEffect(() => {
     const timer = setInterval(() => {

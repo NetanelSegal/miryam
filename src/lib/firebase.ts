@@ -18,7 +18,6 @@ export const auth = getAuth(app)
 export const googleProvider = new GoogleAuthProvider()
 export const db = getFirestore(app)
 export const storage = getStorage(app)
-
 let analyticsInstance: ReturnType<typeof import('firebase/analytics').getAnalytics> | null = null
 if (typeof window !== 'undefined' && firebaseConfig.measurementId) {
   import('firebase/analytics').then(({ getAnalytics }) => {

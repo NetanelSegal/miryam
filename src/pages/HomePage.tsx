@@ -1,22 +1,30 @@
-import { useState, useRef, type FormEvent } from 'react'
+import { useState, useRef, useEffect, type FormEvent } from 'react'
 import {
   Heading, Text, Button, Container, Countdown,
-  StatCard, Marquee, Card, Input,
+  StatCard, Marquee, Card, Input, TiktokEmbed,
 } from '@/components/ui'
 import { useToast } from '@/components/ui/Toast'
 import { AnimateOnScroll, StaggerChildren } from '@/components/motion'
 import { useCountUp, useParallax } from '@/hooks'
 import { useInView } from 'motion/react'
 import * as store from '@/lib/store'
+import { subscribeToSocialStats, type SocialStats } from '@/lib/social-stats-store'
+import { LINKS } from '@/config/links'
 
 const BIRTHDAY = new Date('2026-03-05T00:00:00')
 
-const socialStats = [
-  { value: 580, suffix: 'K+', label: 'עוקבים באינסטגרם' },
-  { value: 620, suffix: 'K+', label: 'עוקבים בטיקטוק' },
-  { value: 45, suffix: 'K+', label: 'מנויים ביוטיוב' },
-  { value: 8.2, suffix: '%', label: 'אחוז מעורבות', decimals: 1 },
-]
+function buildDisplayStats(stats: SocialStats) {
+  const ig = stats.instagram?.followers ?? 580000
+  const tt = stats.tiktok?.followers ?? 620000
+  const yt = stats.youtube?.subscribers ?? 45000
+  const eng = stats.engagementPercent ?? 8.2
+  return [
+    { value: ig >= 1000 ? ig / 1000 : ig, suffix: ig >= 1000 ? 'K+' : '', label: 'עוקבים באינסטגרם' },
+    { value: tt >= 1000 ? tt / 1000 : tt, suffix: tt >= 1000 ? 'K+' : '', label: 'עוקבים בטיקטוק' },
+    { value: yt >= 1000 ? yt / 1000 : yt, suffix: yt >= 1000 ? 'K+' : '', label: 'מנויים ביוטיוב' },
+    { value: eng, suffix: '%', label: 'אחוז מעורבות', decimals: 1 },
+  ]
+}
 
 const brands = ["L'Oréal", 'MAC', 'Samsung', 'Fox', 'Castro', 'Adidas', 'Zara', 'H&M']
 
@@ -51,11 +59,24 @@ const caseStudies = [
 function StatSection() {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, amount: 0.3 })
+  const [stats, setStats] = useState<SocialStats>({
+    instagram: { followers: 580000 },
+    tiktok: { followers: 620000 },
+    youtube: { subscribers: 45000 },
+    engagementPercent: 8.2,
+    updatedAt: 0,
+  })
+
+  useEffect(() => {
+    return subscribeToSocialStats(setStats)
+  }, [])
+
+  const displayStats = buildDisplayStats(stats)
 
   return (
     <div ref={ref}>
       <StaggerChildren staggerDelay={0.12} className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {socialStats.map((stat) => (
+        {displayStats.map((stat) => (
           <StatItem key={stat.label} stat={stat} enabled={isInView} />
         ))}
       </StaggerChildren>
@@ -63,7 +84,13 @@ function StatSection() {
   )
 }
 
-function StatItem({ stat, enabled }: { stat: (typeof socialStats)[number]; enabled: boolean }) {
+function StatItem({
+  stat,
+  enabled,
+}: {
+  stat: { value: number; suffix: string; label: string; decimals?: number }
+  enabled: boolean
+}) {
   const count = useCountUp({
     end: stat.value,
     duration: 2000,
@@ -72,6 +99,73 @@ function StatItem({ stat, enabled }: { stat: (typeof socialStats)[number]; enabl
   })
 
   return <StatCard value={`${count}${stat.suffix}`} label={stat.label} />
+}
+
+/* ------------------------------------------------------------------ */
+/*  TikTok top videos section                                         */
+/* ------------------------------------------------------------------ */
+
+function TiktokTopVideosSection() {
+  const [stats, setStats] = useState<SocialStats>({
+    instagram: { followers: 580000 },
+    tiktok: { followers: 620000 },
+    youtube: { subscribers: 45000 },
+    engagementPercent: 8.2,
+    updatedAt: 0,
+  })
+
+  useEffect(() => {
+    return subscribeToSocialStats(setStats)
+  }, [])
+
+  const videos = stats.tiktokTopVideos ?? []
+  if (videos.length === 0) return null
+
+  const formatMetric = (n: number) =>
+    n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1)}M` : n >= 1_000 ? `${(n / 1_000).toFixed(1)}K` : String(n)
+
+  return (
+    <section className="py-20 md:py-28 border-t border-white/5">
+      <Container size="lg">
+        <AnimateOnScroll variant="fade-up">
+          <Text variant="label" className="text-center mb-3">TikTok</Text>
+          <Heading level={2} gradient className="text-center mb-12">
+            הסרטונים הפופולריים שלי
+          </Heading>
+        </AnimateOnScroll>
+        <StaggerChildren staggerDelay={0.15} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {videos.map((v, i) => {
+            const url = typeof v === 'string' ? v : v.url
+            const views = typeof v === 'object' ? v.views : undefined
+            const likes = typeof v === 'object' ? v.likes : undefined
+            const metric =
+              views != null && likes != null
+                ? `${formatMetric(views)} צפיות · ${formatMetric(likes)} לייקים`
+                : views != null
+                  ? `${formatMetric(views)} צפיות`
+                  : likes != null
+                    ? `${formatMetric(likes)} לייקים`
+                    : `סרטון ${i + 1}`
+            return (
+              <Card key={url} variant="accent" className="overflow-hidden">
+                <TiktokEmbed url={url} metric={metric} className="rounded-t-lg" />
+              </Card>
+            )
+          })}
+        </StaggerChildren>
+        <div className="flex justify-center mt-8">
+          <a
+            href={LINKS.tiktok}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 font-medium rounded-none transition-all border-2 border-border-neutral text-white hover:border-accent-indigo px-6 py-3"
+          >
+            לעמוד הטיקטוק שלי
+          </a>
+        </div>
+      </Container>
+    </section>
+  )
 }
 
 /* ------------------------------------------------------------------ */
@@ -94,11 +188,15 @@ function ContactForm() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    await new Promise((r) => setTimeout(r, 1000))
-    store.saveContact(formData)
-    toast('success', 'ההודעה נשלחה בהצלחה!')
-    setFormData({ name: '', company: '', email: '', message: '' })
-    setLoading(false)
+    try {
+      await store.saveContact(formData)
+      toast('success', 'ההודעה נשלחה בהצלחה!')
+      setFormData({ name: '', company: '', email: '', message: '' })
+    } catch {
+      toast('error', 'שגיאה בשליחת ההודעה')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -214,6 +312,9 @@ export function HomePage() {
           </Container>
         </section>
 
+        {/* --- TikTok top videos --- */}
+        <TiktokTopVideosSection />
+
         {/* --- Brand Logos --- */}
         <section className="py-12 border-t border-b border-white/5">
           <Container size="lg">
@@ -289,13 +390,10 @@ export function HomePage() {
                   יוצרת תוכן דיגיטלי בתחום הלייפסטייל, היופי וחיי המשפחה. עם קהילה של מעל מיליון
                   עוקבים, מרים יוצרת תוכן אותנטי שמחבר בין מותגים לקהלים צעירים בישראל.
                 </Text>
-                <Text variant="secondary" className="mb-8 leading-relaxed">
+                <Text variant="secondary" className="leading-relaxed">
                   מתמחה ביצירת קמפיינים ויראליים בטיקטוק ואינסטגרם, עם דגש על אותנטיות ותוצאות
                   מדידות. שיתפה פעולה עם מותגים מובילים כמו L'Oréal, Samsung, Fox ועוד.
                 </Text>
-                <Button variant="secondary" href="/party">
-                  הכירו את מרים
-                </Button>
               </AnimateOnScroll>
             </div>
           </Container>
@@ -326,13 +424,13 @@ export function HomePage() {
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <Text variant="muted" size="sm">© 2026 מרים סגל. כל הזכויות שמורות.</Text>
               <div className="flex gap-6">
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-text-muted hover:text-white transition-colors text-sm">
+                <a href={LINKS.instagram} target="_blank" rel="noopener noreferrer" className="text-text-muted hover:text-white transition-colors text-sm">
                   Instagram
                 </a>
-                <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="text-text-muted hover:text-white transition-colors text-sm">
+                <a href={LINKS.tiktok} target="_blank" rel="noopener noreferrer" className="text-text-muted hover:text-white transition-colors text-sm">
                   TikTok
                 </a>
-                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-text-muted hover:text-white transition-colors text-sm">
+                <a href={LINKS.youtube} target="_blank" rel="noopener noreferrer" className="text-text-muted hover:text-white transition-colors text-sm">
                   YouTube
                 </a>
               </div>

@@ -34,13 +34,13 @@ export function Modal({ open, onClose, title, size = 'md', children }: ModalProp
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm overflow-y-auto"
       onClick={(e) => { if (e.target === overlayRef.current) onClose() }}
       role="dialog"
       aria-modal="true"
       aria-label={title}
     >
-      <div className={`w-full ${sizeMap[size]} bg-bg-end border border-white/10 rounded-none p-6 relative animate-fade-in-up`}>
+      <div className={`w-full ${sizeMap[size]} bg-bg-end border border-white/10 rounded-none p-6 relative animate-fade-in-up my-auto max-h-[min(90vh,600px)] overflow-y-auto shrink-0`}>
         {title && (
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-heading text-xl font-semibold text-white">{title}</h2>
