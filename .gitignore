@@ -5,3 +5,5 @@ dist
 *.local
 .DS_Store
 .vercel
+CREDENTIALS.md
+firestore-debug.log
