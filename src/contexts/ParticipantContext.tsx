@@ -1,5 +1,8 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
-import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut, type User } from 'firebase/auth'
+import {
+  onAuthStateChanged, signInWithPopup, signInWithRedirect,
+  getRedirectResult, signOut as firebaseSignOut, type User,
+} from 'firebase/auth'
 import { auth, googleProvider } from '@/lib/firebase'
 import { createParticipant, type Participant } from '@/lib/store'
 
@@ -35,6 +38,8 @@ export function ParticipantProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    getRedirectResult(auth).catch(() => {})
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setFirebaseUser(user)
       if (user) {
@@ -52,9 +57,13 @@ export function ParticipantProvider({ children }: { children: ReactNode }) {
     try {
       await signInWithPopup(auth, googleProvider)
     } catch (err) {
-      if ((err as { code?: string }).code !== 'auth/popup-closed-by-user') {
-        console.error('Google sign-in error:', err)
+      const code = (err as { code?: string }).code
+      if (code === 'auth/popup-closed-by-user') throw err
+      if (code === 'auth/popup-blocked' || code === 'auth/cancelled-popup-request') {
+        await signInWithRedirect(auth, googleProvider)
+        return
       }
+      console.error('Google sign-in error:', err)
       throw err
     }
   }, [])

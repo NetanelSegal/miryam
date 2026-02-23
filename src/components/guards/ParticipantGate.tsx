@@ -36,8 +36,12 @@ export function ParticipantGate({ children }: { children: ReactNode }) {
     try {
       await signInWithGoogle()
     } catch (err) {
-      if ((err as { code?: string }).code === 'auth/popup-closed-by-user') {
+      const code = (err as { code?: string }).code
+      if (code === 'auth/popup-closed-by-user') {
         setSigningIn(false)
+        return
+      }
+      if (code === 'auth/popup-blocked' || code === 'auth/cancelled-popup-request') {
         return
       }
       setError('שגיאה בהתחברות. נסו שנית.')
