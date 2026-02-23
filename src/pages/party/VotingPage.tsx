@@ -1,21 +1,20 @@
-import { useState, useCallback, useRef, useMemo } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { motion } from 'motion/react'
 import { Check, Upload, Camera, Clock, X as XIcon, Trophy } from 'lucide-react'
-import { Heading, Text, Button, Input, Container, Card, Badge } from '@/components/ui'
+import { Heading, Text, Button, Input, Container, Card, Badge, EmptyState, VoteBar } from '@/components/ui'
 import { AnimateOnScroll, StaggerChildren } from '@/components/motion'
 import { useToast } from '@/components/ui/Toast'
 import { confetti } from '@/lib/confetti'
-import { useParticipant } from '@/contexts/ParticipantContext'
+import { useRequiredParticipant, useFileUpload } from '@/hooks'
 import { ParticipantGate } from '@/components/guards/ParticipantGate'
 import { compressImage } from '@/lib/image'
 import * as store from '@/lib/store'
 
 function VotingGame() {
-  const { participant } = useParticipant()
+  const participant = useRequiredParticipant()
   const { toast } = useToast()
-  const pid = participant!.id
-  const pname = participant!.name
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const { id: pid, name: pname } = participant
+  const { fileInputRef, preview, selectedFile, handleFileChange, clearFile } = useFileUpload()
 
   const [myCostume, setMyCostume] = useState(() => store.getCostumeByParticipant(pid))
   const [approvedCostumes, setApprovedCostumes] = useState(() => store.getApprovedCostumes())
@@ -25,24 +24,7 @@ function VotingGame() {
   const [voteCounts, setVoteCounts] = useState(() => store.getVoteCounts())
 
   const [title, setTitle] = useState('')
-  const [preview, setPreview] = useState<string | null>(null)
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
-
-  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setSelectedFile(file)
-    const reader = new FileReader()
-    reader.onloadend = () => setPreview(reader.result as string)
-    reader.readAsDataURL(file)
-  }, [])
-
-  const clearFile = useCallback(() => {
-    setPreview(null)
-    setSelectedFile(null)
-    if (fileInputRef.current) fileInputRef.current.value = ''
-  }, [])
 
   const handleUpload = useCallback(async () => {
     if (!selectedFile || !title.trim()) return
@@ -193,10 +175,7 @@ function VotingGame() {
         </div>
 
         {approvedCostumes.length === 0 ? (
-          <Card variant="accent" className="p-8 text-center">
-            <Trophy className="w-12 h-12 text-text-muted mx-auto mb-3" />
-            <Text variant="muted">עדיין אין תחפושות מאושרות. העלו תחפושת והמתינו לאישור!</Text>
-          </Card>
+          <EmptyState icon={Trophy} message="עדיין אין תחפושות מאושרות. העלו תחפושת והמתינו לאישור!" />
         ) : !hasVoted ? (
           <StaggerChildren className="grid grid-cols-2 gap-4 md:gap-6">
             {approvedCostumes.map(costume => (
@@ -211,7 +190,7 @@ function VotingGame() {
                   <img src={costume.imageData} alt={costume.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <span className="bg-gradient-to-l from-[#6366f1] to-[#a855f7] text-white px-4 py-2 text-sm font-bold translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    <span className="bg-gradient-brand text-white px-4 py-2 text-sm font-bold translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                       {costume.participantId === pid ? 'זו התחפושת שלך!' : 'הצביעו לי!'}
                     </span>
                   </div>
@@ -244,17 +223,7 @@ function VotingGame() {
                           </Badge>
                         )}
                       </div>
-                      <div className="relative h-7 md:h-8 bg-white/5 overflow-hidden">
-                        <motion.div
-                          className="absolute inset-y-0 right-0 bg-gradient-to-l from-[#6366f1] to-[#a855f7]"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${(costume.votes / maxVotes) * 100}%` }}
-                          transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1], delay: 0.2 }}
-                        />
-                        <span className="absolute inset-0 flex items-center px-3 text-xs md:text-sm font-bold text-white z-10">
-                          {costume.votes} הצבעות
-                        </span>
-                      </div>
+                      <VoteBar votes={costume.votes} maxVotes={maxVotes} size="sm" />
                     </div>
                   </div>
                 ))}

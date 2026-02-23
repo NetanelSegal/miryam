@@ -1,59 +1,79 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { Heading, Text, Button, Container } from '@/components/ui'
 import { PageTransition } from '@/components/motion'
 import { confetti } from '@/lib/confetti'
-import { useParticipant } from '@/contexts/ParticipantContext'
+import { useRequiredParticipant } from '@/hooks'
 import { ParticipantGate } from '@/components/guards/ParticipantGate'
 import * as store from '@/lib/store'
-import { Share2, ArrowRight, Trophy, Sparkles } from 'lucide-react'
+import * as triviaStore from '@/lib/trivia-store'
+import type { TriviaQuestion } from '@/lib/trivia-store'
+import { Share2, ArrowRight, Trophy, Sparkles, Loader2, AlertCircle } from 'lucide-react'
 
-const questions = [
-  { question: 'באיזה תאריך נולדה מרים?', options: ['5 במרץ', '27 בפברואר', '15 באפריל', '1 בינואר'], correct: 0 },
-  { question: 'באיזו פלטפורמה מרים התחילה את הקריירה שלה?', options: ['TikTok', 'Instagram', 'YouTube', 'Twitter'], correct: 0 },
-  { question: 'עם איזה מותג מרים שיתפה פעולה בקמפיין שקיבל מעל 2.7M צפיות?', options: ["L'Oréal", 'MAC', 'Dior', 'Chanel'], correct: 0 },
-  { question: 'מה המזל של מרים?', options: ['דגים', 'מאזניים', 'בתולה', 'טלה'], correct: 0 },
-  { question: 'איזו יוצרת תוכן ישראלית חברה של מרים?', options: ['נועה בוגוסלבסקי', 'נועה קירל', 'אגם בוחבוט', 'ליהיא גרינר'], correct: 0 },
-  { question: 'באיזו תוכנית טלוויזיה מרים הופיעה?', options: ['אז ככה', 'האח הגדול', 'הישרדות', "נינג'ה ישראל"], correct: 0 },
-  { question: 'מתי מרים פרסמה את הפוסט הראשון שלה באינסטגרם?', options: ['ספטמבר 2020', 'ינואר 2019', 'יוני 2021', 'מרץ 2018'], correct: 0 },
-  { question: 'באיזו מדינה מרים נולדה?', options: ['ישראל', 'ארה"ב', 'צרפת', 'אנגליה'], correct: 0 },
-  { question: 'על איזה נושא מרים העלתה מודעות ציבורית?', options: ['שימוש לרעה ב-AI', 'זכויות בעלי חיים', 'איכות הסביבה', 'חינוך'], correct: 0 },
-  { question: 'כמה עוקבים יש למרים בטיקטוק?', options: ['600K+', '100K', '1M+', '300K'], correct: 0 },
-] as const
+type Phase = 'loading' | 'error' | 'start' | 'playing' | 'result'
 
-type Phase = 'start' | 'playing' | 'result'
-
-function getScoreMessage(score: number): string {
-  if (score === 10) return 'מושלם! את/ה מכירים את מרים הכי טוב!'
-  if (score >= 7) return 'כל הכבוד! את/ה ממש מכירים את מרים'
-  if (score >= 4) return 'לא רע! יש עוד מה ללמוד על מרים'
+function getScoreMessage(score: number, total: number): string {
+  const pct = total > 0 ? score / total : 0
+  if (pct === 1) return 'מושלם! את/ה מכירים את מרים הכי טוב!'
+  if (pct >= 0.7) return 'כל הכבוד! את/ה ממש מכירים את מרים'
+  if (pct >= 0.4) return 'לא רע! יש עוד מה ללמוד על מרים'
   return 'אופס... אולי תעקבו אחרי מרים ברשתות?'
 }
 
 function TriviaGame() {
-  const { participant } = useParticipant()
-  const participantId = participant!.id
-  const participantName = participant!.name
+  const participant = useRequiredParticipant()
+  const { id: participantId, name: participantName } = participant
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const [phase, setPhase] = useState<Phase>(() => {
-    const existing = store.getTriviaResult(participantId)
-    return existing ? 'result' : 'start'
-  })
+  const [questions, setQuestions] = useState<TriviaQuestion[]>([])
+  const [phase, setPhase] = useState<Phase>('loading')
   const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [score, setScore] = useState(() => {
-    const existing = store.getTriviaResult(participantId)
-    return existing?.score ?? 0
-  })
+  const [score, setScore] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
-    if (phase === 'result' && score === 10) {
+    let cancelled = false
+
+    async function load() {
+      try {
+        const existing = store.getTriviaResult(participantId)
+        const qs = await triviaStore.getAllQuestions()
+
+        if (cancelled) return
+
+        setQuestions(qs)
+
+        if (existing) {
+          setScore(existing.score)
+          setPhase('result')
+        } else if (qs.length === 0) {
+          setPhase('error')
+        } else {
+          setPhase('start')
+        }
+      } catch {
+        if (!cancelled) setPhase('error')
+      }
+    }
+
+    load()
+    return () => { cancelled = true }
+  }, [participantId])
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (phase === 'result' && questions.length > 0 && score === questions.length) {
       const timer = setTimeout(() => confetti(), 300)
       return () => clearTimeout(timer)
     }
-  }, [phase, score])
+  }, [phase, score, questions.length])
 
   const handleStart = useCallback(() => {
     setPhase('playing')
@@ -75,7 +95,7 @@ function TriviaGame() {
     const newScore = isCorrect ? score + 1 : score
     if (isCorrect) setScore(newScore)
 
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       const next = currentQuestion + 1
       if (next >= questions.length) {
         store.saveTriviaResult({
@@ -91,21 +111,51 @@ function TriviaGame() {
         setShowFeedback(false)
       }
     }, 1500)
-  }, [showFeedback, currentQuestion, score, participantId, participantName])
+  }, [showFeedback, currentQuestion, score, participantId, participantName, questions])
 
   const handleShare = useCallback(async () => {
-    const text = `קיבלתי ${score}/10 בטריוויה של מרים! 🎉 נסו גם: ${window.location.origin}/party/trivia`
+    const text = `קיבלתי ${score}/${questions.length} בטריוויה של מרים! 🎉 נסו גם: ${window.location.origin}/party/trivia`
     try {
       await navigator.clipboard.writeText(text)
       setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      timeoutRef.current = setTimeout(() => setCopied(false), 2000)
     } catch { /* silent */ }
-  }, [score])
+  }, [score, questions.length])
 
   return (
     <PageTransition>
       <Container size="sm" className="py-12 min-h-[60vh] flex flex-col items-center justify-center">
         <AnimatePresence mode="wait">
+          {phase === 'loading' && (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-center"
+            >
+              <Loader2 className="w-10 h-10 mx-auto animate-spin text-accent-violet" />
+              <Text variant="muted" className="mt-4">טוען שאלות...</Text>
+            </motion.div>
+          )}
+
+          {phase === 'error' && (
+            <motion.div
+              key="error"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="w-full text-center space-y-6"
+            >
+              <AlertCircle className="w-12 h-12 mx-auto text-red-400" />
+              <Heading level={4} className="text-white">לא ניתן לטעון את הטריוויה</Heading>
+              <Text variant="secondary">אין שאלות זמינות כרגע. נסו שוב מאוחר יותר.</Text>
+              <Button variant="secondary" href="/party" icon={<ArrowRight className="w-4 h-4" />}>
+                חזרה למתחם
+              </Button>
+            </motion.div>
+          )}
+
           {phase === 'start' && (
             <motion.div
               key="start"
@@ -119,7 +169,7 @@ function TriviaGame() {
                 <Sparkles className="w-10 h-10 mx-auto text-accent-violet" />
                 <Heading level={2} gradient>הטריוויה של מרים</Heading>
                 <Text variant="secondary" size="lg">
-                  שלום {participantName}! 10 שאלות, ניסיון אחד. מוכנים?
+                  שלום {participantName}! {questions.length} שאלות, ניסיון אחד. מוכנים?
                 </Text>
               </div>
               <div className="max-w-xs mx-auto">
@@ -130,10 +180,12 @@ function TriviaGame() {
             </motion.div>
           )}
 
-          {phase === 'playing' && (
+          {phase === 'playing' && questions[currentQuestion] && (
             <QuestionScreen
               key={`q-${currentQuestion}`}
+              question={questions[currentQuestion]}
               questionIndex={currentQuestion}
+              totalQuestions={questions.length}
               selectedAnswer={selectedAnswer}
               showFeedback={showFeedback}
               onAnswer={handleAnswer}
@@ -157,7 +209,7 @@ function TriviaGame() {
                 <div className="text-7xl md:text-9xl font-bold font-heading gradient-text leading-none">
                   {score}/{questions.length}
                 </div>
-                <Text variant="secondary" size="lg">{getScoreMessage(score)}</Text>
+                <Text variant="secondary" size="lg">{getScoreMessage(score, questions.length)}</Text>
               </div>
               <div className="flex flex-col gap-3 max-w-xs mx-auto">
                 <Button variant="primary" size="md" icon={<Share2 className="w-4 h-4" />} onClick={handleShare}>
@@ -176,13 +228,16 @@ function TriviaGame() {
 }
 
 function QuestionScreen({
-  questionIndex, selectedAnswer, showFeedback, onAnswer,
+  question: q, questionIndex, totalQuestions, selectedAnswer, showFeedback, onAnswer,
 }: {
-  questionIndex: number; selectedAnswer: number | null; showFeedback: boolean; onAnswer: (i: number) => void
+  question: TriviaQuestion
+  questionIndex: number
+  totalQuestions: number
+  selectedAnswer: number | null
+  showFeedback: boolean
+  onAnswer: (i: number) => void
 }) {
-  const q = questions[questionIndex]
-  if (!q) return null
-  const progress = ((questionIndex + 1) / questions.length) * 100
+  const progress = ((questionIndex + 1) / totalQuestions) * 100
 
   return (
     <motion.div
@@ -193,12 +248,12 @@ function QuestionScreen({
       className="w-full space-y-6"
     >
       <div className="flex items-center justify-between mb-2">
-        <Text variant="muted" size="sm">{questionIndex + 1} / {questions.length}</Text>
+        <Text variant="muted" size="sm">{questionIndex + 1} / {totalQuestions}</Text>
       </div>
       <div className="w-full h-1.5 bg-white/10 overflow-hidden">
         <motion.div
-          className="h-full bg-gradient-to-l from-accent-violet to-accent-indigo"
-          initial={{ width: `${(questionIndex / questions.length) * 100}%` }}
+          className="h-full bg-gradient-brand"
+          initial={{ width: `${(questionIndex / totalQuestions) * 100}%` }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.4 }}
         />

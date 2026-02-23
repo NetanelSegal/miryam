@@ -108,10 +108,3 @@ export function getNavRoutes(): RouteConfig[] {
   return routes.filter(r => r.showInNav)
 }
 
-export function getRoutesByLayout(layout: LayoutType): RouteConfig[] {
-  return routes.filter(r => r.layout === layout)
-}
-
-export function getRouteByPath(path: string): RouteConfig | undefined {
-  return routes.find(r => r.path === path)
-}

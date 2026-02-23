@@ -3,38 +3,14 @@ import { Camera, Send, X } from 'lucide-react'
 import { Heading, Text, Button, Input, Container, Card } from '@/components/ui'
 import { useToast } from '@/components/ui/Toast'
 import { AnimateOnScroll, StaggerChildren, PageTransition } from '@/components/motion'
-
-interface Blessing {
-  id: string
-  name: string
-  message: string
-  photoURL?: string
-  timestamp: Date
-}
-
-const sampleBlessings: Blessing[] = [
-  { id: '1', name: 'נועה', message: 'מרים המלכה! יום הולדת שמח מותק 💕 שיהיה השנה הכי מוצלחת', timestamp: new Date(Date.now() - 1000 * 60 * 15) },
-  { id: '2', name: 'אור', message: 'מזל טוב מרים!! תמיד שמחה לראות את התוכן שלך 🎉', timestamp: new Date(Date.now() - 1000 * 60 * 45) },
-  { id: '3', name: 'שירה', message: 'יום הולדת שמח! את השראה אמיתית. ממשיכה לעקוב ולאהוב 🌟', timestamp: new Date(Date.now() - 1000 * 60 * 120) },
-  { id: '4', name: 'דניאל', message: 'Happy Birthday!! 🎂 מחכה לראות מה השנה הזאת מביאה', timestamp: new Date(Date.now() - 1000 * 60 * 180) },
-]
-
-function timeAgo(date: Date): string {
-  const seconds = Math.floor((Date.now() - date.getTime()) / 1000)
-  if (seconds < 60) return 'עכשיו'
-  const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `לפני ${minutes} דקות`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `לפני ${hours} שעות`
-  const days = Math.floor(hours / 24)
-  return `לפני ${days} ימים`
-}
+import * as store from '@/lib/store'
+import { timeAgo } from '@/lib/date'
 
 const MAX_MESSAGE_LENGTH = 280
 
 export function BlessingsPage() {
   const { toast } = useToast()
-  const [blessings, setBlessings] = useState<Blessing[]>(sampleBlessings)
+  const [blessings, setBlessings] = useState<store.Blessing[]>(() => store.getAllBlessings())
   const [showForm, setShowForm] = useState(false)
   const [name, setName] = useState('')
   const [message, setMessage] = useState('')
@@ -58,15 +34,13 @@ export function BlessingsPage() {
     e.preventDefault()
     if (!name.trim() || !message.trim()) return
 
-    const newBlessing: Blessing = {
-      id: crypto.randomUUID(),
+    const saved = store.saveBlessing({
       name: name.trim(),
       message: message.trim(),
       photoURL: photoPreview ?? undefined,
-      timestamp: new Date(),
-    }
+    })
 
-    setBlessings((prev) => [newBlessing, ...prev])
+    setBlessings((prev) => [saved, ...prev])
     toast('success', 'הברכה נוספה בהצלחה! 🎉')
     setName('')
     setMessage('')

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
 
-type UserRole = 'guest' | 'user' | 'admin'
+type UserRole = 'guest' | 'admin'
 
 interface AuthState {
   isAuthenticated: boolean

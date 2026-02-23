@@ -50,9 +50,7 @@ export function ParticipantProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogle = useCallback(async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider)
-      const p = userToParticipant(result.user)
-      setParticipant(p)
+      await signInWithPopup(auth, googleProvider)
     } catch (err) {
       if ((err as { code?: string }).code !== 'auth/popup-closed-by-user') {
         console.error('Google sign-in error:', err)

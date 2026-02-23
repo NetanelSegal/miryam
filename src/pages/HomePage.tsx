@@ -7,6 +7,7 @@ import { useToast } from '@/components/ui/Toast'
 import { AnimateOnScroll, StaggerChildren } from '@/components/motion'
 import { useCountUp, useParallax } from '@/hooks'
 import { useInView } from 'motion/react'
+import * as store from '@/lib/store'
 
 const BIRTHDAY = new Date('2026-03-05T00:00:00')
 
@@ -94,7 +95,7 @@ function ContactForm() {
     e.preventDefault()
     setLoading(true)
     await new Promise((r) => setTimeout(r, 1000))
-    console.log('Contact form:', formData)
+    store.saveContact(formData)
     toast('success', 'ההודעה נשלחה בהצלחה!')
     setFormData({ name: '', company: '', email: '', message: '' })
     setLoading(false)

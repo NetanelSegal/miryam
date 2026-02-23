@@ -109,8 +109,11 @@ export function getAllParticipants(): Participant[] {
 
 // --- Trivia ---
 export function saveTriviaResult(result: Omit<TriviaResult, 'timestamp'>): TriviaResult {
-  const entry: TriviaResult = { ...result, timestamp: Date.now() }
   const list = getList<TriviaResult>(KEYS.triviaResults)
+  const existing = list.find(r => r.participantId === result.participantId)
+  if (existing) return existing
+
+  const entry: TriviaResult = { ...result, timestamp: Date.now() }
   list.push(entry)
   setList(KEYS.triviaResults, list)
   return entry
@@ -221,13 +224,14 @@ export function getAllContacts(): ContactSubmission[] {
 
 // --- Stats ---
 export function getStats() {
+  const costumes = getList<CostumeEntry>(KEYS.costumes)
   return {
     totalParticipants: getList<Participant>(KEYS.participants).length,
     totalTriviaPlayers: getList<TriviaResult>(KEYS.triviaResults).length,
     totalVotes: getList<VoteRecord>(KEYS.votes).length,
     totalBlessings: getList<Blessing>(KEYS.blessings).length,
     totalContacts: getList<ContactSubmission>(KEYS.contacts).length,
-    totalCostumes: getList<CostumeEntry>(KEYS.costumes).length,
-    pendingCostumes: getList<CostumeEntry>(KEYS.costumes).filter(c => c.status === 'pending').length,
+    totalCostumes: costumes.length,
+    pendingCostumes: costumes.filter(c => c.status === 'pending').length,
   }
 }

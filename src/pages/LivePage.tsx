@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { Trophy, MessageSquareHeart, Crown, Cake } from 'lucide-react'
-import { Heading, Text, Countdown } from '@/components/ui'
+import { Heading, Text, Countdown, VoteBar } from '@/components/ui'
+import { getRankColor } from '@/lib/utils'
 import * as store from '@/lib/store'
 
 const ROTATE_INTERVAL = 8000
@@ -48,11 +49,8 @@ function VotingResultsSection({ voteCounts, costumes }: { voteCounts: Record<str
                 <Text size="xl" className="font-bold">{entry.name}</Text>
                 {entry.participantName && <Text variant="muted" size="xs">{entry.participantName}</Text>}
               </div>
-              <div className="flex-1 h-12 md:h-14 bg-white/5 relative overflow-hidden">
-                <motion.div className="absolute inset-y-0 right-0 bg-gradient-to-l from-[#6366f1] to-[#a855f7]"
-                  initial={{ width: 0 }} animate={{ width: `${(entry.votes / maxVotes) * 100}%` }}
-                  transition={{ duration: 1, delay: 0.3 + i * 0.15, ease: [0.25, 0.1, 0.25, 1] }} />
-                <span className="absolute inset-0 flex items-center px-4 text-lg font-bold text-white z-10">{entry.votes}</span>
+              <div className="flex-1">
+                <VoteBar votes={entry.votes} maxVotes={maxVotes} label={String(entry.votes)} size="lg" />
               </div>
             </motion.div>
           ))}
@@ -99,9 +97,9 @@ function LeaderboardSection({ leaderboard }: { leaderboard: store.TriviaResult[]
               className={`flex items-center gap-4 p-4 md:p-5 border ${
                 i === 0 ? 'border-amber-500/30 bg-amber-500/5' : 'border-white/5 bg-white/[0.02]'
               }`}>
-              <span className={`text-2xl md:text-3xl font-heading font-bold w-10 text-center ${
-                i === 0 ? 'text-amber-400' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-amber-600' : 'text-text-muted'
-              }`}>{i + 1}</span>
+              <span className={`text-2xl md:text-3xl font-heading font-bold w-10 text-center ${getRankColor(i)}`}>
+                {i + 1}
+              </span>
               <Text size="xl" className="flex-1 font-semibold">{entry.participantName}</Text>
               <Text size="xl" className="font-bold gradient-text">{entry.score}/{entry.totalQuestions}</Text>
             </motion.div>
@@ -121,7 +119,7 @@ function BirthdaySection() {
         transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}>
         <Cake className="w-16 h-16 md:w-20 md:h-20 text-accent-purple mx-auto mb-6" />
         <Heading level={1} gradient className="mb-4">יום הולדת שמח מרים!</Heading>
-        <Text variant="secondary" size="xl" className="mb-10 md:mb-14">החגיגה בעיצומה ✨</Text>
+        <Text variant="secondary" size="xl" className="mb-10 md:mb-14">החגיגה בעיצומה</Text>
         <Countdown targetDate={birthdayTarget} className="justify-center" />
       </motion.div>
     </div>
@@ -173,7 +171,7 @@ export function LivePage() {
       <div className="flex items-center justify-center gap-2 pb-6 relative z-10">
         {Array.from({ length: SECTION_COUNT }).map((_, i) => (
           <div key={i} className={`h-1.5 rounded-none transition-all duration-500 ${
-            i === activeIndex ? 'w-8 bg-gradient-to-l from-[#6366f1] to-[#a855f7]' : 'w-3 bg-white/20'
+            i === activeIndex ? 'w-8 bg-gradient-brand' : 'w-3 bg-white/20'
           }`} />
         ))}
       </div>

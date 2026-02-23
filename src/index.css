@@ -31,10 +31,15 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   font-family: var(--font-family-body);
   background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-mid) 40%, var(--color-bg-end) 100%);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .font-heading {
@@ -139,6 +144,10 @@ body {
   inset: 0;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent 60%);
   z-index: 1;
+}
+
+.bg-gradient-brand {
+  background: linear-gradient(to left, var(--color-accent-indigo), var(--color-accent-violet));
 }
 
 @keyframes fade-in-up {
