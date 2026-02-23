@@ -1,6 +1,8 @@
 export interface Participant {
   id: string
   name: string
+  email?: string
+  photoURL?: string
   createdAt: number
 }
 
@@ -68,10 +70,31 @@ function setList<T>(key: string, items: T[]) {
 }
 
 // --- Participants ---
-export function createParticipant(name: string): Participant {
+export function findParticipantById(id: string): Participant | undefined {
+  return getList<Participant>(KEYS.participants).find(p => p.id === id)
+}
+
+export function createParticipant(data: { id?: string; name: string; email?: string; photoURL?: string }): Participant {
+  const id = data.id ?? crypto.randomUUID()
+  const existing = findParticipantById(id)
+  if (existing) {
+    if (existing.name !== data.name || existing.photoURL !== data.photoURL) {
+      const list = getList<Participant>(KEYS.participants)
+      const idx = list.findIndex(p => p.id === id)
+      if (idx !== -1) {
+        list[idx] = { ...existing, name: data.name, email: data.email, photoURL: data.photoURL }
+        setList(KEYS.participants, list)
+        return list[idx]!
+      }
+    }
+    return existing
+  }
+
   const participant: Participant = {
-    id: crypto.randomUUID(),
-    name,
+    id,
+    name: data.name,
+    email: data.email,
+    photoURL: data.photoURL,
     createdAt: Date.now(),
   }
   const list = getList<Participant>(KEYS.participants)

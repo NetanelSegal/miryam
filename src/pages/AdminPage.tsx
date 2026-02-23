@@ -325,8 +325,15 @@ export function AdminPage() {
                 {participants.map((p) => (
                   <div key={p.id} className="flex items-center justify-between p-3 border border-white/5 bg-white/[0.02]">
                     <div className="flex items-center gap-3">
-                      <Users className="w-4 h-4 text-text-muted" />
-                      <Text className="font-semibold">{p.name}</Text>
+                      {p.photoURL ? (
+                        <img src={p.photoURL} alt={p.name} className="w-8 h-8 rounded-full object-cover" />
+                      ) : (
+                        <Users className="w-4 h-4 text-text-muted" />
+                      )}
+                      <div>
+                        <Text className="font-semibold">{p.name}</Text>
+                        {p.email && <Text variant="muted" size="xs">{p.email}</Text>}
+                      </div>
                     </div>
                     <Text variant="muted" size="xs">
                       {new Date(p.createdAt).toLocaleString('he-IL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
