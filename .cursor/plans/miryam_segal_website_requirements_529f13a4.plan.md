@@ -5,6 +5,9 @@ todos:
   - id: setup
     content: 'Project setup: React + Vite + Tailwind + Firebase + RTL + fonts'
     status: complete
+  - id: env-config-ssot
+    content: 'Env Config SSOT: centralized src/config/env.ts with Zod validation, typed exports, runtime checks — all env access goes through this module'
+    status: pending
   - id: ui-component-library
     content: 'UI Component Library: Button, Input, Heading, Card, Text, Badge, Modal, Toast, Container, Skeleton — single source of truth for all design tokens'
     status: pending
@@ -66,7 +69,113 @@ isProject: false
 - **Direction**: RTL, Mobile First
 - **Social APIs**: Instagram Graph API, TikTok Display API, YouTube Data API v3
 
-## 2. UI Component Library (Design Abstraction Layer)
+## 2. Environment Config SSOT
+
+All environment variables are accessed through a **single centralized module** (`src/config/env.ts`). No file should ever read `import.meta.env` directly — everything goes through this module.
+
+### Architecture
+
+```
+.env.example (documented source — variable names, descriptions, defaults)
+    ↓
+src/config/env.ts (Zod validation + typed exports — SSOT)
+    ↓
+src/lib/firebase.ts, src/contexts/AuthContext.tsx, etc. (import from env.ts)
+```
+
+### Implementation: `src/config/env.ts`
+
+```typescript
+import { z } from 'zod'
+
+const envSchema = z.object({
+  firebase: z.object({
+    apiKey: z.string().min(1, 'VITE_FIREBASE_API_KEY is required'),
+    authDomain: z.string().min(1, 'VITE_FIREBASE_AUTH_DOMAIN is required'),
+    projectId: z.string().min(1, 'VITE_FIREBASE_PROJECT_ID is required'),
+    storageBucket: z.string().min(1, 'VITE_FIREBASE_STORAGE_BUCKET is required'),
+    messagingSenderId: z.string().min(1, 'VITE_FIREBASE_MESSAGING_SENDER_ID is required'),
+    appId: z.string().min(1, 'VITE_FIREBASE_APP_ID is required'),
+    databaseURL: z.string().url('VITE_FIREBASE_DATABASE_URL must be a valid URL'),
+  }),
+  admin: z.object({
+    password: z.string().min(1, 'VITE_ADMIN_PASSWORD is required'),
+  }),
+})
+
+export type EnvConfig = z.infer<typeof envSchema>
+
+function parseEnv(): EnvConfig {
+  const raw = import.meta.env
+  const result = envSchema.safeParse({
+    firebase: {
+      apiKey: raw.VITE_FIREBASE_API_KEY,
+      authDomain: raw.VITE_FIREBASE_AUTH_DOMAIN,
+      projectId: raw.VITE_FIREBASE_PROJECT_ID,
+      storageBucket: raw.VITE_FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: raw.VITE_FIREBASE_MESSAGING_SENDER_ID,
+      appId: raw.VITE_FIREBASE_APP_ID,
+      databaseURL: raw.VITE_FIREBASE_DATABASE_URL,
+    },
+    admin: {
+      password: raw.VITE_ADMIN_PASSWORD,
+    },
+  })
+
+  if (!result.success) {
+    const missing = result.error.issues.map(i => i.message).join('\n  ')
+    throw new Error(`Environment validation failed:\n  ${missing}`)
+  }
+  return result.data
+}
+
+export const env = parseEnv()
+```
+
+### Rules
+
+- **NEVER** use `import.meta.env` directly in any file outside of `src/config/env.ts`
+- All consumers import `env` from `@/config/env` (e.g., `env.firebase.apiKey`, `env.admin.password`)
+- Adding a new env var requires 3 edits: `.env.example`, `envSchema` in `env.ts`, and the `parseEnv` mapping
+- Validation runs at app startup — if any var is missing/invalid, the app throws immediately with a clear message
+- The `.env.example` file must include a comment describing each variable
+
+### `.env.example` (updated format)
+
+```bash
+# Firebase Configuration (get from Firebase Console → Project Settings)
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+VITE_FIREBASE_DATABASE_URL=
+
+# Admin Access (Phase 1: simple password auth for /admin)
+VITE_ADMIN_PASSWORD=
+```
+
+### Consumer Migration
+
+| File | Before | After |
+| --- | --- | --- |
+| `src/lib/firebase.ts` | `import.meta.env.VITE_FIREBASE_API_KEY` | `env.firebase.apiKey` |
+| `src/contexts/AuthContext.tsx` | `import.meta.env.VITE_ADMIN_PASSWORD` | `env.admin.password` |
+
+### Future Extensions
+
+When Social Media APIs are added, extend the schema:
+
+```typescript
+social: z.object({
+  instagramToken: z.string().optional(),
+  tiktokToken: z.string().optional(),
+  youtubeApiKey: z.string().optional(),
+}).optional(),
+```
+
+## 3. UI Component Library (Design Abstraction Layer)
 
 All UI is built from a **centralized component library** so that design changes propagate from a single source. No page or feature should use raw HTML elements directly — everything goes through the component layer.
 
@@ -108,7 +217,7 @@ src/pages/*.tsx (compose from components — NEVER raw HTML)
 - Component files live in `src/components/ui/`
 - If a design change is needed, it should require editing **one file** maximum
 
-## 3. Route Configuration & Access Control
+## 4. Route Configuration & Access Control
 
 ### Centralized Route Config
 
@@ -179,7 +288,7 @@ RouteGuard checks route config `access` field
 
 The `Navbar` component reads from the route config to render nav links. Adding a new page = adding one entry to the config file. No need to touch Navbar code.
 
-## 4. Animation System
+## 5. Animation System
 
 ### Research Phase — Award-Winning References
 
@@ -232,7 +341,7 @@ Before implementing animations, research and document patterns from:
 | Counter         | 1500-2000ms | ease-out    | Number counting up         |
 | Celebration     | 2000ms      | ease-out    | Confetti burst             |
 
-## 5. Site Architecture
+## 6. Site Architecture
 
 ```mermaid
 flowchart TD
@@ -269,7 +378,7 @@ flowchart TD
 - `/live` -- Event display screen (no nav, auto-refresh, for TV at physical event)
 - `/admin` -- Admin panel (password protected via env var)
 
-## 6. Homepage -- Hero Section
+## 7. Homepage -- Hero Section
 
 - **Full-bleed image** with dark overlay (from existing studio photos)
 - **Title**: "מרים סגל" in gradient text (Rubik 700)
@@ -278,7 +387,7 @@ flowchart TD
 - **CTA button**: "היכנסו למסיבה" -- navigates to `/party`
 - After the birthday: countdown disappears, CTA remains
 
-## 7. Homepage -- Media Kit (Below Fold)
+## 8. Homepage -- Media Kit (Below Fold)
 
 ### 4a. Live Social Stats
 
@@ -315,7 +424,7 @@ On submit:
 2. Send email notification to Miryam's email (via EmailJS or Firebase Cloud Function)
 3. Show success confirmation
 
-## 8. Party Zone
+## 9. Party Zone
 
 ### 5a. Entry Experience
 
@@ -329,7 +438,7 @@ On submit:
 - **Hamburger menu**: global, links to all main sections
 - The "חזור הביתה" button only visible inside party zone routes
 
-## 9. Trivia Game
+## 10. Trivia Game
 
 ### Flow
 
@@ -364,7 +473,7 @@ Seeded with initial draft questions on first deploy:
 
 Miryam can edit/add/remove questions at any time via the admin panel.
 
-## 10. Blessing Wall
+## 11. Blessing Wall
 
 ### User Flow
 
@@ -387,13 +496,13 @@ Miryam can edit/add/remove questions at any time via the admin panel.
 - Firebase Storage for uploaded photos
 - Bad-word filter runs client-side before submit
 
-## 11. Dictionary
+## 12. Dictionary
 
 - **5+ terms/expressions** unique to Miryam (managed via admin panel)
 - Content stored in Firestore (`dictionary` collection), editable from admin
 - Display: `card-side` style (per design system) with term title + explanation
 
-## 12. Costume Voting
+## 13. Costume Voting
 
 ### Setup
 
@@ -414,7 +523,7 @@ Miryam can edit/add/remove questions at any time via the admin panel.
 - localStorage prevents re-voting on same device
 - Optional: device fingerprint for extra protection
 
-## 13. Event Display Screen (`/live`)
+## 14. Event Display Screen (`/live`)
 
 A dedicated full-screen page designed for a TV/projector at the physical event. No navigation, no interaction needed.
 
@@ -434,14 +543,14 @@ A dedicated full-screen page designed for a TV/projector at the physical event. 
 - Background matches party zone aesthetic
 - Sections rotate automatically with smooth transitions
 
-## 14. QR Code
+## 15. QR Code
 
 - **Single QR code** that opens `/party` (the party zone entrance)
 - Generated as high-res PNG/SVG for print
 - Printed on physical materials at the event (posters, table cards, etc.)
 - The QR URL should include a UTM parameter for analytics: `?utm_source=event_qr`
 
-## 15. Social Media API Architecture
+## 16. Social Media API Architecture
 
 ```mermaid
 flowchart LR
@@ -476,7 +585,7 @@ flowchart LR
 - TikTok: Authorize via TikTok Developer portal OAuth
 - YouTube: Only needs channel ID (public API with API key)
 
-## 16. Admin Panel (`/admin`)
+## 17. Admin Panel (`/admin`)
 
 ### Authentication (Phased Approach)
 
@@ -542,7 +651,7 @@ flowchart LR
 
 All dynamic content flows: Admin writes to Firestore, public frontend reads from Firestore. This means Miryam can update trivia questions, add costume candidates, manage blessings, edit dictionary terms, and update case studies at any time without touching code.
 
-## 17. Design System Reference
+## 18. Design System Reference
 
 All UI follows the approved design system:
 
@@ -553,7 +662,7 @@ All UI follows the approved design system:
 - Typography: Rubik headings, Noto Sans Hebrew body
 - Motion: 180ms hover, 500ms scroll reveal, ease-out
 
-## 18. Content Still Needed from Miryam
+## 19. Content Still Needed from Miryam
 
 **Before launch (required):**
 

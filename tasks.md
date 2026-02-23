@@ -6,6 +6,7 @@
 - [x] **UI Component Library** — 14 components: Heading, Text, Button, Input, Card, Badge, Modal, Toast, Skeleton, Container, Countdown, StatCard, Marquee, Orbs
 - [x] **Route Config System** — centralized routes.ts, AuthContext, AdminGuard, config-driven App.tsx + Navbar, lazy loading
 - [x] **Animation System** — Motion (Framer Motion), AnimateOnScroll, StaggerChildren, PageTransition, useCountUp, useParallax, confetti
+- [ ] **Env Config SSOT** — centralized `src/config/env.ts` with Zod validation, typed exports, runtime checks, .env.example docs
 
 ## שלב 2: Homepage
 - [ ] Homepage Hero — full-bleed image, countdown, CTA (using UI components + animations)

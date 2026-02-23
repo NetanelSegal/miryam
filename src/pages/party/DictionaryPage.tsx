@@ -1,12 +1,38 @@
 import { Heading, Text, Container } from '@/components/ui'
-import { PageTransition } from '@/components/motion'
+import { AnimateOnScroll, StaggerChildren, PageTransition } from '@/components/motion'
+
+const terms = [
+  { term: 'פוב', explanation: 'Point of View — סגנון סרטונים בגוף ראשון שמרים מתמחה בו. כשאת רואה את העולם דרך העיניים של מרים.' },
+  { term: 'סטורי טיים', explanation: 'כשמרים מספרת סיפור מהחיים שלה בצורה דרמטית ומשעשעת, בדרך כלל עם טוויסט בסוף.' },
+  { term: 'גלאם דאון', explanation: 'המעבר מהלוק המושלם של הצילומים ללוק הביתי האמיתי. מרים מראה את שני הצדדים.' },
+  { term: 'קולאב', explanation: 'שיתוף פעולה עם מותג או יוצר תוכן אחר. כשמרים עושה קולאב, זה תמיד הופך לוויראלי.' },
+  { term: 'GRWM', explanation: 'Get Ready With Me — סרטון הכנה בו מרים מתארגנת לאירוע ומשתפת טיפים ומוצרים אהובים.' },
+]
 
 export function DictionaryPage() {
   return (
     <PageTransition>
-      <Container size="sm" className="py-12 text-center">
-        <Heading level={2} gradient className="mb-4">המילון של מרים</Heading>
-        <Text variant="secondary">בקרוב...</Text>
+      <Container size="sm" className="py-12">
+        <AnimateOnScroll variant="fade-up">
+          <Heading level={2} gradient className="text-center mb-4">
+            המילון של מרים
+          </Heading>
+        </AnimateOnScroll>
+
+        <AnimateOnScroll variant="fade-up" delay={0.1}>
+          <Text variant="secondary" className="text-center mb-10">
+            המושגים שכל מי שעוקב אחרי מרים חייב להכיר
+          </Text>
+        </AnimateOnScroll>
+
+        <StaggerChildren staggerDelay={0.1} className="flex flex-col gap-4">
+          {terms.map((t) => (
+            <div key={t.term} className="card-side rounded-none bg-bg-card p-6">
+              <Heading level={4} className="mb-2 text-white">{t.term}</Heading>
+              <Text variant="secondary" size="sm">{t.explanation}</Text>
+            </div>
+          ))}
+        </StaggerChildren>
       </Container>
     </PageTransition>
   )
