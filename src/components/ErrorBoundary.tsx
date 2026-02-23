@@ -18,7 +18,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error) {
-    console.error('ErrorBoundary caught:', error)
+    if (import.meta.env.DEV) console.error('ErrorBoundary caught:', error)
   }
 
   handleRetry = () => {

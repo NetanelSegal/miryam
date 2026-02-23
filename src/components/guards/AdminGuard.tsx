@@ -1,45 +1,86 @@
-import { useState, type FormEvent } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
-import { Heading, Input, Button } from '@/components/ui'
+import { useState } from 'react'
+import { LogIn, Loader2, ShieldX } from 'lucide-react'
+import { Heading, Text, Button, Container } from '@/components/ui'
+import { useParticipant } from '@/contexts/ParticipantContext'
+
+function GoogleIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18A10.96 10.96 0 0 0 1 12c0 1.77.42 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05" />
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+    </svg>
+  )
+}
 
 interface AdminGuardProps {
   children: React.ReactNode
 }
 
 export function AdminGuard({ children }: AdminGuardProps) {
-  const { isAdmin, login } = useAuth()
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const { firebaseUser, isAdmin, adminCheckLoading, loading, signInWithGoogle, signOut } = useParticipant()
+  const [signingIn, setSigningIn] = useState(false)
+
+  if (loading || adminCheckLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-bg px-4">
+        <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
+      </div>
+    )
+  }
 
   if (isAdmin) {
     return <>{children}</>
   }
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault()
-    const success = login(password)
-    if (!success) {
-      setError('סיסמה שגויה')
-      setPassword('')
+  if (!firebaseUser) {
+    const handleSignIn = async () => {
+      setSigningIn(true)
+      try {
+        await signInWithGoogle()
+      } finally {
+        setSigningIn(false)
+      }
     }
+
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-bg px-4">
+        <Container size="sm" className="text-center">
+          <LogIn className="w-16 h-16 mx-auto mb-4 text-accent-violet" />
+          <Heading level={3} className="text-white mb-2">Admin Login</Heading>
+          <Text variant="secondary" className="mb-6">
+            התחברו עם חשבון Google מאושר כדי לגשת לאזור הניהול
+          </Text>
+          <button
+            onClick={handleSignIn}
+            disabled={signingIn}
+            className="w-full flex items-center justify-center gap-3 bg-white text-gray-800 font-medium px-6 py-3.5 hover:bg-gray-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {signingIn ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <GoogleIcon className="w-5 h-5" />
+            )}
+            {signingIn ? 'מתחבר...' : 'התחברות עם Google'}
+          </button>
+        </Container>
+      </div>
+    )
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-bg px-4">
-      <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
-        <Heading level={3} className="text-white text-center">Admin Login</Heading>
-        <Input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword((e.target as HTMLInputElement).value)}
-          placeholder="סיסמה"
-          autoFocus
-          error={error || undefined}
-        />
-        <Button type="submit" variant="primary" size="lg" className="w-full">
-          כניסה
+      <Container size="sm" className="text-center">
+        <ShieldX className="w-16 h-16 mx-auto mb-4 text-red-400" />
+        <Heading level={3} className="text-white mb-2">אין הרשאה</Heading>
+        <Text variant="secondary" className="mb-6">
+          החשבון שלכם אינו מאושר כמנהל. להתחברות עם חשבון אחר, התנתקו תחילה.
+        </Text>
+        <Button variant="primary" onClick={signOut}>
+          התנתקות
         </Button>
-      </form>
+      </Container>
     </div>
   )
 }

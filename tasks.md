@@ -4,7 +4,7 @@
 - [x] Setup — React 19 + Vite 7 + Tailwind CSS 4 + RTL + Firebase + Router
 - [x] Party Zone shell — layout, nav, module cards
 - [x] **UI Component Library** — 14 components
-- [x] **Route Config System** — centralized routes.ts, AuthContext, AdminGuard
+- [x] **Route Config System** — centralized routes.ts, ParticipantContext + Firebase Auth, AdminGuard
 - [x] **Animation System** — Motion, AnimateOnScroll, StaggerChildren, PageTransition, hooks
 
 ## שלב 2: Homepage
@@ -19,7 +19,7 @@
 - [x] הצבעות — כרטיסי תמונות, results bar chart, confetti
 
 ## שלב 3.5: 🔑 מערכת הזדהות משתתפים
-- [x] **מסך הזדהות משתתף** — שם + 4 ספרות אחרונות של הטלפון. ParticipantGate component.
+- [x] **מסך הזדהות משתתף** — התחברות עם Google. ParticipantGate component.
 - [x] **שכבת נתונים (store.ts)** — abstraction layer עם localStorage, מוכן להחלפה ל-Firebase
 - [x] **קישור הצבעות למשתתף** — מניעת הצבעה כפולה לפי participantId
 - [x] **קישור טריוויה למשתתף** — מניעת ניסיון חוזר לפי participantId
@@ -28,14 +28,16 @@
 
 ## שלב 4: מסך אירוע + אדמין
 - [x] Event Display (/live) — מסך TV אוטומטי, 4 sections auto-rotate
-- [x] Admin Panel (/admin) — dashboard with stats + quick-links (Firebase CRUD pending)
+- [x] Admin Panel (/admin) — dashboard with stats + quick-links
+- [x] **ניהול אדמינים** — אדמינים יכולים להוסיף ולהסיר אדמינים אחרים (טאב אדמינים)
 - [ ] **אדמין CRUD** — ניהול ברכות, שאלות טריוויה, מועמדים להצבעה דרך Firebase
 
 ## שלב 5: Firebase Integration
-- [ ] **Firebase project setup** — יצירת פרויקט, הגדרת .env, הפעלת Authentication + Firestore + RTDB
+- [x] **Firebase project setup** — פרויקט מוגדר, Authentication + Firestore פעילים
+- [x] **חיבור טריוויה ל-Firestore** — שאלות ב-Firestore, Firestore rules, deploy:rules
 - [ ] **חיבור קיר ברכות ל-Firebase** — שמירה ב-Firestore, real-time updates
 - [ ] **חיבור הצבעות ל-Firebase** — שמירה ב-RTDB, תוצאות real-time
-- [ ] **חיבור טריוויה ל-Firebase** — שמירת תוצאות, leaderboard
+- [ ] **חיבור תוצאות טריוויה ל-Firebase** — leaderboard ב-Firestore (כרגע localStorage)
 - [ ] **חיבור טופס יצירת קשר ל-Firebase** — שמירת פניות ב-Firestore
 
 ## שלב 6: השקה

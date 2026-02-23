@@ -3,13 +3,16 @@ import {
   onAuthStateChanged, signInWithPopup, signInWithRedirect,
   getRedirectResult, signOut as firebaseSignOut, type User,
 } from 'firebase/auth'
-import { auth, googleProvider } from '@/lib/firebase'
+import { doc, getDoc } from 'firebase/firestore'
+import { auth, googleProvider, db } from '@/lib/firebase'
 import { createParticipant, type Participant } from '@/lib/store'
 
 interface ParticipantState {
   participant: Participant | null
   firebaseUser: User | null
   isIdentified: boolean
+  isAdmin: boolean
+  adminCheckLoading: boolean
   loading: boolean
   signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
@@ -35,6 +38,8 @@ function userToParticipant(user: User): Participant {
 export function ParticipantProvider({ children }: { children: ReactNode }) {
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null)
   const [participant, setParticipant] = useState<Participant | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [adminCheckLoading, setAdminCheckLoading] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -47,11 +52,34 @@ export function ParticipantProvider({ children }: { children: ReactNode }) {
         setParticipant(p)
       } else {
         setParticipant(null)
+        setIsAdmin(false)
+        setAdminCheckLoading(false)
       }
       setLoading(false)
     })
     return unsubscribe
   }, [])
+
+  useEffect(() => {
+    if (!firebaseUser?.email) {
+      setIsAdmin(false)
+      setAdminCheckLoading(false)
+      return
+    }
+    let cancelled = false
+    setAdminCheckLoading(true)
+    getDoc(doc(db, 'admins', firebaseUser.email!))
+      .then((snap) => {
+        if (!cancelled) setIsAdmin(snap.exists())
+      })
+      .catch(() => {
+        if (!cancelled) setIsAdmin(false)
+      })
+      .finally(() => {
+        if (!cancelled) setAdminCheckLoading(false)
+      })
+    return () => { cancelled = true }
+  }, [firebaseUser?.email])
 
   const signInWithGoogle = useCallback(async () => {
     try {
@@ -63,7 +91,7 @@ export function ParticipantProvider({ children }: { children: ReactNode }) {
         await signInWithRedirect(auth, googleProvider)
         return
       }
-      console.error('Google sign-in error:', err)
+      if (import.meta.env.DEV) console.error('Google sign-in error:', err)
       throw err
     }
   }, [])
@@ -79,6 +107,8 @@ export function ParticipantProvider({ children }: { children: ReactNode }) {
       participant,
       firebaseUser,
       isIdentified: participant !== null,
+      isAdmin,
+      adminCheckLoading,
       loading,
       signInWithGoogle,
       signOut,

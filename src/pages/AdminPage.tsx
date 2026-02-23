@@ -1,9 +1,10 @@
 import { useState, useCallback } from 'react'
 import {
   LayoutDashboard, Gamepad2, Vote,
-  Users, Camera, RefreshCw,
+  Users, Camera, RefreshCw, LogOut, Shield,
 } from 'lucide-react'
-import { Heading, Container } from '@/components/ui'
+import { Heading, Container, Button } from '@/components/ui'
+import { useParticipant } from '@/contexts/ParticipantContext'
 import { AnimateOnScroll, PageTransition } from '@/components/motion'
 import { useAutoRefresh } from '@/hooks'
 import * as store from '@/lib/store'
@@ -12,8 +13,9 @@ import { AdminCostumes } from './admin/AdminCostumes'
 import { AdminTrivia } from './admin/AdminTrivia'
 import { AdminVotes } from './admin/AdminVotes'
 import { AdminParticipants } from './admin/AdminParticipants'
+import { AdminAdmins } from './admin/AdminAdmins'
 
-type Tab = 'overview' | 'trivia' | 'votes' | 'costumes' | 'participants'
+type Tab = 'overview' | 'trivia' | 'votes' | 'costumes' | 'participants' | 'admins'
 
 function getAllData() {
   return {
@@ -28,6 +30,7 @@ function getAllData() {
 }
 
 export function AdminPage() {
+  const { signOut } = useParticipant()
   const [tab, setTab] = useState<Tab>('overview')
   const [data, refreshData] = useAutoRefresh(getAllData, 5000)
 
@@ -42,6 +45,7 @@ export function AdminPage() {
     { id: 'trivia', label: 'טריוויה', icon: Gamepad2 },
     { id: 'votes', label: 'הצבעות', icon: Vote },
     { id: 'participants', label: 'משתתפים', icon: Users },
+    { id: 'admins', label: 'אדמינים', icon: Shield },
   ]
 
   return (
@@ -53,9 +57,14 @@ export function AdminPage() {
               <LayoutDashboard className="w-8 h-8 text-accent-violet" />
               <Heading level={2} gradient>ניהול האתר</Heading>
             </div>
-            <button onClick={refreshData} className="text-text-muted hover:text-white transition-colors p-2">
-              <RefreshCw className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button onClick={refreshData} className="text-text-muted hover:text-white transition-colors p-2" title="רענון">
+                <RefreshCw className="w-5 h-5" />
+              </button>
+              <Button variant="ghost" size="sm" icon={<LogOut className="w-4 h-4" />} onClick={signOut}>
+                התנתקות
+              </Button>
+            </div>
           </div>
         </AnimateOnScroll>
 
@@ -101,6 +110,7 @@ export function AdminPage() {
           {tab === 'trivia' && <AdminTrivia triviaResults={data.triviaResults} />}
           {tab === 'votes' && <AdminVotes approvedCostumes={data.approvedCostumes} voteCounts={data.voteCounts} />}
           {tab === 'participants' && <AdminParticipants participants={data.participants} />}
+          {tab === 'admins' && <AdminAdmins />}
         </AnimateOnScroll>
       </Container>
     </PageTransition>

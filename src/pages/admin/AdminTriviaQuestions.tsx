@@ -116,7 +116,7 @@ export function AdminTriviaQuestions() {
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'שגיאה בטעינת השאלות'
       setError(msg)
-      console.error('Failed to load trivia questions:', err)
+      if (import.meta.env.DEV) console.error('Failed to load trivia questions:', err)
     } finally {
       setLoading(false)
     }
@@ -195,7 +195,7 @@ export function AdminTriviaQuestions() {
     setQuestions(reordered)
     try {
       await triviaStore.reorderQuestions(reordered)
-    } catch (err) {
+    } catch {
       toast('error', 'שגיאה בשינוי סדר השאלות')
       loadQuestions()
     }
