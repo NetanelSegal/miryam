@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import {
   LayoutDashboard, Gamepad2, Vote,
-  Users, Camera, RefreshCw, LogOut, Shield,
+  Users, Camera, RefreshCw, LogOut, Shield, Settings,
 } from 'lucide-react'
 import { Heading, Container, Button } from '@/components/ui'
 import { useParticipant } from '@/contexts/ParticipantContext'
@@ -14,8 +14,9 @@ import { AdminTrivia } from './admin/AdminTrivia'
 import { AdminVotes } from './admin/AdminVotes'
 import { AdminParticipants } from './admin/AdminParticipants'
 import { AdminAdmins } from './admin/AdminAdmins'
+import { AdminSettings } from './admin/AdminSettings'
 
-type Tab = 'overview' | 'trivia' | 'votes' | 'costumes' | 'participants' | 'admins'
+type Tab = 'overview' | 'trivia' | 'votes' | 'costumes' | 'participants' | 'admins' | 'settings'
 
 function getAllData() {
   return {
@@ -46,6 +47,7 @@ export function AdminPage() {
     { id: 'votes', label: 'הצבעות', icon: Vote },
     { id: 'participants', label: 'משתתפים', icon: Users },
     { id: 'admins', label: 'אדמינים', icon: Shield },
+    { id: 'settings', label: 'הגדרות', icon: Settings },
   ]
 
   return (
@@ -111,6 +113,7 @@ export function AdminPage() {
           {tab === 'votes' && <AdminVotes approvedCostumes={data.approvedCostumes} voteCounts={data.voteCounts} />}
           {tab === 'participants' && <AdminParticipants participants={data.participants} />}
           {tab === 'admins' && <AdminAdmins />}
+          {tab === 'settings' && <AdminSettings />}
         </AnimateOnScroll>
       </Container>
     </PageTransition>
