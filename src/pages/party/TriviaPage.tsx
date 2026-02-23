@@ -1,16 +1,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { Heading, Text, Button, Input, Container } from '@/components/ui'
+import { Heading, Text, Button, Container } from '@/components/ui'
 import { PageTransition } from '@/components/motion'
 import { confetti } from '@/lib/confetti'
+import { useParticipant } from '@/contexts/ParticipantContext'
+import { ParticipantGate } from '@/components/guards/ParticipantGate'
+import * as store from '@/lib/store'
 import { Share2, ArrowRight, Trophy, Sparkles } from 'lucide-react'
-
-const STORAGE_KEY = 'miryam_trivia_done'
-
-interface StoredResult {
-  score: number
-  nickname: string
-}
 
 const questions = [
   { question: 'באיזה תאריך נולדה מרים?', options: ['5 במרץ', '27 בפברואר', '15 באפריל', '1 בינואר'], correct: 0 },
@@ -34,37 +30,23 @@ function getScoreMessage(score: number): string {
   return 'אופס... אולי תעקבו אחרי מרים ברשתות?'
 }
 
-function getStoredResult(): StoredResult | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return null
-    return JSON.parse(raw) as StoredResult
-  } catch {
-    return null
-  }
-}
+function TriviaGame() {
+  const { participant } = useParticipant()
+  const participantId = participant!.id
+  const participantName = participant!.name
 
-function storeResult(result: StoredResult) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(result))
-}
-
-export function TriviaPage() {
-  const [phase, setPhase] = useState<Phase>('start')
+  const [phase, setPhase] = useState<Phase>(() => {
+    const existing = store.getTriviaResult(participantId)
+    return existing ? 'result' : 'start'
+  })
   const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [score, setScore] = useState(0)
-  const [nickname, setNickname] = useState('')
+  const [score, setScore] = useState(() => {
+    const existing = store.getTriviaResult(participantId)
+    return existing?.score ?? 0
+  })
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
   const [copied, setCopied] = useState(false)
-
-  useEffect(() => {
-    const stored = getStoredResult()
-    if (stored) {
-      setScore(stored.score)
-      setNickname(stored.nickname)
-      setPhase('result')
-    }
-  }, [])
 
   useEffect(() => {
     if (phase === 'result' && score === 10) {
@@ -74,17 +56,15 @@ export function TriviaPage() {
   }, [phase, score])
 
   const handleStart = useCallback(() => {
-    if (!nickname.trim()) return
     setPhase('playing')
     setCurrentQuestion(0)
     setScore(0)
     setSelectedAnswer(null)
     setShowFeedback(false)
-  }, [nickname])
+  }, [])
 
   const handleAnswer = useCallback((index: number) => {
     if (showFeedback) return
-
     const q = questions[currentQuestion]
     if (!q) return
 
@@ -93,13 +73,17 @@ export function TriviaPage() {
 
     const isCorrect = index === q.correct
     const newScore = isCorrect ? score + 1 : score
-
     if (isCorrect) setScore(newScore)
 
     setTimeout(() => {
       const next = currentQuestion + 1
       if (next >= questions.length) {
-        storeResult({ score: newScore, nickname })
+        store.saveTriviaResult({
+          participantId,
+          participantName,
+          score: newScore,
+          totalQuestions: questions.length,
+        })
         setPhase('result')
       } else {
         setCurrentQuestion(next)
@@ -107,24 +91,45 @@ export function TriviaPage() {
         setShowFeedback(false)
       }
     }, 1500)
-  }, [showFeedback, currentQuestion, score, nickname])
+  }, [showFeedback, currentQuestion, score, participantId, participantName])
 
   const handleShare = useCallback(async () => {
-    const text = `קיבלתי ${score}/10 בטריוויה של מרים! 🎉 נסו גם: ${window.location.href}`
+    const text = `קיבלתי ${score}/10 בטריוויה של מרים! 🎉 נסו גם: ${window.location.origin}/party/trivia`
     try {
       await navigator.clipboard.writeText(text)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
-    } catch {
-      // Fallback: ignore silently
-    }
+    } catch { /* silent */ }
   }, [score])
 
   return (
     <PageTransition>
       <Container size="sm" className="py-12 min-h-[60vh] flex flex-col items-center justify-center">
         <AnimatePresence mode="wait">
-          {phase === 'start' && <StartScreen key="start" nickname={nickname} setNickname={setNickname} onStart={handleStart} />}
+          {phase === 'start' && (
+            <motion.div
+              key="start"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="w-full text-center space-y-8"
+            >
+              <div className="space-y-3">
+                <Sparkles className="w-10 h-10 mx-auto text-accent-violet" />
+                <Heading level={2} gradient>הטריוויה של מרים</Heading>
+                <Text variant="secondary" size="lg">
+                  שלום {participantName}! 10 שאלות, ניסיון אחד. מוכנים?
+                </Text>
+              </div>
+              <div className="max-w-xs mx-auto">
+                <Button variant="primary" size="lg" onClick={handleStart} className="w-full">
+                  התחילו
+                </Button>
+              </div>
+            </motion.div>
+          )}
+
           {phase === 'playing' && (
             <QuestionScreen
               key={`q-${currentQuestion}`}
@@ -134,14 +139,35 @@ export function TriviaPage() {
               onAnswer={handleAnswer}
             />
           )}
+
           {phase === 'result' && (
-            <ResultScreen
+            <motion.div
               key="result"
-              score={score}
-              nickname={nickname}
-              copied={copied}
-              onShare={handleShare}
-            />
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              className="w-full text-center space-y-8"
+            >
+              <div className="space-y-2">
+                <Trophy className="w-12 h-12 mx-auto text-accent-violet" />
+                <Text variant="secondary" size="lg">{participantName},</Text>
+              </div>
+              <div className="space-y-4">
+                <div className="text-7xl md:text-9xl font-bold font-heading gradient-text leading-none">
+                  {score}/{questions.length}
+                </div>
+                <Text variant="secondary" size="lg">{getScoreMessage(score)}</Text>
+              </div>
+              <div className="flex flex-col gap-3 max-w-xs mx-auto">
+                <Button variant="primary" size="md" icon={<Share2 className="w-4 h-4" />} onClick={handleShare}>
+                  {copied ? 'הועתק!' : 'שתפו תוצאה'}
+                </Button>
+                <Button variant="secondary" size="md" href="/party" icon={<ArrowRight className="w-4 h-4" />}>
+                  חזרה למתחם
+                </Button>
+              </div>
+            </motion.div>
           )}
         </AnimatePresence>
       </Container>
@@ -149,66 +175,13 @@ export function TriviaPage() {
   )
 }
 
-function StartScreen({
-  nickname,
-  setNickname,
-  onStart,
-}: {
-  nickname: string
-  setNickname: (v: string) => void
-  onStart: () => void
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
-      className="w-full text-center space-y-8"
-    >
-      <div className="space-y-3">
-        <Sparkles className="w-10 h-10 mx-auto text-accent-violet" />
-        <Heading level={2} gradient>הטריוויה של מרים</Heading>
-        <Text variant="secondary" size="lg">
-          כמה טוב את/ה מכירים את מרים? 10 שאלות, ניסיון אחד!
-        </Text>
-      </div>
-
-      <div className="max-w-xs mx-auto space-y-4">
-        <Input
-          placeholder="הכינוי שלך"
-          value={nickname}
-          onChange={(e) => setNickname((e.target as HTMLInputElement).value)}
-          onKeyDown={(e) => { if (e.key === 'Enter') onStart() }}
-        />
-        <Button
-          variant="primary"
-          size="lg"
-          onClick={onStart}
-          disabled={!nickname.trim()}
-          className="w-full"
-        >
-          התחילו
-        </Button>
-      </div>
-    </motion.div>
-  )
-}
-
 function QuestionScreen({
-  questionIndex,
-  selectedAnswer,
-  showFeedback,
-  onAnswer,
+  questionIndex, selectedAnswer, showFeedback, onAnswer,
 }: {
-  questionIndex: number
-  selectedAnswer: number | null
-  showFeedback: boolean
-  onAnswer: (index: number) => void
+  questionIndex: number; selectedAnswer: number | null; showFeedback: boolean; onAnswer: (i: number) => void
 }) {
   const q = questions[questionIndex]
   if (!q) return null
-
   const progress = ((questionIndex + 1) / questions.length) * 100
 
   return (
@@ -222,7 +195,6 @@ function QuestionScreen({
       <div className="flex items-center justify-between mb-2">
         <Text variant="muted" size="sm">{questionIndex + 1} / {questions.length}</Text>
       </div>
-
       <div className="w-full h-1.5 bg-white/10 overflow-hidden">
         <motion.div
           className="h-full bg-gradient-to-l from-accent-violet to-accent-indigo"
@@ -231,30 +203,18 @@ function QuestionScreen({
           transition={{ duration: 0.4 }}
         />
       </div>
-
       <Heading level={4} className="text-center py-4">{q.question}</Heading>
-
       <div className="grid gap-3">
         {q.options.map((option, i) => {
-          let stateClasses = 'border-2 border-border-neutral bg-white/5 hover:border-accent-indigo hover:bg-white/10'
-
+          let cls = 'border-2 border-border-neutral bg-white/5 hover:border-accent-indigo hover:bg-white/10'
           if (showFeedback) {
-            if (i === q.correct) {
-              stateClasses = 'border-2 border-emerald-500 bg-emerald-500/15 text-emerald-300'
-            } else if (i === selectedAnswer && i !== q.correct) {
-              stateClasses = 'border-2 border-red-500 bg-red-500/15 text-red-300'
-            } else {
-              stateClasses = 'border-2 border-border-neutral bg-white/5 opacity-50'
-            }
+            if (i === q.correct) cls = 'border-2 border-emerald-500 bg-emerald-500/15 text-emerald-300'
+            else if (i === selectedAnswer && i !== q.correct) cls = 'border-2 border-red-500 bg-red-500/15 text-red-300'
+            else cls = 'border-2 border-border-neutral bg-white/5 opacity-50'
           }
-
           return (
-            <button
-              key={i}
-              onClick={() => onAnswer(i)}
-              disabled={showFeedback}
-              className={`w-full px-5 py-4 text-right text-white transition-all duration-200 disabled:cursor-default ${stateClasses}`}
-            >
+            <button key={i} onClick={() => onAnswer(i)} disabled={showFeedback}
+              className={`w-full px-5 py-4 text-right text-white transition-all duration-200 disabled:cursor-default ${cls}`}>
               {option}
             </button>
           )
@@ -264,57 +224,10 @@ function QuestionScreen({
   )
 }
 
-function ResultScreen({
-  score,
-  nickname,
-  copied,
-  onShare,
-}: {
-  score: number
-  nickname: string
-  copied: boolean
-  onShare: () => void
-}) {
+export function TriviaPage() {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.4 }}
-      className="w-full text-center space-y-8"
-    >
-      <div className="space-y-2">
-        <Trophy className="w-12 h-12 mx-auto text-accent-violet" />
-        <Text variant="secondary" size="lg">{nickname},</Text>
-      </div>
-
-      <div className="space-y-4">
-        <div className="text-7xl md:text-9xl font-bold font-heading gradient-text leading-none">
-          {score}/{questions.length}
-        </div>
-        <Text variant="secondary" size="lg">
-          {getScoreMessage(score)}
-        </Text>
-      </div>
-
-      <div className="flex flex-col gap-3 max-w-xs mx-auto">
-        <Button
-          variant="primary"
-          size="md"
-          icon={<Share2 className="w-4 h-4" />}
-          onClick={onShare}
-        >
-          {copied ? 'הועתק!' : 'שתפו תוצאה'}
-        </Button>
-        <Button
-          variant="secondary"
-          size="md"
-          href="/party"
-          icon={<ArrowRight className="w-4 h-4" />}
-        >
-          חזרה למתחם
-        </Button>
-      </div>
-    </motion.div>
+    <ParticipantGate>
+      <TriviaGame />
+    </ParticipantGate>
   )
 }
