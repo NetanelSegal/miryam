@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
-import { MessageSquareHeart, Trash2, Save, Loader2 } from 'lucide-react'
-import { Heading, Text, Button, Input, Card, EmptyState, useToast } from '@/components/ui'
+import { MessageSquareHeart, Trash2, Save } from 'lucide-react'
+import { Heading, Text, Button, Input, Card, EmptyState, useToast, LoadingState } from '@/components/ui'
 import * as store from '@/lib/store'
 import { timeAgo } from '@/lib/date'
 
@@ -70,13 +70,7 @@ export function AdminBlessings() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="flex justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
-      </div>
-    )
-  }
+  if (loading) return <LoadingState />
 
   if (blessings.length === 0) {
     return (

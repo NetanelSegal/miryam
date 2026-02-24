@@ -1,5 +1,8 @@
-import { collection, doc, getDocs, setDoc, updateDoc, deleteDoc, query, orderBy } from 'firebase/firestore'
-import { db } from './firebase'
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { collection, doc, getDocs, setDoc, updateDoc, deleteDoc, query, orderBy, onSnapshot } from 'firebase/firestore'
+import { db, storage } from './firebase'
+import { compressImage } from './image'
+import { withTimeout, omitUndefined } from './utils'
 
 export interface Blessing {
   id: string
@@ -11,15 +14,15 @@ export interface Blessing {
 
 const COLLECTION = 'blessings'
 
-function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
-  return new Promise((resolve, reject) => {
-    const t = setTimeout(() => reject(new Error(`${label}: timeout`)), ms)
-    p.then(v => { clearTimeout(t); resolve(v) }).catch(e => { clearTimeout(t); reject(e) })
-  })
-}
-
-function omitUndefined<T extends Record<string, unknown>>(obj: T): Record<string, unknown> {
-  return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined))
+/** Upload photo to Storage, return download URL. Compresses before upload. */
+export async function uploadBlessingPhoto(file: File): Promise<string> {
+  const dataUrl = await compressImage(file)
+  const res = await fetch(dataUrl)
+  const blob = await res.blob()
+  const id = crypto.randomUUID()
+  const storageRef = ref(storage, `blessings/${id}`)
+  await uploadBytes(storageRef, blob, { contentType: 'image/jpeg' })
+  return getDownloadURL(storageRef)
 }
 
 export async function saveBlessing(blessing: Omit<Blessing, 'id' | 'timestamp'>): Promise<Blessing> {
@@ -37,6 +40,14 @@ export async function getAllBlessings(): Promise<Blessing[]> {
     'getAllBlessings',
   )
   return snap.docs.map(d => ({ id: d.id, ...d.data() } as Blessing))
+}
+
+/** Subscribe to blessings in real time. Returns unsubscribe. */
+export function subscribeToBlessings(callback: (blessings: Blessing[]) => void): () => void {
+  const q = query(collection(db, COLLECTION), orderBy('timestamp', 'desc'))
+  return onSnapshot(q, (snap) => {
+    callback(snap.docs.map(d => ({ id: d.id, ...d.data() } as Blessing)))
+  })
 }
 
 export async function updateBlessing(id: string, data: Partial<Omit<Blessing, 'id' | 'timestamp'>>): Promise<void> {

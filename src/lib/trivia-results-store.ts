@@ -1,7 +1,9 @@
 import { collection, doc, getDocs, setDoc, query, orderBy, where } from 'firebase/firestore'
 import { db } from './firebase'
+import { withTimeout } from './utils'
 
 export interface TriviaResult {
+  id?: string
   participantId: string
   participantName: string
   score: number
@@ -11,13 +13,6 @@ export interface TriviaResult {
 
 const COLLECTION = 'triviaResults'
 
-function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
-  return new Promise((resolve, reject) => {
-    const t = setTimeout(() => reject(new Error(`${label}: timeout`)), ms)
-    p.then(v => { clearTimeout(t); resolve(v) }).catch(e => { clearTimeout(t); reject(e) })
-  })
-}
-
 export async function getTriviaResult(participantId: string): Promise<TriviaResult | undefined> {
   const snap = await withTimeout(
     getDocs(query(collection(db, COLLECTION), where('participantId', '==', participantId))),
@@ -25,7 +20,7 @@ export async function getTriviaResult(participantId: string): Promise<TriviaResu
     'getTriviaResult',
   )
   const d = snap.docs[0]
-  return d ? ({ ...d.data() } as TriviaResult) : undefined
+  return d ? ({ id: d.id, ...d.data() } as TriviaResult) : undefined
 }
 
 export async function saveTriviaResult(result: Omit<TriviaResult, 'timestamp'>): Promise<TriviaResult> {
@@ -41,6 +36,6 @@ export async function getTriviaLeaderboard(): Promise<TriviaResult[]> {
     10_000,
     'getTriviaLeaderboard',
   )
-  const results = snap.docs.map(d => ({ ...d.data() } as TriviaResult))
+  const results = snap.docs.map(d => ({ id: d.id, ...d.data() } as TriviaResult))
   return results.sort((a, b) => (b.score !== a.score ? b.score - a.score : a.timestamp - b.timestamp))
 }

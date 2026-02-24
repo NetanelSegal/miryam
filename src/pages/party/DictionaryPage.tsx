@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Heading, Text, Container } from '@/components/ui'
+import { Heading, Text, Container, LoadingState } from '@/components/ui'
 import { AnimateOnScroll, StaggerChildren, PageTransition } from '@/components/motion'
-import { Loader2 } from 'lucide-react'
 import * as dictionaryStore from '@/lib/dictionary-store'
 
 const FALLBACK_TERMS = [
@@ -48,10 +47,8 @@ export function DictionaryPage() {
         </AnimateOnScroll>
 
         {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
-        </div>
-      ) : (
+          <LoadingState />
+        ) : (
         <StaggerChildren staggerDelay={0.1} className="flex flex-col gap-4">
           {terms.map((t) => (
             <div key={t.term} className="card-side rounded-none bg-bg-card p-6">

@@ -1,36 +1,47 @@
 import { useState, useRef, useEffect, type FormEvent } from 'react'
-import { Camera, Send, X, Loader2 } from 'lucide-react'
-import { Heading, Text, Button, Input, Container, Card } from '@/components/ui'
+import { Camera, Send, X } from 'lucide-react'
+import { Heading, Text, Button, Input, Container, Card, LoadingState } from '@/components/ui'
 import { useToast } from '@/components/ui/Toast'
 import { AnimateOnScroll, StaggerChildren, PageTransition } from '@/components/motion'
+import { ParticipantGate } from '@/components/guards/ParticipantGate'
 import * as store from '@/lib/store'
+import { uploadBlessingPhoto } from '@/lib/blessings-store'
 import { timeAgo } from '@/lib/date'
 
 const MAX_MESSAGE_LENGTH = 280
 
-export function BlessingsPage() {
+function BlessingsContent() {
   const { toast } = useToast()
   const [blessings, setBlessings] = useState<store.Blessing[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    store.getAllBlessings().then(setBlessings).finally(() => setLoading(false))
+    const unsub = store.subscribeToBlessings((data) => {
+      setBlessings(data)
+      setLoading(false)
+    })
+    return unsub
   }, [])
+
   const [showForm, setShowForm] = useState(false)
   const [name, setName] = useState('')
   const [message, setMessage] = useState('')
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
+    setPhotoFile(file)
     const reader = new FileReader()
     reader.onloadend = () => setPhotoPreview(reader.result as string)
     reader.readAsDataURL(file)
   }
 
   function clearPhoto() {
+    setPhotoFile(null)
     setPhotoPreview(null)
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
@@ -39,18 +50,30 @@ export function BlessingsPage() {
     e.preventDefault()
     if (!name.trim() || !message.trim()) return
 
-    const saved = await store.saveBlessing({
-      name: name.trim(),
-      message: message.trim(),
-      photoURL: photoPreview ?? undefined,
-    })
+    setUploading(true)
+    try {
+      let photoURL: string | undefined
+      if (photoFile) {
+        photoURL = await uploadBlessingPhoto(photoFile)
+      }
 
-    setBlessings((prev) => [saved, ...prev])
-    toast('success', 'הברכה נוספה בהצלחה! 🎉')
-    setName('')
-    setMessage('')
-    clearPhoto()
-    setShowForm(false)
+      const saved = await store.saveBlessing({
+        name: name.trim(),
+        message: message.trim(),
+        photoURL,
+      })
+
+      setBlessings((prev) => [saved, ...prev])
+      toast('success', 'הברכה נוספה בהצלחה! 🎉')
+      setName('')
+      setMessage('')
+      clearPhoto()
+      setShowForm(false)
+    } catch (err) {
+      toast('error', err instanceof Error ? err.message : 'שגיאה בשמירה')
+    } finally {
+      setUploading(false)
+    }
   }
 
   return (
@@ -141,8 +164,8 @@ export function BlessingsPage() {
                   <Button type="button" variant="ghost" size="sm" onClick={() => { setShowForm(false); clearPhoto() }}>
                     ביטול
                   </Button>
-                  <Button type="submit" variant="primary" size="sm" icon={<Send className="w-4 h-4" />}>
-                    שליחה
+                  <Button type="submit" variant="primary" size="sm" icon={<Send className="w-4 h-4" />} disabled={uploading} loading={uploading}>
+                    {uploading ? 'שומר...' : 'שליחה'}
                   </Button>
                 </div>
               </form>
@@ -151,9 +174,7 @@ export function BlessingsPage() {
         )}
 
         {loading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
-          </div>
+          <LoadingState />
         ) : (
         <StaggerChildren staggerDelay={0.08} className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
           {blessings.map((b) => (
@@ -172,5 +193,13 @@ export function BlessingsPage() {
         )}
       </Container>
     </PageTransition>
+  )
+}
+
+export function BlessingsPage() {
+  return (
+    <ParticipantGate>
+      <BlessingsContent />
+    </ParticipantGate>
   )
 }

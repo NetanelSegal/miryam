@@ -1,18 +1,24 @@
 import { useState, useEffect, useCallback } from 'react'
-import { BarChart3, Loader2, Video } from 'lucide-react'
-import { Heading, Text, Button, Card, Input, useToast } from '@/components/ui'
+import { BarChart3, Video, Briefcase, Tag } from 'lucide-react'
+import { Heading, Text, Button, Card, Input, useToast, LoadingState, SubTabNav } from '@/components/ui'
 import * as socialStatsStore from '@/lib/social-stats-store'
 import { calcEngagementPercent } from '@/lib/social-stats-store'
 
 const TIKTOK_URL_REGEX = /^https?:\/\/(www\.)?(tiktok\.com|vm\.tiktok\.com)\/.+$/
+
+type MediaKitSubTab = 'stats' | 'caseStudies' | 'brands'
 
 function isValidTiktokUrl(url: string): boolean {
   if (!url.trim()) return true
   return TIKTOK_URL_REGEX.test(url.trim())
 }
 
+import { AdminCaseStudies } from './AdminCaseStudies'
+import { AdminBrands } from './AdminBrands'
+
 export function AdminMediaKit() {
   const { toast } = useToast()
+  const [subTab, setSubTab] = useState<MediaKitSubTab>('stats')
   const [stats, setStats] = useState<socialStatsStore.SocialStats | null>(null)
   const [saving, setSaving] = useState(false)
 
@@ -37,16 +43,25 @@ export function AdminMediaKit() {
     [stats, toast]
   )
 
-  if (stats === null) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
-      </div>
-    )
-  }
+  if (stats === null) return <LoadingState />
 
   return (
     <>
+      <SubTabNav
+        tabs={[
+          { id: 'stats', label: 'נתוני רשתות', icon: BarChart3 },
+          { id: 'caseStudies', label: 'קמפיינים', icon: Briefcase },
+          { id: 'brands', label: 'מותגים', icon: Tag },
+        ]}
+        activeId={subTab}
+        onChange={(id) => setSubTab(id as MediaKitSubTab)}
+      />
+
+      {subTab === 'caseStudies' && <AdminCaseStudies />}
+      {subTab === 'brands' && <AdminBrands />}
+
+      {subTab === 'stats' && (
+        <>
       <Heading level={4} className="text-white mb-6">
         <BarChart3 className="w-5 h-5 inline-block ml-2 align-middle" />
         Media Kit — נתוני רשתות
@@ -382,6 +397,8 @@ export function AdminMediaKit() {
           </Button>
         </Card>
       </div>
+        </>
+      )}
     </>
   )
 }

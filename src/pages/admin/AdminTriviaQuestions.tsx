@@ -3,7 +3,7 @@ import {
   Plus, Trash2, Save, GripVertical, ChevronUp, ChevronDown,
   Loader2, AlertCircle, Check,
 } from 'lucide-react'
-import { Heading, Text, Button, Input, Card, Badge, useToast } from '@/components/ui'
+import { Heading, Text, Button, Input, Card, Badge, useToast, LoadingState } from '@/components/ui'
 import * as triviaStore from '@/lib/trivia-store'
 import type { TriviaQuestion } from '@/lib/trivia-store'
 
@@ -201,13 +201,7 @@ export function AdminTriviaQuestions() {
     }
   }, [questions, toast, loadQuestions])
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
-      </div>
-    )
-  }
+  if (loading) return <LoadingState />
 
   if (error) {
     return (

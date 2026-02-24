@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { LogIn, Loader2 } from 'lucide-react'
-import { Heading, Text, Container } from '@/components/ui'
+import { Heading, Text, Container, LoadingState } from '@/components/ui'
 import { useParticipant } from '@/contexts/ParticipantContext'
 
 function GoogleIcon({ className }: { className?: string }) {
@@ -23,7 +23,7 @@ export function ParticipantGate({ children }: { children: ReactNode }) {
   if (loading) {
     return (
       <Container size="sm" className="py-12 min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
+        <LoadingState />
       </Container>
     )
   }
