@@ -15,12 +15,15 @@ function isValidTiktokUrl(url: string): boolean {
 
 import { AdminCaseStudies } from './AdminCaseStudies'
 import { AdminBrands } from './AdminBrands'
+import { seedBrandsAndCaseStudies } from '@/lib/seed'
+import { Database } from 'lucide-react'
 
 export function AdminMediaKit() {
   const { toast } = useToast()
   const [subTab, setSubTab] = useState<MediaKitSubTab>('stats')
   const [stats, setStats] = useState<socialStatsStore.SocialStats | null>(null)
   const [saving, setSaving] = useState(false)
+  const [seeding, setSeeding] = useState(false)
 
   useEffect(() => {
     return socialStatsStore.subscribeToSocialStats(setStats)
@@ -42,6 +45,22 @@ export function AdminMediaKit() {
     },
     [stats, toast]
   )
+
+  const handleSeed = useCallback(async () => {
+    setSeeding(true)
+    try {
+      const { brandsAdded, caseStudiesAdded } = await seedBrandsAndCaseStudies()
+      if (brandsAdded > 0 || caseStudiesAdded > 0) {
+        toast('success', `נוסף: ${brandsAdded} מותגים, ${caseStudiesAdded} קמפיינים`)
+      } else {
+        toast('success', 'הנתונים כבר קיימים')
+      }
+    } catch (err) {
+      toast('error', err instanceof Error ? err.message : 'שגיאה ביצירת נתונים')
+    } finally {
+      setSeeding(false)
+    }
+  }, [toast])
 
   if (stats === null) return <LoadingState />
 
@@ -74,6 +93,25 @@ export function AdminMediaKit() {
         <Text variant="muted" size="xs" className="mt-1 block">
           כל השמירות מתפרסמות ישירות לאתר — ללא Cloud Functions
         </Text>
+      </Card>
+
+      <Card variant="accent" className="p-5 mb-6">
+        <Heading level={5} className="text-white mb-2 flex items-center gap-2">
+          <Database className="w-4 h-4" />
+          יצירת אוספים ראשוניים
+        </Heading>
+        <Text variant="muted" size="sm" className="mb-4">
+          אם אוספי brands ו-caseStudies עדיין לא קיימים ב-Firestore, לחצו כדי ליצור אותם עם נתוני דוגמה.
+        </Text>
+        <Button
+          variant="secondary"
+          size="sm"
+          icon={<Database className="w-4 h-4" />}
+          onClick={handleSeed}
+          disabled={seeding}
+        >
+          {seeding ? 'יוצר...' : 'יצירת brands ו-caseStudies'}
+        </Button>
       </Card>
 
       <div className="space-y-4">
