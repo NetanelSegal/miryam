@@ -1,32 +1,39 @@
 ---
 description: Mandatory workflow enforcement for all file modifications. Prevents skipping pre-execution steps and manifest creation.
-globs: "**/*"
+globs: '**/*'
 alwaysApply: true
 ---
 
 # Workflow Mandate: Pre-Execution & Manifest
 
-**CRITICAL:** Before editing ANY code in `client/`, `server/`, or `shared/`, you MUST verify the following. Skipping these steps is a violation of project integrity.
+**CRITICAL:** Before editing ANY code, you MUST verify the following. Skipping these steps is a violation of project integrity.
 
 ## 1. Implementation Planning (MANDATORY)
-Even if the user said "Autonomous" or "Go ahead", that ONLY applies to *picking* the next task from `tasks.md`. It DOES NOT apply to the implementation plan.
+
+Even if the user said "Autonomous" or "Go ahead", that ONLY applies to _picking_ the next task from `tasks.md`. It DOES NOT apply to the implementation plan.
+
 - You **MUST** ask targeted questions about the task scope.
 - You **MUST** propose subtasks (e.g., API vs UI).
 - You **MUST** wait for user approval of the plan before writing a single line of code.
 
 ## 2. UI Design Sign-off (MANDATORY)
+
 If the task involves client-side UI:
+
 - You **MUST** activate the `ui-ux-designer` skill.
 - You **MUST** ask design questions and obtain sign-off on a design spec before implementation.
 
 ## 3. Manifest Law
+
 - All complex tasks **MUST** have a manifest at `.claude/active-task/manifest.md`.
 - Each subtask **MUST** have its own `working.md` for context isolation.
 - Use the `mega-agent-orchestrator` skill to manage this.
 
 ## 4. Verification Check
+
 Before marking a task [Complete]:
-- Run `npm run type-check` (root).
+
+- Run type check (root).
 - Run `security-accessibility-audit`.
 - Describe the visual result (for UI tasks) in `progress.md`.
 
