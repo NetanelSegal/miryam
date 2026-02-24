@@ -2,6 +2,7 @@ import {
   collection, doc, getDocs, setDoc, updateDoc, query, orderBy, where,
 } from 'firebase/firestore'
 import { db } from './firebase'
+import { withTimeout } from './utils'
 
 export interface CostumeEntry {
   id: string
@@ -15,13 +16,6 @@ export interface CostumeEntry {
 }
 
 const COLLECTION = 'costumes'
-
-function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
-  return new Promise((resolve, reject) => {
-    const t = setTimeout(() => reject(new Error(`${label}: timeout`)), ms)
-    p.then(v => { clearTimeout(t); resolve(v) }).catch(e => { clearTimeout(t); reject(e) })
-  })
-}
 
 function mapDoc(d: { id: string; data: () => Record<string, unknown> }): CostumeEntry {
   return { id: d.id, ...d.data() } as CostumeEntry

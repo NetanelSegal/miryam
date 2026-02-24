@@ -9,9 +9,19 @@ import { useCountUp, useParallax } from '@/hooks'
 import { useInView } from 'motion/react'
 import * as store from '@/lib/store'
 import { subscribeToSocialStats, type SocialStats } from '@/lib/social-stats-store'
+import { getAllCaseStudies } from '@/lib/case-studies-store'
+import { getAllBrands } from '@/lib/brands-store'
 import { LINKS } from '@/config/links'
 
 const BIRTHDAY = new Date('2026-03-05T00:00:00')
+
+const FALLBACK_CASE_STUDIES = [
+  { brand: "L'Oréal", title: 'קמפיין True Match', description: 'סדרת תוכן שהגיעה ל-2.7 מיליון צפיות עם אחוז מעורבות של 12%', metric: '2.7M צפיות', imageUrl: '/images/WhatsApp Image 2026-02-23 at 10.39.53.jpeg' },
+  { brand: 'Samsung', title: 'השקת Galaxy S26', description: 'שיתוף פעולה ל-Unboxing ו-Review שהפך לוויראלי', metric: '1.2M צפיות', imageUrl: '/images/WhatsApp Image 2026-02-23 at 10.39.48.jpeg' },
+  { brand: 'Fox', title: 'קולקציית קיץ', description: 'קמפיין אופנה עם 5 סרטוני TikTok שהניבו המרות ישירות', metric: '890K צפיות', imageUrl: '/images/WhatsApp Image 2026-02-23 at 10.39.56.jpeg' },
+]
+
+const FALLBACK_BRANDS = ["L'Oréal", 'MAC', 'Samsung', 'Fox', 'Castro', 'Adidas', 'Zara', 'H&M']
 
 function buildDisplayStats(stats: SocialStats) {
   const ig = stats.instagram?.followers ?? 580000
@@ -25,32 +35,6 @@ function buildDisplayStats(stats: SocialStats) {
     { value: eng, suffix: '%', label: 'אחוז מעורבות', decimals: 1 },
   ]
 }
-
-const brands = ["L'Oréal", 'MAC', 'Samsung', 'Fox', 'Castro', 'Adidas', 'Zara', 'H&M']
-
-const caseStudies = [
-  {
-    brand: "L'Oréal",
-    title: 'קמפיין True Match',
-    description: 'סדרת תוכן שהגיעה ל-2.7 מיליון צפיות עם אחוז מעורבות של 12%',
-    metric: '2.7M צפיות',
-    image: '/images/WhatsApp Image 2026-02-23 at 10.39.53.jpeg',
-  },
-  {
-    brand: 'Samsung',
-    title: 'השקת Galaxy S26',
-    description: 'שיתוף פעולה ל-Unboxing ו-Review שהפך לוויראלי',
-    metric: '1.2M צפיות',
-    image: '/images/WhatsApp Image 2026-02-23 at 10.39.48.jpeg',
-  },
-  {
-    brand: 'Fox',
-    title: 'קולקציית קיץ',
-    description: 'קמפיין אופנה עם 5 סרטוני TikTok שהניבו המרות ישירות',
-    metric: '890K צפיות',
-    image: '/images/WhatsApp Image 2026-02-23 at 10.39.56.jpeg',
-  },
-]
 
 /* ------------------------------------------------------------------ */
 /*  Stat sub-section with count-up animation                          */
@@ -99,6 +83,70 @@ function StatItem({
   })
 
   return <StatCard value={`${count}${stat.suffix}`} label={stat.label} />
+}
+
+/* ------------------------------------------------------------------ */
+/*  Brands marquee — from Firestore                                    */
+/* ------------------------------------------------------------------ */
+
+function BrandMarqueeSection() {
+  const [brands, setBrands] = useState<string[]>(FALLBACK_BRANDS)
+
+  useEffect(() => {
+    getAllBrands()
+      .then((data) => setBrands(data.length > 0 ? data.map((b) => b.name) : FALLBACK_BRANDS))
+      .catch(() => {})
+  }, [])
+
+  return (
+    <Marquee speed={25}>
+      {brands.map((brand) => (
+        <div
+          key={brand}
+          className="shrink-0 w-28 h-12 bg-white/5 flex items-center justify-center text-text-muted text-sm font-medium"
+        >
+          {brand}
+        </div>
+      ))}
+    </Marquee>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Case Studies — from Firestore                                     */
+/* ------------------------------------------------------------------ */
+
+function CaseStudiesSection() {
+  const [caseStudies, setCaseStudies] = useState<typeof FALLBACK_CASE_STUDIES>(FALLBACK_CASE_STUDIES)
+
+  useEffect(() => {
+    getAllCaseStudies()
+      .then((data) => setCaseStudies(data.length > 0 ? data : FALLBACK_CASE_STUDIES))
+      .catch(() => {})
+  }, [])
+
+  return (
+    <StaggerChildren staggerDelay={0.15} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {caseStudies.map((study) => (
+        <Card key={study.brand + study.title} variant="accent" className="overflow-hidden">
+          <div className="aspect-4/3 overflow-hidden relative">
+            <img src={study.imageUrl} alt={study.brand} className="w-full h-full object-cover" />
+            <div className="img-overlay" />
+            <span className="absolute bottom-3 right-3 z-10 bg-accent-indigo/80 px-3 py-1 text-xs font-medium text-white">
+              {study.metric}
+            </span>
+          </div>
+          <div className="p-5">
+            <Text variant="muted" size="xs" className="mb-1 uppercase tracking-wider">
+              {study.brand}
+            </Text>
+            <Heading level={5} className="mb-2">{study.title}</Heading>
+            <Text variant="secondary" size="sm">{study.description}</Text>
+          </div>
+        </Card>
+      ))}
+    </StaggerChildren>
+  )
 }
 
 /* ------------------------------------------------------------------ */
@@ -172,6 +220,9 @@ function TiktokTopVideosSection() {
 /*  B2B Contact form                                                  */
 /* ------------------------------------------------------------------ */
 
+const CONTACT_RATE_LIMIT_MS = 5 * 60 * 1000 // 5 minutes
+const CONTACT_STORAGE_KEY = 'miryam_contact_last_submit'
+
 function ContactForm() {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
@@ -180,6 +231,7 @@ function ContactForm() {
     company: '',
     email: '',
     message: '',
+    website: '', // honeypot — bots fill this
   })
 
   const set = (field: keyof typeof formData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -187,11 +239,25 @@ function ContactForm() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
+    if (formData.website) {
+      toast('error', 'שגיאה בשליחת ההודעה')
+      return
+    }
+    const last = localStorage.getItem(CONTACT_STORAGE_KEY)
+    if (last) {
+      const elapsed = Date.now() - Number(last)
+      if (elapsed < CONTACT_RATE_LIMIT_MS) {
+        toast('error', 'אנא המתינו מעט לפני שליחה נוספת')
+        return
+      }
+    }
     setLoading(true)
     try {
-      await store.saveContact(formData)
+      const { website: _w, ...payload } = formData
+      await store.saveContact(payload)
+      localStorage.setItem(CONTACT_STORAGE_KEY, String(Date.now()))
       toast('success', 'ההודעה נשלחה בהצלחה!')
-      setFormData({ name: '', company: '', email: '', message: '' })
+      setFormData({ name: '', company: '', email: '', message: '', website: '' })
     } catch {
       toast('error', 'שגיאה בשליחת ההודעה')
     } finally {
@@ -201,6 +267,17 @@ function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-lg mx-auto">
+      {/* Honeypot: hidden from users, bots often fill it */}
+      <div className="absolute -left-[9999px] top-0 overflow-hidden" aria-hidden="true">
+        <input
+          type="text"
+          name="website"
+          value={formData.website}
+          onChange={(e) => setFormData((prev) => ({ ...prev, website: e.target.value }))}
+          tabIndex={-1}
+          autoComplete="off"
+        />
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input label="שם" value={formData.name} onChange={set('name')} required placeholder="השם שלך" />
         <Input label="חברה" value={formData.company} onChange={set('company')} placeholder="שם החברה" />
@@ -320,16 +397,7 @@ export function HomePage() {
           <Container size="lg">
             <AnimateOnScroll variant="fade">
               <Text variant="label" className="text-center mb-8">עבדתי עם</Text>
-              <Marquee speed={25}>
-                {brands.map((brand) => (
-                  <div
-                    key={brand}
-                    className="shrink-0 w-28 h-12 bg-white/5 flex items-center justify-center text-text-muted text-sm font-medium"
-                  >
-                    {brand}
-                  </div>
-                ))}
-              </Marquee>
+              <BrandMarqueeSection />
             </AnimateOnScroll>
           </Container>
         </section>
@@ -344,26 +412,7 @@ export function HomePage() {
               </Heading>
             </AnimateOnScroll>
 
-            <StaggerChildren staggerDelay={0.15} className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {caseStudies.map((study) => (
-                <Card key={study.brand} variant="accent" className="overflow-hidden">
-                  <div className="aspect-4/3 overflow-hidden relative">
-                    <img src={study.image} alt={study.brand} className="w-full h-full object-cover" />
-                    <div className="img-overlay" />
-                    <span className="absolute bottom-3 right-3 z-10 bg-accent-indigo/80 px-3 py-1 text-xs font-medium text-white">
-                      {study.metric}
-                    </span>
-                  </div>
-                  <div className="p-5">
-                    <Text variant="muted" size="xs" className="mb-1 uppercase tracking-wider">
-                      {study.brand}
-                    </Text>
-                    <Heading level={5} className="mb-2">{study.title}</Heading>
-                    <Text variant="secondary" size="sm">{study.description}</Text>
-                  </div>
-                </Card>
-              ))}
-            </StaggerChildren>
+            <CaseStudiesSection />
           </Container>
         </section>
 

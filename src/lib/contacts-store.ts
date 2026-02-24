@@ -1,5 +1,6 @@
 import { collection, doc, getDocs, setDoc, query, orderBy } from 'firebase/firestore'
 import { db } from './firebase'
+import { withTimeout } from './utils'
 
 export interface ContactSubmission {
   id: string
@@ -11,13 +12,6 @@ export interface ContactSubmission {
 }
 
 const COLLECTION = 'contacts'
-
-function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
-  return new Promise((resolve, reject) => {
-    const t = setTimeout(() => reject(new Error(`${label}: timeout`)), ms)
-    p.then(v => { clearTimeout(t); resolve(v) }).catch(e => { clearTimeout(t); reject(e) })
-  })
-}
 
 export async function saveContact(contact: Omit<ContactSubmission, 'id' | 'timestamp'>): Promise<ContactSubmission> {
   const id = crypto.randomUUID()

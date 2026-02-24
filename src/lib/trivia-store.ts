@@ -3,6 +3,7 @@ import {
   query, orderBy, writeBatch,
 } from 'firebase/firestore'
 import { db } from './firebase'
+import { withTimeout } from './utils'
 
 export interface TriviaQuestion {
   id: string
@@ -16,15 +17,6 @@ const COLLECTION = 'triviaQuestions'
 
 function colRef() {
   return collection(db, COLLECTION)
-}
-
-function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error(`${label}: timeout after ${ms}ms`)), ms)
-    promise
-      .then(val => { clearTimeout(timer); resolve(val) })
-      .catch(err => { clearTimeout(timer); reject(err) })
-  })
 }
 
 export async function getAllQuestions(): Promise<TriviaQuestion[]> {

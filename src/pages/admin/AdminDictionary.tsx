@@ -3,7 +3,7 @@ import {
   Plus, Trash2, Save, ChevronUp, ChevronDown,
   Loader2, AlertCircle, BookOpen,
 } from 'lucide-react'
-import { Heading, Text, Button, Input, Card, useToast } from '@/components/ui'
+import { Heading, Text, Button, Input, Card, useToast, LoadingState } from '@/components/ui'
 import * as dictionaryStore from '@/lib/dictionary-store'
 import type { DictionaryTerm } from '@/lib/dictionary-store'
 
@@ -160,13 +160,7 @@ export function AdminDictionary() {
     }
   }, [terms, toast, loadTerms])
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
-      </div>
-    )
-  }
+  if (loading) return <LoadingState />
 
   if (error) {
     return (

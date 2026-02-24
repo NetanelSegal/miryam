@@ -1,5 +1,6 @@
-import { collection, doc, getDocs, setDoc, query, orderBy } from 'firebase/firestore'
+import { collection, doc, getDocs, setDoc, query, orderBy, where, limit } from 'firebase/firestore'
 import { db } from './firebase'
+import { withTimeout } from './utils'
 
 export interface VoteRecord {
   participantId: string
@@ -10,13 +11,6 @@ export interface VoteRecord {
 
 const COLLECTION = 'votes'
 
-function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
-  return new Promise((resolve, reject) => {
-    const t = setTimeout(() => reject(new Error(`${label}: timeout`)), ms)
-    p.then(v => { clearTimeout(t); resolve(v) }).catch(e => { clearTimeout(t); reject(e) })
-  })
-}
-
 export async function castVote(vote: Omit<VoteRecord, 'timestamp'>): Promise<VoteRecord> {
   const entry: VoteRecord = { ...vote, timestamp: Date.now() }
   const id = crypto.randomUUID()
@@ -25,10 +19,14 @@ export async function castVote(vote: Omit<VoteRecord, 'timestamp'>): Promise<Vot
 }
 
 export async function getVote(participantId: string): Promise<VoteRecord | undefined> {
-  const snap = await withTimeout(getDocs(collection(db, COLLECTION)), 10_000, 'getVotes')
-  return snap.docs
-    .map(d => ({ ...d.data() } as VoteRecord))
-    .find(v => v.participantId === participantId)
+  const q = query(
+    collection(db, COLLECTION),
+    where('participantId', '==', participantId),
+    limit(1),
+  )
+  const snap = await withTimeout(getDocs(q), 10_000, 'getVote')
+  const d = snap.docs[0]
+  return d ? ({ ...d.data() } as VoteRecord) : undefined
 }
 
 export async function getVoteCounts(): Promise<Record<string, number>> {

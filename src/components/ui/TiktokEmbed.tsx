@@ -31,11 +31,20 @@ export function TiktokEmbed({ url, metric, className = '' }: TiktokEmbedProps) {
       return
     }
 
+    const cacheKey = `tiktok_vid_${url.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 80)}`
+    const cached = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem(cacheKey) : null
+    if (cached) {
+      setVideoId(cached)
+      setLoading(false)
+      return
+    }
+
     fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`)
       .then((res) => res.json())
       .then((data: { html?: string }) => {
         const match = data.html?.match(/data-video-id="(\d+)"/)
         if (match?.[1]) {
+          try { sessionStorage.setItem(cacheKey, match[1]) } catch { /* quota */ }
           setVideoId(match[1])
         } else {
           setError(true)

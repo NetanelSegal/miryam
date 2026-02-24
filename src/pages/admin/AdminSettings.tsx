@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Settings, Loader2, Vote, PartyPopper } from 'lucide-react'
-import { Heading, Text, Button, Card, useToast } from '@/components/ui'
+import { Heading, Text, Button, Card, useToast, LoadingState } from '@/components/ui'
 import * as settingsStore from '@/lib/settings-store'
 
 export function AdminSettings() {
@@ -28,13 +28,7 @@ export function AdminSettings() {
     [settings, toast]
   )
 
-  if (settings === null) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
-      </div>
-    )
-  }
+  if (settings === null) return <LoadingState />
 
   return (
     <>

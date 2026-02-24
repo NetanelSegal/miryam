@@ -1,0 +1,7 @@
+rules_version = '2';
+service firebase.storage {
+  match /blessings/{blessingId} {
+    allow read: if true;
+    allow write: if request.auth != null;
+  }
+}

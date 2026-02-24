@@ -38,7 +38,7 @@ export {
   reviewCostume,
 } from './costumes-store'
 
-export { saveBlessing, getAllBlessings, updateBlessing, deleteBlessing } from './blessings-store'
+export { saveBlessing, getAllBlessings, updateBlessing, deleteBlessing, subscribeToBlessings } from './blessings-store'
 export { saveContact, getAllContacts } from './contacts-store'
 
 import * as participantsStore from './participants-store'

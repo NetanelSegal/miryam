@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react'
 import {
   LayoutDashboard, Gamepad2, Vote,
-  Users, Camera, RefreshCw, LogOut, Shield, Settings, BarChart3, BookOpen, Loader2, MessageSquareHeart,
+  Users, Camera, RefreshCw, LogOut, Shield, Settings, BarChart3, BookOpen, MessageSquareHeart,
 } from 'lucide-react'
-import { Heading, Container, Button } from '@/components/ui'
+import { Heading, Container, Button, LoadingState } from '@/components/ui'
 import { useParticipant } from '@/contexts/ParticipantContext'
 import { AnimateOnScroll, PageTransition } from '@/components/motion'
 import { useAsyncAutoRefresh } from '@/hooks'
@@ -110,9 +110,7 @@ export function AdminPage() {
 
         <AnimateOnScroll variant="fade-up">
           {loading && !data ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
-            </div>
+            <LoadingState />
           ) : error ? (
             <div className="text-red-400 text-center py-8">{error.message}</div>
           ) : data ? (

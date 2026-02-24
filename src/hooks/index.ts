@@ -1,3 +1,4 @@
+export { useAsyncData } from './useAsyncData'
 export { useCountUp } from './useCountUp'
 export { useParallax } from './useParallax'
 export { useRequiredParticipant } from './useRequiredParticipant'

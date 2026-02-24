@@ -1,5 +1,6 @@
 import { collection, doc, getDoc, getDocs, setDoc, query, orderBy } from 'firebase/firestore'
 import { db } from './firebase'
+import { withTimeout } from './utils'
 
 export interface Participant {
   id: string
@@ -10,13 +11,6 @@ export interface Participant {
 }
 
 const COLLECTION = 'participants'
-
-function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
-  return new Promise((resolve, reject) => {
-    const t = setTimeout(() => reject(new Error(`${label}: timeout`)), ms)
-    p.then(v => { clearTimeout(t); resolve(v) }).catch(e => { clearTimeout(t); reject(e) })
-  })
-}
 
 export async function findParticipantById(id: string): Promise<Participant | undefined> {
   const snap = await withTimeout(getDoc(doc(db, COLLECTION, id)), 10_000, 'findParticipant')

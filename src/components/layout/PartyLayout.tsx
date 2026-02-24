@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Outlet } from 'react-router'
-import { Home, Loader2 } from 'lucide-react'
+import { Home } from 'lucide-react'
 import { Navbar } from './Navbar'
 import { Orbs } from '../ui/Orbs'
-import { Heading, Text, Button, Container } from '@/components/ui'
+import { Heading, Text, Button, Container, LoadingState } from '@/components/ui'
 import { subscribeToSettings } from '@/lib/settings-store'
 
 export function PartyLayout() {
@@ -14,11 +14,7 @@ export function PartyLayout() {
   }, [])
 
   if (partyOpen === null) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
-      </div>
-    )
+    return <LoadingState className="min-h-screen items-center justify-center" />
   }
 
   if (!partyOpen) {

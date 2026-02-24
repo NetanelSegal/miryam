@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Shield, Plus, Trash2, Loader2, AlertCircle } from 'lucide-react'
-import { Heading, Text, Button, Input, Card, useToast } from '@/components/ui'
+import { Heading, Text, Button, Input, Card, useToast, LoadingState } from '@/components/ui'
 import * as adminsStore from '@/lib/admins-store'
 
 export function AdminAdmins() {
@@ -62,13 +62,7 @@ export function AdminAdmins() {
     [toast]
   )
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
-      </div>
-    )
-  }
+  if (loading) return <LoadingState />
 
   if (error) {
     return (

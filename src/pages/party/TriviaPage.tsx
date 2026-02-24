@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { Heading, Text, Button, Container } from '@/components/ui'
+import { Heading, Text, Button, Container, LoadingState } from '@/components/ui'
+import { TriviaShareModal } from '@/components/party/TriviaShareModal'
 import { PageTransition } from '@/components/motion'
 import { confetti } from '@/lib/confetti'
 import { useRequiredParticipant } from '@/hooks'
@@ -8,7 +9,7 @@ import { ParticipantGate } from '@/components/guards/ParticipantGate'
 import * as store from '@/lib/store'
 import * as triviaStore from '@/lib/trivia-store'
 import type { TriviaQuestion } from '@/lib/trivia-store'
-import { Share2, ArrowRight, Trophy, Sparkles, Loader2, AlertCircle } from 'lucide-react'
+import { Share2, ArrowRight, Trophy, Sparkles, AlertCircle } from 'lucide-react'
 
 type Phase = 'loading' | 'error' | 'start' | 'playing' | 'result'
 
@@ -31,7 +32,7 @@ function TriviaGame() {
   const [score, setScore] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
-  const [copied, setCopied] = useState(false)
+  const [shareModalOpen, setShareModalOpen] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -114,14 +115,7 @@ function TriviaGame() {
     }, 1500)
   }, [showFeedback, currentQuestion, score, participantId, participantName, questions])
 
-  const handleShare = useCallback(async () => {
-    const text = `קיבלתי ${score}/${questions.length} בטריוויה של מרים! 🎉 נסו גם: ${window.location.origin}/party/trivia`
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopied(true)
-      timeoutRef.current = setTimeout(() => setCopied(false), 2000)
-    } catch { /* silent */ }
-  }, [score, questions.length])
+  const triviaUrl = `${window.location.origin}/party/trivia`
 
   return (
     <PageTransition>
@@ -135,7 +129,7 @@ function TriviaGame() {
               exit={{ opacity: 0 }}
               className="text-center"
             >
-              <Loader2 className="w-10 h-10 mx-auto animate-spin text-accent-violet" />
+              <LoadingState size="lg" />
               <Text variant="muted" className="mt-4">טוען שאלות...</Text>
             </motion.div>
           )}
@@ -213,13 +207,22 @@ function TriviaGame() {
                 <Text variant="secondary" size="lg">{getScoreMessage(score, questions.length)}</Text>
               </div>
               <div className="flex flex-col gap-3 max-w-xs mx-auto">
-                <Button variant="primary" size="md" icon={<Share2 className="w-4 h-4" />} onClick={handleShare}>
-                  {copied ? 'הועתק!' : 'שתפו תוצאה'}
+                <Button variant="primary" size="md" icon={<Share2 className="w-4 h-4" />} onClick={() => setShareModalOpen(true)}>
+                  שתפו תוצאה
                 </Button>
                 <Button variant="secondary" size="md" href="/party" icon={<ArrowRight className="w-4 h-4" />}>
                   חזרה למתחם
                 </Button>
               </div>
+
+              <TriviaShareModal
+                open={shareModalOpen}
+                onClose={() => setShareModalOpen(false)}
+                score={score}
+                totalQuestions={questions.length}
+                participantName={participantName}
+                triviaUrl={triviaUrl}
+              />
             </motion.div>
           )}
         </AnimatePresence>

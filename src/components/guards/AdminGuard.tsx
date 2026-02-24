@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { LogIn, Loader2, ShieldX } from 'lucide-react'
-import { Heading, Text, Button, Container } from '@/components/ui'
+import { Heading, Text, Button, Container, LoadingState } from '@/components/ui'
 import { useParticipant } from '@/contexts/ParticipantContext'
 
 function GoogleIcon({ className }: { className?: string }) {
@@ -29,11 +29,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
   }
 
   if (loading || adminCheckLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-bg px-4">
-        <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
-      </div>
-    )
+    return <LoadingState className="min-h-screen items-center justify-center bg-bg px-4" />
   }
 
   if (isAdmin) {

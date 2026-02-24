@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import { motion } from 'motion/react'
-import { Check, Upload, Camera, Clock, X as XIcon, Trophy, Lock, Loader2 } from 'lucide-react'
-import { Heading, Text, Button, Input, Container, Card, Badge, EmptyState, VoteBar } from '@/components/ui'
+import { Check, Upload, Camera, Clock, X as XIcon, Trophy, Lock } from 'lucide-react'
+import { Heading, Text, Button, Input, Container, Card, Badge, EmptyState, VoteBar, LoadingState } from '@/components/ui'
 import { AnimateOnScroll, StaggerChildren } from '@/components/motion'
 import { useToast } from '@/components/ui/Toast'
 import { confetti } from '@/lib/confetti'
@@ -37,7 +37,7 @@ function VotingClosedView() {
   if (loading) {
     return (
       <Container size="md" className="py-12 flex justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
+        <LoadingState />
       </Container>
     )
   }
@@ -191,7 +191,7 @@ function VotingGame() {
   if (dataLoading) {
     return (
       <Container size="md" className="py-12 flex justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
+        <LoadingState />
       </Container>
     )
   }
@@ -364,7 +364,7 @@ export function VotingPage() {
     <ParticipantGate>
       {votingOpen === null ? (
         <Container size="md" className="py-12 flex justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-accent-violet" />
+          <LoadingState />
         </Container>
       ) : !votingOpen ? (
         <VotingClosedView />
