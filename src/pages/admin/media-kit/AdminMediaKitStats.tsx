@@ -7,7 +7,6 @@ import { SeedCollectionsCard } from './SeedCollectionsCard'
 import { YouTubeStatsCard } from './YouTubeStatsCard'
 import { InstagramStatsCard } from './InstagramStatsCard'
 import { TiktokStatsCard } from './TiktokStatsCard'
-import { EngagementPercentCard } from './EngagementPercentCard'
 import { TiktokTopVideosCard } from './TiktokTopVideosCard'
 
 export function AdminMediaKitStats() {
@@ -36,7 +35,6 @@ export function AdminMediaKitStats() {
           saving={saving}
         />
         <TiktokStatsCard stats={stats} setStats={setStats} onSave={handleSave} saving={saving} />
-        <EngagementPercentCard stats={stats} />
         <TiktokTopVideosCard
           stats={stats}
           setStats={setStats}

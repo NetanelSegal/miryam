@@ -1,0 +1,35 @@
+---
+description: BACKEND & SECURITY: Enforces Firebase best practices, Firestore security rules, authentication guards, and data integrity. Triggered on database, auth, and server-side logic.
+globs: "functions/**/*, {firestore,storage}.rules, src/lib/firebase.ts, src/lib/*-store.ts"
+---
+
+# 03-Firebase: Security & Data Integrity
+
+This rule ensures that all backend logic, database rules, and authentication flows are secure, scalable, and performant.
+
+## 1. Firestore & Security Rules
+- **Rule Principle**: Least privilege. Wildcard `allow read, write: if true` is strictly prohibited.
+- **Admin Access**: Protect admin collections using the `admins` collection whitelist check in `firestore.rules`.
+- **Validation**: Firestore rules MUST validate data shape (required fields, types) before allowing writes.
+- **Rate Limiting**: Apply logic to prevent spam on public endpoints (e.g., Blessings, Contact Form).
+
+## 2. Authentication & Authorization
+- **Auth Provider**: Google Sign-in via Firebase Auth.
+- **Participant Gate**: All party activities must be gated by `ParticipantGate` to ensure `participantId` availability.
+- **Admin Guard**: The `/admin` route must be protected by `AdminGuard.tsx` which verifies the user UID against the Firestore `admins` whitelist.
+- **Sign Out**: Ensure all state (stores, context) is purged upon logout.
+
+## 3. Data Store Architecture
+- **Abstraction**: Use the `src/lib/*-store.ts` pattern to decouple UI from Firebase SDK logic.
+- **Real-time**: Use Firestore snapshots for live updates on Blessings and Trivia leaderboards.
+- **Performance**: Use pagination or limiting on large collections (e.g., `blessings`). No unbounded `getDocs()`.
+
+## 4. Environment & Secrets
+- **Zero Exposure**: Never commit `.env` files or hardcode API keys. Use `.env.example` as a template.
+- **Firebase Config**: Centralize all Firebase initialization in `src/lib/firebase.ts`.
+
+## 5. Security Audit Checklist
+- [ ] Are Firestore rules restrictive and validated?
+- [ ] Is admin-only data properly guarded by UID checks?
+- [ ] Are all secrets stored in environment variables?
+- [ ] Is the data shape validated both client-side and in rules?

@@ -27,12 +27,10 @@ function buildDisplayStats(stats: SocialStats) {
   const ig = stats.instagram?.followers ?? 580000
   const tt = stats.tiktok?.followers ?? 620000
   const yt = stats.youtube?.subscribers ?? 45000
-  const eng = stats.engagementPercent ?? 8.2
   return [
     { value: ig >= 1000 ? ig / 1000 : ig, suffix: ig >= 1000 ? 'K+' : '', label: 'עוקבים באינסטגרם' },
     { value: tt >= 1000 ? tt / 1000 : tt, suffix: tt >= 1000 ? 'K+' : '', label: 'עוקבים בטיקטוק' },
     { value: yt >= 1000 ? yt / 1000 : yt, suffix: yt >= 1000 ? 'K+' : '', label: 'מנויים ביוטיוב' },
-    { value: eng, suffix: '%', label: 'אחוז מעורבות', decimals: 1 },
   ]
 }
 
@@ -47,7 +45,6 @@ function StatSection() {
     instagram: { followers: 580000 },
     tiktok: { followers: 620000 },
     youtube: { subscribers: 45000 },
-    engagementPercent: 8.2,
     updatedAt: 0,
   })
 
@@ -59,7 +56,7 @@ function StatSection() {
 
   return (
     <div ref={ref}>
-      <StaggerChildren staggerDelay={0.12} className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <StaggerChildren staggerDelay={0.12} className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {displayStats.map((stat) => (
           <StatItem key={stat.label} stat={stat} enabled={isInView} />
         ))}
@@ -95,7 +92,7 @@ function BrandMarqueeSection() {
   useEffect(() => {
     getAllBrands()
       .then((data) => setBrands(data.length > 0 ? data.map((b) => b.name) : FALLBACK_BRANDS))
-      .catch(() => {})
+      .catch(() => { })
   }, [])
 
   return (
@@ -122,7 +119,7 @@ function CaseStudiesSection() {
   useEffect(() => {
     getAllCaseStudies()
       .then((data) => setCaseStudies(data.length > 0 ? data : FALLBACK_CASE_STUDIES))
-      .catch(() => {})
+      .catch(() => { })
   }, [])
 
   return (
@@ -158,7 +155,6 @@ function TiktokTopVideosSection() {
     instagram: { followers: 580000 },
     tiktok: { followers: 620000 },
     youtube: { subscribers: 45000 },
-    engagementPercent: 8.2,
     updatedAt: 0,
   })
 
@@ -393,8 +389,8 @@ export function HomePage() {
         <TiktokTopVideosSection />
 
         {/* --- Brand Logos --- */}
-        <section className="py-12 border-t border-b border-white/5">
-          <Container size="lg">
+        <section className="py-12 border-t border-b border-white/5 overflow-x-hidden">
+          <Container size="lg" className="overflow-hidden">
             <AnimateOnScroll variant="fade">
               <Text variant="label" className="text-center mb-8">עבדתי עם</Text>
               <BrandMarqueeSection />

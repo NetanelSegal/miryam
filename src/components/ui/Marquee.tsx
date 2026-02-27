@@ -8,7 +8,7 @@ interface MarqueeProps {
 
 export function Marquee({ speed = 30, children, className = '' }: MarqueeProps) {
   return (
-    <div className={`overflow-hidden ${className}`}>
+    <div className={`w-full max-w-full overflow-hidden ${className}`}>
       <div
         className="flex gap-8 w-max"
         style={{

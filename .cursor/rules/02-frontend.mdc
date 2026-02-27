@@ -1,0 +1,38 @@
+---
+description: FRONTEND STANDARDS: Enforces React 19 patterns, Tailwind 4 styling, UI/UX consistency, and RTL support. Triggered on all UI and client-side logic changes.
+globs: "src/**/*.{tsx,ts,css,scss}, public/**/*"
+---
+
+# 02-Frontend: UI/UX & React Excellence
+
+This rule applies to all frontend code in `src/`. It prioritizes performance, accessibility, and the "Energetic VIP Party" design system.
+
+## 1. Design System & Styling
+- **Theme**: Strictly Dark Mode (`#0a0a0a`). No Light Mode support.
+- **Components**: Use ONLY `src/components/ui/` barrel exports. Avoid raw HTML tags for styled elements.
+- **Tailwind 4**: Use utility classes for all styling. Refer to `docs/05-Design/brand-guide.md` for color tokens and gradients.
+- **RTL Support**: Default to Hebrew layout. Use `ltr` only for code snippets, URLs, or specific LTR inputs.
+- **Visuals**: High contrast, direct flash "paparazzi" photography style, and neon violet/indigo accents.
+
+## 2. React 19 & Performance
+- **Eliminate Waterfalls**: Start promises early, await late. Use `Promise.all()` for independent operations.
+- **Bundle Optimization**: Import directly from component files; avoid heavy barrel files in performance-critical paths. Use `React.lazy()` for all page components.
+- **Re-render Control**: Don't subscribe to state only used in callbacks. Use `memo` for expensive components.
+- **Data Fetching**: Use the abstracted hooks in `src/hooks/` (e.g., `useAsyncData`).
+
+## 3. Motion & Animation
+- **Motion Package**: Use `motion` (Framer Motion) primitives from `src/components/motion/`.
+- **AnimateOnScroll**: Apply to all section reveals (400-600ms ease-out).
+- **Stagger**: Use `StaggerChildren` for Bento grids and card lists.
+- **Reduced Motion**: Always respect user `prefers-reduced-motion` settings.
+
+## 4. Accessibility & Forms
+- **Semantic HTML**: Use proper heading hierarchies and ARIA labels.
+- **Input Validation**: Perform both client-side (Zod/HTML5) and server-side validation.
+- **Loading States**: Every async action MUST show a `LoadingState`, `Skeleton`, or `Spinner`.
+
+## 5. Verification Checklist
+- [ ] Is it RTL compatible?
+- [ ] Does it use the UI component library?
+- [ ] Are animations smooth and accessible?
+- [ ] No waterfalls in data fetching?
