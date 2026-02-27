@@ -1,145 +1,93 @@
-import { useState, useEffect } from 'react'
-import { Plus, Trash2, Pencil } from 'lucide-react'
-import { Heading, Text, Button, Input, Card, useToast, LoadingState } from '@/components/ui'
-import { useAsyncData } from '@/hooks'
-import * as caseStudiesStore from '@/lib/case-studies-store'
-import type { CaseStudy } from '@/lib/case-studies-store'
+import { Plus } from 'lucide-react'
+import { Heading, Text, Button, useToast, LoadingState } from '@/components/ui'
+import { useCaseStudies, CaseStudyFormCard, CaseStudyListItem } from './case-studies'
 
 export function AdminCaseStudies() {
   const { toast } = useToast()
-  const { data: items, loading, error, refresh: load } = useAsyncData(caseStudiesStore.getAllCaseStudies)
-  const [adding, setAdding] = useState(false)
-  const [saving, setSaving] = useState(false)
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [form, setForm] = useState({ brand: '', title: '', description: '', metric: '', imageUrl: '' })
-  const [editForm, setEditForm] = useState(form)
-
-  useEffect(() => {
-    if (error) toast('error', error.message)
-  }, [error, toast])
-
-  const handleAdd = async () => {
-    if (!form.brand.trim() || !form.title.trim() || !form.description.trim() || !form.metric.trim() || !form.imageUrl.trim()) {
-      toast('error', 'מלאו את כל השדות')
-      return
-    }
-    setSaving(true)
-    try {
-      await caseStudiesStore.addCaseStudy({
-        ...form,
-        order: (items ?? []).length,
-      })
-      setForm({ brand: '', title: '', description: '', metric: '', imageUrl: '' })
-      setAdding(false)
-      load()
-      toast('success', 'הקמפיין נוסף')
-    } catch (err) {
-      toast('error', err instanceof Error ? err.message : 'שגיאה בהוספה')
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  const handleDelete = async (id: string) => {
-    if (!confirm('למחוק?')) return
-    setSaving(true)
-    try {
-      await caseStudiesStore.deleteCaseStudy(id)
-      load()
-      toast('success', 'נמחק')
-    } catch (err) {
-      toast('error', err instanceof Error ? err.message : 'שגיאה במחיקה')
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  const startEdit = (c: CaseStudy) => {
-    setEditingId(c.id)
-    setEditForm({ brand: c.brand, title: c.title, description: c.description, metric: c.metric, imageUrl: c.imageUrl })
-  }
-
-  const cancelEdit = () => {
-    setEditingId(null)
-  }
-
-  const handleSaveEdit = async () => {
-    if (!editingId) return
-    const { brand, title, description, metric, imageUrl } = editForm
-    if (!brand.trim() || !title.trim() || !description.trim() || !metric.trim() || !imageUrl.trim()) {
-      toast('error', 'מלאו את כל השדות')
-      return
-    }
-    setSaving(true)
-    try {
-      await caseStudiesStore.updateCaseStudy(editingId, editForm)
-      setEditingId(null)
-      load()
-      toast('success', 'נשמר')
-    } catch (err) {
-      toast('error', err instanceof Error ? err.message : 'שגיאה בשמירה')
-    } finally {
-      setSaving(false)
-    }
-  }
+  const {
+    items,
+    loading,
+    adding,
+    saving,
+    uploadingImage,
+    editingId,
+    form,
+    setForm,
+    editForm,
+    setEditForm,
+    addFileRef,
+    addPreview,
+    editFileRef,
+    editPreview,
+    setAdding,
+    clearAddFile,
+    handleAddFileChange,
+    handleEditFileChange,
+    handleAdd,
+    handleDelete,
+    startEdit,
+    cancelEdit,
+    handleSaveEdit,
+  } = useCaseStudies(toast)
 
   if (loading) return <LoadingState />
 
   return (
     <div className="space-y-6">
-      <Heading level={4} className="text-white">קמפיינים (Case Studies)</Heading>
+      <Heading level={4} className="text-white">
+        קמפיינים (Case Studies)
+      </Heading>
       <Text variant="muted" size="sm" className="block mb-4">
         נשלפים לאתר בדף הבית. הזינו נתונים אמיתיים.
       </Text>
 
       {adding && (
-        <Card variant="accent" className="p-5 space-y-3">
-          <Input label="מותג" value={form.brand} onChange={(e) => setForm(f => ({ ...f, brand: e.target.value }))} placeholder="L'Oréal" />
-          <Input label="כותרת" value={form.title} onChange={(e) => setForm(f => ({ ...f, title: e.target.value }))} placeholder="קמפיין True Match" />
-          <Input label="תיאור" value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} placeholder="סדרת תוכן שהגיעה ל-2.7 מיליון צפיות" multiline />
-          <Input label="מטריקה" value={form.metric} onChange={(e) => setForm(f => ({ ...f, metric: e.target.value }))} placeholder="2.7M צפיות" />
-          <Input label="תמונה (URL)" value={form.imageUrl} onChange={(e) => setForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="/images/..." dir="ltr" />
-          <div className="flex gap-2">
-            <Button variant="primary" size="sm" onClick={handleAdd} disabled={saving}>הוספה</Button>
-            <Button variant="ghost" size="sm" onClick={() => setAdding(false)}>ביטול</Button>
-          </div>
-        </Card>
+        <CaseStudyFormCard
+          form={form}
+          setForm={setForm}
+          fileInputRef={addFileRef}
+          preview={addPreview}
+          uploading={uploadingImage}
+          saving={saving}
+          onFileChange={handleAddFileChange}
+          onSubmit={handleAdd}
+          onCancel={() => {
+            setAdding(false)
+            clearAddFile()
+          }}
+          submitLabel="הוספה"
+        />
       )}
 
       {!adding && (
-        <Button variant="primary" size="sm" icon={<Plus className="w-4 h-4" />} onClick={() => setAdding(true)}>
+        <Button
+          variant="primary"
+          size="sm"
+          icon={<Plus className="w-4 h-4" />}
+          onClick={() => setAdding(true)}
+        >
           קמפיין חדש
         </Button>
       )}
 
       <div className="space-y-2">
         {(items ?? []).map((c) => (
-          <Card key={c.id} variant="accent" className="p-4">
-            {editingId === c.id ? (
-              <div className="space-y-3">
-                <Input label="מותג" value={editForm.brand} onChange={(e) => setEditForm(f => ({ ...f, brand: e.target.value }))} placeholder="L'Oréal" />
-                <Input label="כותרת" value={editForm.title} onChange={(e) => setEditForm(f => ({ ...f, title: e.target.value }))} placeholder="קמפיין True Match" />
-                <Input label="תיאור" value={editForm.description} onChange={(e) => setEditForm(f => ({ ...f, description: e.target.value }))} placeholder="תיאור" multiline />
-                <Input label="מטריקה" value={editForm.metric} onChange={(e) => setEditForm(f => ({ ...f, metric: e.target.value }))} placeholder="2.7M צפיות" />
-                <Input label="תמונה (URL)" value={editForm.imageUrl} onChange={(e) => setEditForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="/images/..." dir="ltr" />
-                <div className="flex gap-2">
-                  <Button variant="primary" size="sm" onClick={handleSaveEdit} disabled={saving}>שמור</Button>
-                  <Button variant="ghost" size="sm" onClick={cancelEdit} disabled={saving}>ביטול</Button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center justify-between">
-                <div>
-                  <Text className="font-semibold">{c.brand} — {c.title}</Text>
-                  <Text variant="muted" size="sm">{c.metric}</Text>
-                </div>
-                <div className="flex gap-1">
-                  <Button variant="ghost" size="sm" icon={<Pencil className="w-4 h-4" />} onClick={() => startEdit(c)} disabled={saving} title="עריכה">ערוך</Button>
-                  <Button variant="ghost" size="sm" icon={<Trash2 className="w-4 h-4" />} onClick={() => handleDelete(c.id)} className="text-red-400" disabled={saving} title="מחיקה">מחק</Button>
-                </div>
-              </div>
-            )}
-          </Card>
+          <CaseStudyListItem
+            key={c.id}
+            item={c}
+            isEditing={editingId === c.id}
+            editForm={editForm}
+            setEditForm={setEditForm}
+            editFileRef={editFileRef}
+            editPreview={editPreview}
+            uploading={uploadingImage}
+            saving={saving}
+            onEditFileChange={handleEditFileChange}
+            onStartEdit={() => startEdit(c)}
+            onCancelEdit={cancelEdit}
+            onSaveEdit={handleSaveEdit}
+            onDelete={() => handleDelete(c.id)}
+          />
         ))}
       </div>
     </div>

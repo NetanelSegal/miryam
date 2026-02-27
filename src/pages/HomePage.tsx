@@ -9,17 +9,11 @@ import { useCountUp, useParallax } from '@/hooks'
 import { useInView } from 'motion/react'
 import * as store from '@/lib/store'
 import { subscribeToSocialStats, type SocialStats } from '@/lib/social-stats-store'
-import { getAllCaseStudies } from '@/lib/case-studies-store'
+import { subscribeToCaseStudies, getCaseStudyImageSrc, type CaseStudy } from '@/lib/case-studies-store'
 import { getAllBrands } from '@/lib/brands-store'
 import { LINKS } from '@/config/links'
 
 const BIRTHDAY = new Date('2026-03-05T00:00:00')
-
-const FALLBACK_CASE_STUDIES = [
-  { brand: "L'Oréal", title: 'קמפיין True Match', description: 'סדרת תוכן שהגיעה ל-2.7 מיליון צפיות עם אחוז מעורבות של 12%', metric: '2.7M צפיות', imageUrl: '/images/WhatsApp Image 2026-02-23 at 10.39.53.jpeg' },
-  { brand: 'Samsung', title: 'השקת Galaxy S26', description: 'שיתוף פעולה ל-Unboxing ו-Review שהפך לוויראלי', metric: '1.2M צפיות', imageUrl: '/images/WhatsApp Image 2026-02-23 at 10.39.48.jpeg' },
-  { brand: 'Fox', title: 'קולקציית קיץ', description: 'קמפיין אופנה עם 5 סרטוני TikTok שהניבו המרות ישירות', metric: '890K צפיות', imageUrl: '/images/WhatsApp Image 2026-02-23 at 10.39.56.jpeg' },
-]
 
 const FALLBACK_BRANDS = ["L'Oréal", 'MAC', 'Samsung', 'Fox', 'Castro', 'Adidas', 'Zara', 'H&M']
 
@@ -114,20 +108,48 @@ function BrandMarqueeSection() {
 /* ------------------------------------------------------------------ */
 
 function CaseStudiesSection() {
-  const [caseStudies, setCaseStudies] = useState<typeof FALLBACK_CASE_STUDIES>(FALLBACK_CASE_STUDIES)
+  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([])
 
   useEffect(() => {
-    getAllCaseStudies()
-      .then((data) => setCaseStudies(data.length > 0 ? data : FALLBACK_CASE_STUDIES))
-      .catch(() => { })
+    return subscribeToCaseStudies(
+      (data) => setCaseStudies(data),
+      () => setCaseStudies([]),
+    )
   }, [])
+
+  if (caseStudies.length === 0) {
+    return (
+      <div className="py-12 text-center">
+        <Text variant="muted">אין קמפיינים להצגה. השתמשו בלוח הניהול כדי ליצור נתונים ראשוניים.</Text>
+      </div>
+    )
+  }
 
   return (
     <StaggerChildren staggerDelay={0.15} className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {caseStudies.map((study) => (
-        <Card key={study.brand + study.title} variant="accent" className="overflow-hidden">
-          <div className="aspect-4/3 overflow-hidden relative">
-            <img src={study.imageUrl} alt={study.brand} className="w-full h-full object-cover" />
+        <Card key={study.id} variant="accent" className="overflow-hidden">
+          <div className="aspect-4/3 overflow-hidden relative bg-white/5">
+            {study.imageUrl ? (
+              <>
+                <img
+                  key={study.imageUrl}
+                  src={getCaseStudyImageSrc(study.imageUrl)}
+                  alt={study.brand}
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                  loading="eager"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none'
+                    const fallback = e.currentTarget.nextElementSibling
+                    if (fallback) (fallback as HTMLElement).classList.remove('hidden')
+                  }}
+                />
+                <div className="hidden w-full h-full flex items-center justify-center text-text-muted text-sm absolute inset-0 bg-white/5" aria-hidden>אין תמונה</div>
+              </>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-text-muted text-sm" aria-hidden>אין תמונה</div>
+            )}
             <div className="img-overlay" />
             <span className="absolute bottom-3 right-3 z-10 bg-accent-indigo/80 px-3 py-1 text-xs font-medium text-white">
               {study.metric}
@@ -318,7 +340,7 @@ export function HomePage() {
           <div ref={parallaxRef} style={parallaxStyle} className="absolute -inset-20">
             <img
               src="/images/WhatsApp Image 2026-02-23 at 10.39.43.jpeg"
-              alt=""
+              alt="מרים סגל "
               className="w-full h-full object-cover"
             />
           </div>

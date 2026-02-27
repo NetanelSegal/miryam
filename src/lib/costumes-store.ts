@@ -1,7 +1,8 @@
 import {
-  collection, doc, getDocs, setDoc, updateDoc, query, orderBy, where,
+  collection, doc, getDocs, setDoc, updateDoc, deleteDoc, query, orderBy, where,
 } from 'firebase/firestore'
 import { db } from './firebase'
+import { uploadImage, deleteStorageFileByUrl } from './storage-upload'
 import { withTimeout } from './utils'
 
 export interface CostumeEntry {
@@ -9,10 +10,18 @@ export interface CostumeEntry {
   participantId: string
   participantName: string
   title: string
-  imageData: string
+  /** Storage URL (new). Use getCostumeImageUrl() for display (handles legacy imageData). */
+  imageUrl?: string
+  /** @deprecated Legacy base64. Display: imageUrl ?? imageData */
+  imageData?: string
   status: 'pending' | 'approved' | 'rejected'
   submittedAt: number
   reviewedAt?: number
+}
+
+/** Get image src for display. Handles both Storage URL (imageUrl) and legacy base64 (imageData). */
+export function getCostumeImageUrl(c: CostumeEntry): string {
+  return c.imageUrl ?? c.imageData ?? ''
 }
 
 const COLLECTION = 'costumes'
@@ -21,7 +30,12 @@ function mapDoc(d: { id: string; data: () => Record<string, unknown> }): Costume
   return { id: d.id, ...d.data() } as CostumeEntry
 }
 
-export async function submitCostume(entry: Omit<CostumeEntry, 'id' | 'status' | 'submittedAt'>): Promise<CostumeEntry> {
+/** Upload costume image to Storage, return download URL. */
+export async function uploadCostumeImage(file: File): Promise<string> {
+  return uploadImage('costumes', file)
+}
+
+export async function submitCostume(entry: Omit<CostumeEntry, 'id' | 'status' | 'submittedAt'> & { imageUrl: string }): Promise<CostumeEntry> {
   const id = crypto.randomUUID()
   const costume: CostumeEntry = {
     ...entry,
@@ -76,4 +90,9 @@ export async function reviewCostume(costumeId: string, status: 'approved' | 'rej
     10_000,
     'reviewCostume',
   )
+}
+
+export async function deleteCostume(id: string, imageUrl?: string): Promise<void> {
+  if (imageUrl) await deleteStorageFileByUrl(imageUrl)
+  await withTimeout(deleteDoc(doc(db, COLLECTION, id)), 10_000, 'deleteCostume')
 }

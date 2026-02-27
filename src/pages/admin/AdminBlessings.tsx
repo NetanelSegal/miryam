@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { MessageSquareHeart, Trash2, Save } from 'lucide-react'
 import { Heading, Text, Button, Input, Card, EmptyState, useToast, LoadingState } from '@/components/ui'
 import * as store from '@/lib/store'
@@ -13,21 +13,13 @@ export function AdminBlessings() {
   const [editMessage, setEditMessage] = useState('')
   const [saving, setSaving] = useState(false)
 
-  const loadBlessings = useCallback(async () => {
-    setLoading(true)
-    try {
-      const data = await store.getAllBlessings()
-      setBlessings(data)
-    } catch (err) {
-      toast('error', err instanceof Error ? err.message : 'שגיאה בטעינת הברכות')
-    } finally {
-      setLoading(false)
-    }
-  }, [toast])
-
   useEffect(() => {
-    loadBlessings()
-  }, [loadBlessings])
+    const unsubscribe = store.subscribeToBlessings((data) => {
+      setBlessings(data)
+      setLoading(false)
+    })
+    return () => unsubscribe()
+  }, [])
 
   const startEdit = (b: store.Blessing) => {
     setEditingId(b.id)
@@ -56,11 +48,27 @@ export function AdminBlessings() {
     }
   }
 
+  const handleAddTestBlessing = async () => {
+    setSaving(true)
+    try {
+      await store.saveBlessing({
+        name: 'בדיקה',
+        message: `ברכת בדיקה ${new Date().toLocaleTimeString('he-IL')}`,
+      })
+      toast('success', 'ברכת בדיקה נוספה — אמורה להופיע מיד')
+    } catch (err) {
+      toast('error', err instanceof Error ? err.message : 'שגיאה בהוספה')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   const handleDelete = async (id: string) => {
     if (!confirm('למחוק את הברכה?')) return
     setSaving(true)
     try {
-      await store.deleteBlessing(id)
+      const blessing = blessings.find((b) => b.id === id)
+      await store.deleteBlessing(id, blessing?.photoURL)
       setBlessings(prev => prev.filter(b => b.id !== id))
       toast('success', 'הברכה נמחקה')
     } catch (err) {
@@ -74,15 +82,31 @@ export function AdminBlessings() {
 
   if (blessings.length === 0) {
     return (
-      <EmptyState icon={MessageSquareHeart} message="אין ברכות עדיין" />
+      <div className="space-y-6">
+        {import.meta.env.DEV && (
+          <div className="flex justify-end">
+            <Button variant="ghost" size="sm" onClick={handleAddTestBlessing} disabled={saving}>
+              + ברכת בדיקה
+            </Button>
+          </div>
+        )}
+        <EmptyState icon={MessageSquareHeart} message="אין ברכות עדיין" />
+      </div>
     )
   }
 
   return (
     <div className="space-y-6">
-      <Heading level={4} className="text-white">
-        ניהול ברכות ({blessings.length})
-      </Heading>
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <Heading level={4} className="text-white">
+          ניהול ברכות ({blessings.length})
+        </Heading>
+        {import.meta.env.DEV && (
+          <Button variant="ghost" size="sm" onClick={handleAddTestBlessing} disabled={saving}>
+            + ברכת בדיקה
+          </Button>
+        )}
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {blessings.map((b) => (
           <Card key={b.id} variant="accent" className="p-5 group">

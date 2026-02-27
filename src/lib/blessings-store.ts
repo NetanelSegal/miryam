@@ -1,7 +1,6 @@
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { collection, doc, getDocs, setDoc, updateDoc, deleteDoc, query, orderBy, onSnapshot } from 'firebase/firestore'
-import { db, storage } from './firebase'
-import { compressImage } from './image'
+import { db } from './firebase'
+import { uploadImage, deleteStorageFileByUrl } from './storage-upload'
 import { withTimeout, omitUndefined } from './utils'
 
 export interface Blessing {
@@ -16,13 +15,7 @@ const COLLECTION = 'blessings'
 
 /** Upload photo to Storage, return download URL. Compresses before upload. */
 export async function uploadBlessingPhoto(file: File): Promise<string> {
-  const dataUrl = await compressImage(file)
-  const res = await fetch(dataUrl)
-  const blob = await res.blob()
-  const id = crypto.randomUUID()
-  const storageRef = ref(storage, `blessings/${id}`)
-  await uploadBytes(storageRef, blob, { contentType: 'image/jpeg' })
-  return getDownloadURL(storageRef)
+  return uploadImage('blessings', file)
 }
 
 export async function saveBlessing(blessing: Omit<Blessing, 'id' | 'timestamp'>): Promise<Blessing> {
@@ -56,6 +49,7 @@ export async function updateBlessing(id: string, data: Partial<Omit<Blessing, 'i
   await withTimeout(updateDoc(doc(db, COLLECTION, id), clean), 10_000, 'updateBlessing')
 }
 
-export async function deleteBlessing(id: string): Promise<void> {
+export async function deleteBlessing(id: string, photoURL?: string): Promise<void> {
+  if (photoURL) await deleteStorageFileByUrl(photoURL)
   await withTimeout(deleteDoc(doc(db, COLLECTION, id)), 10_000, 'deleteBlessing')
 }

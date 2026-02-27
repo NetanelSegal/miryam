@@ -1,6 +1,6 @@
 import { Vote } from 'lucide-react'
 import { Heading, Text, Badge, VoteBar, EmptyState } from '@/components/ui'
-import type { CostumeEntry } from '@/lib/store'
+import { getCostumeImageUrl, type CostumeEntry } from '@/lib/store'
 
 interface AdminVotesProps {
   approvedCostumes: CostumeEntry[]
@@ -22,7 +22,7 @@ export function AdminVotes({ approvedCostumes, voteCounts }: AdminVotesProps) {
               .sort((a, b) => b.votes - a.votes)
               .map((c, i) => (
                 <div key={c.id} className="flex items-center gap-4">
-                  <img src={c.imageData} alt={c.title} className="w-10 h-10 object-cover shrink-0" />
+                  <img src={getCostumeImageUrl(c)} alt={c.title} className="w-10 h-10 object-cover shrink-0" />
                   <div className="w-28 shrink-0">
                     <Text size="sm" className="font-semibold">{c.title}</Text>
                     <Text variant="muted" size="xs">{c.participantName}</Text>

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Text } from './Text'
 import { getRankColor } from '@/lib/utils'
 
@@ -7,9 +8,11 @@ interface LeaderboardRowProps {
   score: string
   detail?: string
   highlight?: boolean
+  /** Optional trailing action (e.g. delete button) */
+  action?: ReactNode
 }
 
-export function LeaderboardRow({ rank, name, score, detail, highlight = false }: LeaderboardRowProps) {
+export function LeaderboardRow({ rank, name, score, detail, highlight = false, action }: LeaderboardRowProps) {
   return (
     <div className={`flex items-center gap-4 p-4 border ${
       highlight ? 'border-amber-500/30 bg-amber-500/5' : 'border-white/5 bg-white/[0.02]'
@@ -20,6 +23,7 @@ export function LeaderboardRow({ rank, name, score, detail, highlight = false }:
       <Text className="flex-1 font-semibold">{name}</Text>
       <Text className="font-bold gradient-text">{score}</Text>
       {detail && <Text variant="muted" size="xs">{detail}</Text>}
+      {action}
     </div>
   )
 }

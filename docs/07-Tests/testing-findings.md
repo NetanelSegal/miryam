@@ -63,9 +63,12 @@ All routes rendered; no runtime crashes observed. RTL, layout, and animations vi
 | -------------------------- | ---------------- | -------------------------------------------------------------------------------- |
 | BlessingsPage              | **Not verified** | Requires ParticipantGate (Google sign-in). Manual QA with signed-in user needed. |
 | VotingPage (costume photo) | **Not verified** | Requires ParticipantGate. Manual QA with signed-in user needed.                  |
+| AdminCaseStudies (image)   | **Not verified** | Admin uploads case study images to Storage. Manual QA needed.                     |
 
 
-**Recommendation:** Run manual QA: sign in with Google, add blessing with photo, submit costume with photo, verify in list and Live screen.
+**CORS issue (Feb 2026):** Real browser uploads to Firebase Storage fail with `CORS Preflight Did Not Succeed` and `404`. **Cause:** Firebase Storage bucket has no CORS config for localhost. **Fix:** Apply `storage.cors.json` to the bucket (see `docs/04-Architecture/STORAGE-CORS.md`). Unit tests use mocked Firebase and pass; they verify logic only, not real uploads.
+
+**Recommendation:** Configure CORS, then run manual QA: sign in with Google, add blessing with photo, submit costume with photo, verify in list and Live screen.
 
 ---
 
@@ -107,5 +110,5 @@ All routes rendered; no runtime crashes observed. RTL, layout, and animations vi
 
 1. **Apply lint fixes** (with approval) — 3 errors block clean lint; low-risk changes.
 2. **Manual QA:** Image upload (Blessings, Voting) and QR (ShareButton modal, TriviaShareCard) with signed-in participant.
-3. **Consider:** Vitest for `compressImage`, `useFileUpload`, stores; Playwright for homepage and admin access flow.
+3. **Vitest:** `compressImage`, `useFileUpload`, `storage-upload`, blessings/costumes/case-studies-store — all covered. Consider Playwright for homepage and admin access flow.
 

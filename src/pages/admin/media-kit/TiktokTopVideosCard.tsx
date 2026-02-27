@@ -52,8 +52,6 @@ export function TiktokTopVideosCard({
         {[0, 1, 2].map((i) => {
           const v = videos[i]
           const url = !v ? '' : typeof v === 'string' ? v : v.url
-          const views = v && typeof v === 'object' ? v.views : undefined
-          const likes = v && typeof v === 'object' ? v.likes : undefined
           const invalid = url && !isValidTiktokUrl(url)
           return (
             <div key={i} className="flex flex-col gap-2 p-3 bg-white/5 rounded-lg">
@@ -80,48 +78,6 @@ export function TiktokTopVideosCard({
                     קישור לא תקין
                   </Text>
                 )}
-              </div>
-              <div className="flex gap-2">
-                <Input
-                  type="number"
-                  value={views ?? ''}
-                  onChange={(e) => {
-                    const val = e.target.value ? parseInt(e.target.value, 10) : undefined
-                    const next = [...(stats.tiktokTopVideos ?? []).slice(0, 3)]
-                    while (next.length <= i) next.push({ url: '' })
-                    const curr = next[i]
-                    const currUrl = typeof curr === 'string' ? curr : curr?.url ?? ''
-                    next[i] = {
-                      url: currUrl,
-                      views: val,
-                      likes: curr && typeof curr === 'object' ? curr.likes : undefined,
-                    }
-                    setStats((s) => (s ? { ...s, tiktokTopVideos: next } : null))
-                  }}
-                  placeholder="צפיות"
-                  dir="ltr"
-                  className="w-28"
-                />
-                <Input
-                  type="number"
-                  value={likes ?? ''}
-                  onChange={(e) => {
-                    const val = e.target.value ? parseInt(e.target.value, 10) : undefined
-                    const next = [...(stats.tiktokTopVideos ?? []).slice(0, 3)]
-                    while (next.length <= i) next.push({ url: '' })
-                    const curr = next[i]
-                    const currUrl = typeof curr === 'string' ? curr : curr?.url ?? ''
-                    next[i] = {
-                      url: currUrl,
-                      views: curr && typeof curr === 'object' ? curr.views : undefined,
-                      likes: val,
-                    }
-                    setStats((s) => (s ? { ...s, tiktokTopVideos: next } : null))
-                  }}
-                  placeholder="לייקים"
-                  dir="ltr"
-                  className="w-28"
-                />
               </div>
             </div>
           )

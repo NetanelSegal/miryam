@@ -7,7 +7,6 @@ import { useToast } from '@/components/ui/Toast'
 import { confetti } from '@/lib/confetti'
 import { useRequiredParticipant, useFileUpload } from '@/hooks'
 import { ParticipantGate } from '@/components/guards/ParticipantGate'
-import { compressImage } from '@/lib/image'
 import * as store from '@/lib/store'
 import { subscribeToSettings } from '@/lib/settings-store'
 
@@ -70,7 +69,7 @@ function VotingClosedView() {
                 .map((costume) => (
                   <div key={costume.id} className="flex items-center gap-3 md:gap-4">
                     <img
-                      src={costume.imageData}
+                      src={store.getCostumeImageUrl(costume)}
                       alt={costume.title}
                       className="w-10 h-10 md:w-12 md:h-12 object-cover shrink-0"
                     />
@@ -136,12 +135,12 @@ function VotingGame() {
     setUploading(true)
 
     try {
-      const imageData = await compressImage(selectedFile)
+      const imageUrl = await store.uploadCostumeImage(selectedFile)
       const entry = await store.submitCostume({
         participantId: pid,
         participantName: pname,
         title: title.trim(),
-        imageData,
+        imageUrl,
       })
       setMyCostume(entry)
       toast('success', 'התחפושת הועלתה! ממתינה לאישור 🎭')
@@ -266,7 +265,7 @@ function VotingGame() {
         <AnimateOnScroll variant="fade-up" delay={0.1}>
           <Card variant="accent" className="p-4 mb-10 max-w-sm mx-auto">
             <div className="aspect-[3/4] overflow-hidden mb-3">
-              <img src={myCostume.imageData} alt={myCostume.title} className="w-full h-full object-cover" />
+              <img src={store.getCostumeImageUrl(myCostume)} alt={myCostume.title} className="w-full h-full object-cover" />
             </div>
             <div className="flex items-center justify-between">
               <div>
@@ -305,7 +304,7 @@ function VotingGame() {
                 whileTap={{ scale: 0.98 }}
               >
                 <div className="aspect-[3/4] overflow-hidden">
-                  <img src={costume.imageData} alt={costume.title}
+                  <img src={store.getCostumeImageUrl(costume)} alt={costume.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                     <span className="bg-gradient-brand text-white px-4 py-2 text-sm font-bold translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
@@ -329,7 +328,7 @@ function VotingGame() {
                 .sort((a, b) => b.votes - a.votes)
                 .map(costume => (
                   <div key={costume.id} className="flex items-center gap-3 md:gap-4">
-                    <img src={costume.imageData} alt={costume.title}
+                    <img src={store.getCostumeImageUrl(costume)} alt={costume.title}
                       className="w-10 h-10 md:w-12 md:h-12 object-cover shrink-0" />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1.5">

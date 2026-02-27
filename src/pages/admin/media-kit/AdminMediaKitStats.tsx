@@ -1,9 +1,7 @@
 import { BarChart3 } from 'lucide-react'
 import { Heading, LoadingState, useToast } from '@/components/ui'
 import { useSocialStats } from './useSocialStats'
-import { useSeedBrandsAndCaseStudies } from './useSeedBrandsAndCaseStudies'
 import { StatsLastUpdated } from './StatsLastUpdated'
-import { SeedCollectionsCard } from './SeedCollectionsCard'
 import { YouTubeStatsCard } from './YouTubeStatsCard'
 import { InstagramStatsCard } from './InstagramStatsCard'
 import { TiktokStatsCard } from './TiktokStatsCard'
@@ -12,7 +10,6 @@ import { TiktokTopVideosCard } from './TiktokTopVideosCard'
 export function AdminMediaKitStats() {
   const { toast } = useToast()
   const { stats, setStats, handleSave, saving } = useSocialStats(toast)
-  const { handleSeed, seeding } = useSeedBrandsAndCaseStudies(toast)
 
   if (stats === null) return <LoadingState />
 
@@ -24,7 +21,6 @@ export function AdminMediaKitStats() {
       </Heading>
 
       <StatsLastUpdated updatedAt={stats.updatedAt} />
-      <SeedCollectionsCard onSeed={handleSeed} seeding={seeding} />
 
       <div className="space-y-4">
         <YouTubeStatsCard stats={stats} setStats={setStats} onSave={handleSave} saving={saving} />
