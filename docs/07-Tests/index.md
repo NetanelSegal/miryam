@@ -8,6 +8,7 @@ A task is not complete until it is verified. We follow a "Validation First" appr
 - **Type Checking**: Every build MUST pass `npm run type-check`.
 - **Linting**: No ESLint errors allowed in new code.
 - **Unit Tests**: Logic in `src/lib/` or `src/hooks/` should have corresponding unit tests where applicable.
+- **Image Upload Tests**: `npm run test:run` — covers `compressImage`, `uploadBlessingPhoto` (blessings), `submitCostume` (costumes), `addCaseStudy` (imageUrl), `useFileUpload`.
 
 ### 2. Manual QA Checklist (MANDATORY)
 For every UI/Feature change, the AI must verify:

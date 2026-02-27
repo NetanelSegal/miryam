@@ -1,6 +1,7 @@
 # Progress
 
 ## History
+- **Image Upload Tests:** Complete — Vitest + 5 test files for compressImage, uploadBlessingPhoto (blessings), submitCostume (costumes), addCaseStudy (imageUrl), useFileUpload. `npm run test:run`.
 - **Security Audit:** Complete — Firestore rules, Firebase Auth לאדמין (במקום סיסמה), deploy:rules, npm audit
 - **ניהול אדמינים:** Complete — טאב אדמינים באדמין פאנל, הוספה והסרה של אדמינים, Firestore rules
 - **עיצוב:** מאושר — BRAND-GUIDE.md + design-system.html
