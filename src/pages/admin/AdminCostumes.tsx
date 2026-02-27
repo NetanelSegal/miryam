@@ -1,6 +1,6 @@
 import { ShieldCheck, ShieldX, Camera } from 'lucide-react'
 import { Heading, Text, Button, Card, EmptyState } from '@/components/ui'
-import type { CostumeEntry } from '@/lib/store'
+import { getCostumeImageUrl, type CostumeEntry } from '@/lib/store'
 import { useMemo } from 'react'
 
 interface AdminCostumesProps {
@@ -26,7 +26,7 @@ export function AdminCostumes({ pendingCostumes, approvedCostumes, allCostumes, 
           {pendingCostumes.map(c => (
             <Card key={c.id} variant="top" className="overflow-hidden">
               <div className="aspect-[3/4] overflow-hidden">
-                <img src={c.imageData} alt={c.title} className="w-full h-full object-cover" />
+                <img src={getCostumeImageUrl(c)} alt={c.title} className="w-full h-full object-cover" />
               </div>
               <div className="p-4">
                 <Text className="font-semibold mb-1">{c.title}</Text>
@@ -58,7 +58,7 @@ export function AdminCostumes({ pendingCostumes, approvedCostumes, allCostumes, 
           {approvedCostumes.map(c => (
             <div key={c.id} className="border border-emerald-500/20 bg-emerald-500/5 overflow-hidden">
               <div className="aspect-square overflow-hidden">
-                <img src={c.imageData} alt={c.title} className="w-full h-full object-cover" />
+                <img src={getCostumeImageUrl(c)} alt={c.title} className="w-full h-full object-cover" />
               </div>
               <div className="p-2">
                 <Text size="xs" className="font-semibold">{c.title}</Text>
@@ -80,7 +80,7 @@ export function AdminCostumes({ pendingCostumes, approvedCostumes, allCostumes, 
             {rejectedCostumes.map(c => (
               <div key={c.id} className="border border-red-500/20 bg-red-500/5 overflow-hidden opacity-60">
                 <div className="aspect-square overflow-hidden">
-                  <img src={c.imageData} alt={c.title} className="w-full h-full object-cover" />
+                  <img src={getCostumeImageUrl(c)} alt={c.title} className="w-full h-full object-cover" />
                 </div>
                 <div className="p-2">
                   <Text size="xs" className="font-semibold">{c.title}</Text>

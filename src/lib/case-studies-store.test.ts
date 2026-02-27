@@ -1,5 +1,9 @@
+/**
+ * Unit tests for case-studies-store addCaseStudy and uploadCaseStudyImage.
+ * NOTE: Firestore/Storage are MOCKED — these tests verify logic only.
+ */
 import { describe, it, expect, vi } from 'vitest'
-import { addCaseStudy } from './case-studies-store'
+import { addCaseStudy, uploadCaseStudyImage } from './case-studies-store'
 import { setDoc } from 'firebase/firestore'
 
 vi.mock('@/lib/firebase', () => ({ db: {} }))
@@ -13,19 +17,31 @@ vi.mock('firebase/firestore', () => ({
   query: vi.fn(),
   orderBy: vi.fn(),
 }))
+vi.mock('@/lib/storage-upload', () => ({
+  uploadImage: vi.fn().mockResolvedValue('https://storage.example.com/case-studies/xyz'),
+  deleteStorageFileByUrl: vi.fn().mockResolvedValue(undefined),
+}))
 vi.mock('@/lib/utils', () => ({
   withTimeout: (p: Promise<unknown>) => p,
   omitUndefined: (obj: Record<string, unknown>) => obj,
 }))
 
-describe('case-studies-store imageUrl', () => {
+describe('case-studies-store', () => {
+  it('uploadCaseStudyImage returns Storage URL', async () => {
+    const { uploadImage } = await import('@/lib/storage-upload')
+    const file = new File(['x'], 'study.jpg', { type: 'image/jpeg' })
+    const url = await uploadCaseStudyImage(file)
+    expect(url).toBe('https://storage.example.com/case-studies/xyz')
+    expect(uploadImage).toHaveBeenCalledWith('case-studies', file)
+  })
+
   it('addCaseStudy stores case study with imageUrl', async () => {
     const data = {
       brand: 'Brand',
       title: 'Campaign',
       description: 'Desc',
       metric: '1M views',
-      imageUrl: 'https://example.com/image.jpg',
+      imageUrl: 'https://storage.example.com/case-studies/xyz',
       order: 0,
     }
     const result = await addCaseStudy(data)

@@ -1,3 +1,7 @@
+/**
+ * Unit tests for compressImage.
+ * Tests validation and compression logic only — no real Storage upload.
+ */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { compressImage } from './image'
 

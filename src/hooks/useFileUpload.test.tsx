@@ -1,3 +1,7 @@
+/**
+ * Unit tests for useFileUpload hook.
+ * Tests file selection/clear logic only — no real upload to Firebase.
+ */
 import { describe, it, expect } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useFileUpload } from './useFileUpload'

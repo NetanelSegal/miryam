@@ -1,7 +1,6 @@
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { collection, doc, getDocs, setDoc, updateDoc, deleteDoc, query, orderBy, onSnapshot } from 'firebase/firestore'
-import { db, storage } from './firebase'
-import { compressImage } from './image'
+import { db } from './firebase'
+import { uploadImage } from './storage-upload'
 import { withTimeout, omitUndefined } from './utils'
 
 export interface Blessing {
@@ -16,13 +15,7 @@ const COLLECTION = 'blessings'
 
 /** Upload photo to Storage, return download URL. Compresses before upload. */
 export async function uploadBlessingPhoto(file: File): Promise<string> {
-  const dataUrl = await compressImage(file)
-  const res = await fetch(dataUrl)
-  const blob = await res.blob()
-  const id = crypto.randomUUID()
-  const storageRef = ref(storage, `blessings/${id}`)
-  await uploadBytes(storageRef, blob, { contentType: 'image/jpeg' })
-  return getDownloadURL(storageRef)
+  return uploadImage('blessings', file)
 }
 
 export async function saveBlessing(blessing: Omit<Blessing, 'id' | 'timestamp'>): Promise<Blessing> {

@@ -58,12 +58,27 @@ export async function seedBrandsAndCaseStudies(): Promise<{
     for (let i = 0; i < SEED_CASE_STUDIES.length; i++) {
       const s = SEED_CASE_STUDIES[i]
       if (!s) continue
+      let imageUrl: string
+      if (s.imageUrl.startsWith('/images/')) {
+        const absoluteUrl = typeof window !== 'undefined'
+          ? `${window.location.origin}${s.imageUrl}`
+          : s.imageUrl
+        const res = await fetch(absoluteUrl)
+        if (!res.ok) throw new Error(`Seed: failed to fetch ${s.imageUrl} (${res.status})`)
+        const blob = await res.blob()
+        const file = new File([blob], s.imageUrl.split('/').pop() ?? 'image.jpeg', { type: blob.type || 'image/jpeg' })
+        imageUrl = await caseStudiesStore.uploadCaseStudyImage(file)
+      } else if (s.imageUrl.startsWith('http')) {
+        imageUrl = s.imageUrl
+      } else {
+        throw new Error(`Seed: case study imageUrl must be /images/ path or http URL, got: ${s.imageUrl}`)
+      }
       await caseStudiesStore.addCaseStudy({
         brand: s.brand,
         title: s.title,
         description: s.description,
         metric: s.metric,
-        imageUrl: s.imageUrl,
+        imageUrl,
         order: i,
       })
       caseStudiesAdded++

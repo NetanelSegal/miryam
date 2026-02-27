@@ -94,6 +94,15 @@ export const routes: RouteConfig[] = [
     meta: { noIndex: true },
   },
   {
+    path: '/seed',
+    title: 'Seed — מרים סגל',
+    component: lazy(() => import('@/pages/SeedPage').then(m => ({ default: m.SeedPage }))),
+    layout: 'none',
+    access: 'admin',
+    showInNav: false,
+    meta: { noIndex: true },
+  },
+  {
     path: '/admin',
     title: 'Admin — מרים סגל',
     component: lazy(() => import('@/pages/AdminPage').then(m => ({ default: m.AdminPage }))),

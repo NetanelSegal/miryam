@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "test": "vitest",
     "test:run": "vitest run",
-    "deploy:rules": "firebase deploy --only firestore:rules"
+    "deploy:rules": "firebase deploy --only firestore:rules",
+    "verify-storage": "node scripts/verify-storage-url.mjs"
   },
   "dependencies": {
     "firebase": "^11.7.1",

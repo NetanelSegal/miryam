@@ -14,6 +14,10 @@ The app acts directly against Firebase services without a traditional intermedia
 - **Firestore Rules:** Strict `firestore.rules` protect data integrity. Admin collections can only be read/written by verified admin UIDs. Public collections (like votes/blessings) have rate-limiting and validation rules.
 - **Admin Access:** No password login; admins authenticate via Google, and their email must be present in the Firestore `admins` whitelist.
 
+## Firebase Storage & Images
+
+All admin-editable images (blessings, costumes, case studies) are stored in Firebase Storage. See [STORAGE-STRUCTURE.md](STORAGE-STRUCTURE.md) for paths, rules, and seed. For localhost uploads, configure CORS — see [STORAGE-CORS.md](STORAGE-CORS.md).
+
 ## Data Flow (Participant Identity)
 1. User enters the Party Zone.
 2. `ParticipantGate` prompts for Google Sign-in.

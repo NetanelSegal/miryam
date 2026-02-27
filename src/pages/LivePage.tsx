@@ -28,7 +28,7 @@ function VotingResultsSection({ voteCounts, costumes }: { voteCounts: Record<str
       id,
       name: costumeMap[id]?.title ?? id,
       participantName: costumeMap[id]?.participantName ?? '',
-      imageData: costumeMap[id]?.imageData,
+      imageSrc: costumeMap[id] ? store.getCostumeImageUrl(costumeMap[id]) : '',
       votes,
     }))
     .sort((a, b) => b.votes - a.votes)
@@ -42,8 +42,8 @@ function VotingResultsSection({ voteCounts, costumes }: { voteCounts: Record<str
           {entries.map((entry, i) => (
             <motion.div key={entry.id} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.15, duration: 0.5 }} className="flex items-center gap-4">
-              {entry.imageData && (
-                <img src={entry.imageData} alt={entry.name} className="w-12 h-12 md:w-14 md:h-14 object-cover shrink-0" />
+              {entry.imageSrc && (
+                <img src={entry.imageSrc} alt={entry.name} className="w-12 h-12 md:w-14 md:h-14 object-cover shrink-0" />
               )}
               <div className="w-28 md:w-36 shrink-0">
                 <Text size="xl" className="font-bold">{entry.name}</Text>

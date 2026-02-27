@@ -1,6 +1,12 @@
+/**
+ * Unit tests for blessings photo upload.
+ * NOTE: Firebase is MOCKED. These tests verify code logic only — they do NOT
+ * perform real uploads to Firebase Storage. Real uploads require CORS config
+ * on the Storage bucket (see docs/04-Architecture/STORAGE-CORS.md).
+ */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { uploadBlessingPhoto } from './blessings-store'
-import { compressImage } from '@/lib/image'
+import { uploadImage } from '@/lib/storage-upload'
 
 vi.mock('@/lib/firebase', () => ({
   db: {},
@@ -22,19 +28,19 @@ vi.mock('firebase/firestore', () => ({
   orderBy: vi.fn(),
   onSnapshot: vi.fn(() => vi.fn()),
 }))
-vi.mock('@/lib/image', () => ({
-  compressImage: vi.fn().mockResolvedValue('data:image/jpeg;base64,fake'),
+vi.mock('@/lib/storage-upload', () => ({
+  uploadImage: vi.fn().mockResolvedValue('https://storage.example.com/blessings/abc'),
 }))
 
 describe('blessings-store image upload', () => {
   beforeEach(() => {
-    vi.mocked(compressImage).mockClear()
+    vi.mocked(uploadImage).mockClear()
   })
 
-  it('uploadBlessingPhoto compresses and returns download URL', async () => {
+  it('uploadBlessingPhoto uploads and returns download URL', async () => {
     const file = new File(['x'], 'photo.jpg', { type: 'image/jpeg' })
     const url = await uploadBlessingPhoto(file)
     expect(url).toBe('https://storage.example.com/blessings/abc')
-    expect(compressImage).toHaveBeenCalledWith(file)
+    expect(uploadImage).toHaveBeenCalledWith('blessings', file)
   })
 })

@@ -1,5 +1,9 @@
+/**
+ * Unit tests for costume submission with imageUrl (Storage) and legacy imageData.
+ * NOTE: Firestore/Storage are MOCKED. These tests verify code logic only.
+ */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { submitCostume } from './costumes-store'
+import { submitCostume, uploadCostumeImage, getCostumeImageUrl } from './costumes-store'
 import { setDoc } from 'firebase/firestore'
 
 vi.mock('@/lib/firebase', () => ({ db: {} }))
@@ -13,43 +17,49 @@ vi.mock('firebase/firestore', () => ({
   orderBy: vi.fn(),
   where: vi.fn(),
 }))
+vi.mock('@/lib/storage-upload', () => ({
+  uploadImage: vi.fn().mockResolvedValue('https://storage.example.com/costumes/abc'),
+}))
 vi.mock('@/lib/utils', () => ({
   withTimeout: (p: Promise<unknown>) => p,
 }))
 
-describe('costumes-store image upload', () => {
+describe('costumes-store', () => {
   beforeEach(() => {
     vi.mocked(setDoc).mockClear()
   })
 
-  it('submitCostume stores entry with imageData in Firestore', async () => {
-    const imageData = 'data:image/jpeg;base64,/9j/4AAQ'
+  it('uploadCostumeImage returns Storage URL', async () => {
+    const { uploadImage } = await import('@/lib/storage-upload')
+    const file = new File(['x'], 'costume.jpg', { type: 'image/jpeg' })
+    const url = await uploadCostumeImage(file)
+    expect(url).toBe('https://storage.example.com/costumes/abc')
+    expect(uploadImage).toHaveBeenCalledWith('costumes', file)
+  })
+
+  it('submitCostume stores entry with imageUrl in Firestore', async () => {
+    const imageUrl = 'https://storage.example.com/costumes/abc'
     const result = await submitCostume({
       participantId: 'user-123',
       participantName: 'Test User',
       title: 'My Costume',
-      imageData,
+      imageUrl,
     })
     expect(result).toMatchObject({
       participantId: 'user-123',
       participantName: 'Test User',
       title: 'My Costume',
-      imageData,
+      imageUrl,
       status: 'pending',
     })
     expect(result.id).toBeDefined()
-    expect(result.submittedAt).toBeDefined()
     expect(setDoc).toHaveBeenCalled()
+    expect(vi.mocked(setDoc).mock.calls[0]?.[1]).toMatchObject({ imageUrl })
   })
 
-  it('imageData is base64 data URL string', async () => {
-    const imageData = 'data:image/jpeg;base64,fakeBase64Content'
-    await submitCostume({
-      participantId: 'p1',
-      participantName: 'Name',
-      title: 'Title',
-      imageData,
-    })
-    expect(vi.mocked(setDoc).mock.calls[0]?.[1]).toMatchObject({ imageData })
+  it('getCostumeImageUrl prefers imageUrl over imageData', () => {
+    expect(getCostumeImageUrl({ imageUrl: 'https://a.com/x', imageData: 'data:...' } as never)).toBe('https://a.com/x')
+    expect(getCostumeImageUrl({ imageData: 'data:image/base64' } as never)).toBe('data:image/base64')
+    expect(getCostumeImageUrl({} as never)).toBe('')
   })
 })

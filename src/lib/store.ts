@@ -31,6 +31,8 @@ export {
 
 export {
   submitCostume,
+  uploadCostumeImage,
+  getCostumeImageUrl,
   getCostumeByParticipant,
   getApprovedCostumes,
   getPendingCostumes,
