@@ -1,0 +1,44 @@
+---
+description: GLOBAL WORKFLOW: Mandatory lifecycle for task management, implementation planning, and sequential execution. Enforces context isolation and verification.
+globs: "**/*"
+alwaysApply: true
+---
+
+# 01-Workflow: The Supreme Mandate
+
+This rule governs all AI operations in this workspace. It ensures structural integrity, prevents architectural drift, and maintains a clean context window.
+
+## 1. Research & Analysis Phase (MANDATORY)
+Before any code modification:
+- **Search & Validate**: Analyze existing patterns, reusable components, and the "Single Source of Truth" (SSOT) in `src/`.
+- **Reference Docs**: Check `docs/` for PRDs (`03`), Architecture (`04`), and Design (`05`).
+- **Empirical Confirmation**: For bugs, reproduce the failure with a script or test before fixing.
+
+## 2. Implementation Planning & Approval
+- **Propose Subtasks**: Break the task into atomic, independent units (e.g., [API], [UI], [Test]).
+- **Ask & Wait**: Propose 2-3 clarifying questions about scope or constraints.
+- **MANDATORY STOP**: You MUST get explicit user approval ("Go ahead") before starting the Execution phase.
+
+## 3. Execution (Sequential & Isolated)
+- **One Task at a Time**: Complete one subtask, verify it, then move to the next.
+- **Complexity Management**: For tasks with 2+ subtasks, create a temporary manifest at `.cursor/active-task/manifest.md` to track progress and shared contracts.
+- **Zero Raw HTML**: For UI changes, strictly use components from `src/components/ui/`.
+- **RTL Integrity**: All UI implementation must default to Right-to-Left (Hebrew) standards.
+
+## 4. Verification & Quality Assurance
+Before marking a task [Complete]:
+- **Validation Suite**: Run `npm run type-check` and linting.
+- **Visual Audit**: For UI tasks, describe the final visual outcome in the progress log.
+- **Security Audit**: Apply the checks in `03-firebase.mdc` if database/auth logic was touched.
+- **Log Updates**: Update `docs/00-Context/progress.md` and move the task to "Completed" in `docs/00-Context/tasks.md`.
+
+## 5. Branching & Commits (STRICT)
+- **Branch First**: You MUST create a branch `feature/[task-slug]` or `fix/[bug-description]` before making any edits.
+- **No Main Commits**: NEVER commit or merge directly to `main`. Your job is to prepare the branch for human review.
+- **Conventional Commits**: Use `feat:`, `fix:`, etc. focusing on the "Why."
+
+## 6. Testing & Validation (MANDATORY)
+- **Reproduce First**: For bug fixes, reproduce the issue before applying the fix.
+- **Cross-Platform**: Verify all UI changes on mobile, tablet, and desktop breakpoints.
+- **RTL First**: Ensure Hebrew alignment and layout flow are perfect.
+- **Type Safety**: Run `npm run type-check` before declaring a task finished.

@@ -21,18 +21,8 @@ export interface SocialStats {
   updatedAt: number;
 }
 
-export interface MediaKitConfig {
-  youtubeChannelId?: string;
-  instagramUsername?: string;
-  tiktokUsername?: string;
-  manualInstagram?: number;
-  manualTiktok?: number;
-  manualEngagement?: number;
-  tiktokTopVideos?: TikTokVideo[];
-}
 
 const STATS_DOC = doc(db, 'mediaKit', 'socialStats');
-const CONFIG_DOC = doc(db, 'mediaKit', 'config');
 
 const FALLBACK: SocialStats = {
   youtube: { subscribers: 45000, views: 0 },
@@ -131,20 +121,6 @@ export function subscribeToSocialStats(
   });
 }
 
-export function getMediaKitConfig(): Promise<MediaKitConfig> {
-  return getDoc(CONFIG_DOC).then((snap) =>
-    snap.exists() ? (snap.data() as MediaKitConfig) : {},
-  );
-}
-
-export async function updateMediaKitConfig(
-  partial: Partial<MediaKitConfig>,
-): Promise<void> {
-  const snap = await getDoc(CONFIG_DOC);
-  const current = snap.exists() ? (snap.data() as MediaKitConfig) : {};
-  await setDoc(CONFIG_DOC, { ...current, ...partial });
-}
-
 /** Remove undefined values (Firestore rejects them) */
 function stripUndefined<T extends Record<string, unknown>>(
   obj: T,
@@ -178,6 +154,7 @@ export async function updateSocialStats(
 ): Promise<void> {
   const snap = await getDoc(STATS_DOC);
   const current = snap.exists() ? snap.data() : {};
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- intentional omit engagementPercent from Firestore
   const { engagementPercent: _removed, ...rest } = {
     ...current,
     ...partial,

@@ -69,14 +69,10 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
     }
 
-    // Media kit: socialStats public read, admin write (no Cloud Functions)
+    // Media kit: socialStats public read, admin write. All data from Firestore only (no external APIs).
     match /mediaKit/socialStats {
       allow read: if true;
       allow write: if request.auth != null
-        && exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
-    }
-    match /mediaKit/config {
-      allow read, write: if request.auth != null
         && exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
     }
 
