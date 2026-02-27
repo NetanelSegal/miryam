@@ -23,6 +23,7 @@ This rule ensures that all backend logic, database rules, and authentication flo
 - **Abstraction**: Use the `src/lib/*-store.ts` pattern to decouple UI from Firebase SDK logic.
 - **Real-time**: Use Firestore snapshots for live updates on Blessings and Trivia leaderboards.
 - **Performance**: Use pagination or limiting on large collections (e.g., `blessings`). No unbounded `getDocs()`.
+- **Social Stats**: All Media Kit data (YouTube, Instagram, TikTok followers, top videos) comes from Firestore `mediaKit/socialStats` only. Admin edits via the Admin Panel. No external social APIs (YouTube Data API, Instagram Graph API, etc.) are used.
 
 ## 4. Environment & Secrets
 - **Zero Exposure**: Never commit `.env` files or hardcode API keys. Use `.env.example` as a template.
