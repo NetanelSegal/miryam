@@ -1,4 +1,4 @@
-import { collection, doc, getDocs, setDoc, query, orderBy, where } from 'firebase/firestore'
+import { collection, doc, getDocs, setDoc, deleteDoc, query, orderBy, where } from 'firebase/firestore'
 import { db } from './firebase'
 import { withTimeout } from './utils'
 
@@ -38,4 +38,8 @@ export async function getTriviaLeaderboard(): Promise<TriviaResult[]> {
   )
   const results = snap.docs.map(d => ({ id: d.id, ...d.data() } as TriviaResult))
   return results.sort((a, b) => (b.score !== a.score ? b.score - a.score : a.timestamp - b.timestamp))
+}
+
+export async function deleteTriviaResult(id: string): Promise<void> {
+  await withTimeout(deleteDoc(doc(db, COLLECTION, id)), 10_000, 'deleteTriviaResult')
 }

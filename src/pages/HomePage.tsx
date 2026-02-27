@@ -339,8 +339,8 @@ export function HomePage() {
         <div className="absolute inset-0 -z-20 overflow-hidden">
           <div ref={parallaxRef} style={parallaxStyle} className="absolute -inset-20">
             <img
-              src="firebasestorage.googleapis.com/v0/b/miryam-22429.firebasestorage.app/o/case-studies%2Fe8b0a0ab-67e2-408a-af65-05699a77d24e?alt=media&token=6fa6794b-1ed3-45a3-8a13-b2166e1aa285"
-              alt=""
+              src="/images/WhatsApp Image 2026-02-23 at 10.39.43.jpeg"
+              alt="מרים סגל "
               className="w-full h-full object-cover"
             />
           </div>

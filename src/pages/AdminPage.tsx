@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+import { useSearchParams } from 'react-router'
 import {
   LayoutDashboard, Gamepad2, Vote,
   Users, Camera, RefreshCw, LogOut, Shield, Settings, BarChart3, BookOpen, MessageSquareHeart,
@@ -43,13 +44,39 @@ async function getAllData() {
   }
 }
 
+const VALID_TABS: Tab[] = ['overview', 'costumes', 'trivia', 'votes', 'blessings', 'participants', 'dictionary', 'admins', 'settings', 'mediakit']
+
 export function AdminPage() {
   const { signOut } = useParticipant()
-  const [tab, setTab] = useState<Tab>('overview')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab') as Tab | null
+  const initialTab = tabParam && VALID_TABS.includes(tabParam) ? tabParam : 'overview'
+  const [tab, setTab] = useState<Tab>(initialTab)
   const [data, loading, error, refreshData] = useAsyncAutoRefresh(getAllData, 5000)
+
+  useEffect(() => {
+    const t = searchParams.get('tab') as Tab | null
+    if (t && VALID_TABS.includes(t)) setTab(t)
+  }, [searchParams])
+
+  const setTabAndUrl = useCallback((t: Tab) => {
+    setTab(t)
+    setSearchParams({ tab: t }, { replace: true })
+  }, [setSearchParams])
 
   const handleReview = useCallback(async (costumeId: string, status: 'approved' | 'rejected') => {
     await store.reviewCostume(costumeId, status)
+    refreshData()
+  }, [refreshData])
+
+  const handleDeleteCostume = useCallback(async (costume: { id: string; imageUrl?: string }) => {
+    await store.deleteCostume(costume.id, costume.imageUrl)
+    refreshData()
+  }, [refreshData])
+
+  const handleDeleteTriviaResult = useCallback(async (result: { id?: string }) => {
+    if (!result.id) return
+    await store.deleteTriviaResult(result.id)
     refreshData()
   }, [refreshData])
 
@@ -90,7 +117,7 @@ export function AdminPage() {
           {tabItems.map(t => (
             <button
               key={t.id}
-              onClick={() => setTab(t.id)}
+              onClick={() => setTabAndUrl(t.id)}
               className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all whitespace-nowrap ${
                 tab === t.id
                   ? 'bg-accent-indigo/20 text-white border border-accent-indigo/40'
@@ -129,9 +156,15 @@ export function AdminPage() {
                   approvedCostumes={data.approvedCostumes}
                   allCostumes={data.allCostumes}
                   onReview={handleReview}
+                  onDelete={handleDeleteCostume}
                 />
               )}
-              {tab === 'trivia' && <AdminTrivia triviaResults={data.triviaResults} />}
+              {tab === 'trivia' && (
+                <AdminTrivia
+                  triviaResults={data.triviaResults}
+                  onDeleteResult={handleDeleteTriviaResult}
+                />
+              )}
               {tab === 'votes' && <AdminVotes approvedCostumes={data.approvedCostumes} voteCounts={data.voteCounts} />}
               {tab === 'blessings' && <AdminBlessings />}
               {tab === 'participants' && <AdminParticipants participants={data.participants} />}

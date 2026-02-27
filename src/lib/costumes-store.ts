@@ -1,8 +1,8 @@
 import {
-  collection, doc, getDocs, setDoc, updateDoc, query, orderBy, where,
+  collection, doc, getDocs, setDoc, updateDoc, deleteDoc, query, orderBy, where,
 } from 'firebase/firestore'
 import { db } from './firebase'
-import { uploadImage } from './storage-upload'
+import { uploadImage, deleteStorageFileByUrl } from './storage-upload'
 import { withTimeout } from './utils'
 
 export interface CostumeEntry {
@@ -90,4 +90,9 @@ export async function reviewCostume(costumeId: string, status: 'approved' | 'rej
     10_000,
     'reviewCostume',
   )
+}
+
+export async function deleteCostume(id: string, imageUrl?: string): Promise<void> {
+  if (imageUrl) await deleteStorageFileByUrl(imageUrl)
+  await withTimeout(deleteDoc(doc(db, COLLECTION, id)), 10_000, 'deleteCostume')
 }

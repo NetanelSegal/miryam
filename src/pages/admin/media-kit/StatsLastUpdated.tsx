@@ -10,9 +10,6 @@ export function StatsLastUpdated({ updatedAt }: StatsLastUpdatedProps) {
       <Text variant="muted" size="sm">
         עודכן לאחרונה: {updatedAt ? new Date(updatedAt).toLocaleString('he-IL') : '—'}
       </Text>
-      <Text variant="muted" size="xs" className="mt-1 block">
-        כל השמירות מתפרסמות ישירות לאתר — ללא Cloud Functions
-      </Text>
     </Card>
   )
 }

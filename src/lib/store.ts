@@ -20,6 +20,7 @@ export {
   getTriviaResult,
   saveTriviaResult,
   getTriviaLeaderboard,
+  deleteTriviaResult,
 } from './trivia-results-store'
 
 export {
@@ -38,6 +39,7 @@ export {
   getPendingCostumes,
   getAllCostumes,
   reviewCostume,
+  deleteCostume,
 } from './costumes-store'
 
 export { saveBlessing, getAllBlessings, updateBlessing, deleteBlessing, subscribeToBlessings } from './blessings-store'

@@ -1,10 +1,10 @@
 /**
- * Unit tests for case-studies-store addCaseStudy and uploadCaseStudyImage.
+ * Unit tests for case-studies-store addCaseStudy, uploadCaseStudyImage, deleteCaseStudy.
  * NOTE: Firestore/Storage are MOCKED — these tests verify logic only.
  */
-import { describe, it, expect, vi } from 'vitest'
-import { addCaseStudy, uploadCaseStudyImage } from './case-studies-store'
-import { setDoc } from 'firebase/firestore'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { addCaseStudy, uploadCaseStudyImage, deleteCaseStudy } from './case-studies-store'
+import { setDoc, deleteDoc } from 'firebase/firestore'
 
 vi.mock('@/lib/firebase', () => ({ db: {} }))
 vi.mock('firebase/firestore', () => ({
@@ -27,6 +27,10 @@ vi.mock('@/lib/utils', () => ({
 }))
 
 describe('case-studies-store', () => {
+  beforeEach(() => {
+    vi.mocked(deleteDoc).mockClear()
+  })
+
   it('uploadCaseStudyImage returns Storage URL', async () => {
     const { uploadImage } = await import('@/lib/storage-upload')
     const file = new File(['x'], 'study.jpg', { type: 'image/jpeg' })
@@ -50,5 +54,21 @@ describe('case-studies-store', () => {
     expect(setDoc).toHaveBeenCalled()
     const callArgs = vi.mocked(setDoc).mock.calls[0]
     expect(callArgs?.[1]).toMatchObject({ imageUrl: data.imageUrl })
+  })
+
+  it('deleteCaseStudy deletes Storage image when imageUrl provided', async () => {
+    const { deleteStorageFileByUrl } = await import('@/lib/storage-upload')
+    const imageUrl = 'https://firebasestorage.googleapis.com/v0/b/bucket/o/old.jpg'
+    await deleteCaseStudy('id-123', imageUrl)
+    expect(deleteStorageFileByUrl).toHaveBeenCalledWith(imageUrl)
+    expect(deleteDoc).toHaveBeenCalled()
+  })
+
+  it('deleteCaseStudy skips Storage delete when no imageUrl', async () => {
+    const { deleteStorageFileByUrl } = await import('@/lib/storage-upload')
+    vi.mocked(deleteStorageFileByUrl).mockClear()
+    await deleteCaseStudy('id-123')
+    expect(deleteStorageFileByUrl).not.toHaveBeenCalled()
+    expect(deleteDoc).toHaveBeenCalled()
   })
 })

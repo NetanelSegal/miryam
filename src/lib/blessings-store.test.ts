@@ -1,12 +1,13 @@
 /**
- * Unit tests for blessings photo upload.
+ * Unit tests for blessings photo upload and delete.
  * NOTE: Firebase is MOCKED. These tests verify code logic only — they do NOT
  * perform real uploads to Firebase Storage. Real uploads require CORS config
  * on the Storage bucket (see docs/04-Architecture/STORAGE-CORS.md).
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { uploadBlessingPhoto } from './blessings-store'
-import { uploadImage } from '@/lib/storage-upload'
+import { uploadBlessingPhoto, deleteBlessing } from './blessings-store'
+import { uploadImage, deleteStorageFileByUrl } from '@/lib/storage-upload'
+import { deleteDoc } from 'firebase/firestore'
 
 vi.mock('@/lib/firebase', () => ({
   db: {},
@@ -30,6 +31,11 @@ vi.mock('firebase/firestore', () => ({
 }))
 vi.mock('@/lib/storage-upload', () => ({
   uploadImage: vi.fn().mockResolvedValue('https://storage.example.com/blessings/abc'),
+  deleteStorageFileByUrl: vi.fn().mockResolvedValue(undefined),
+}))
+vi.mock('@/lib/utils', () => ({
+  withTimeout: (p: Promise<unknown>) => p,
+  omitUndefined: (obj: Record<string, unknown>) => obj,
 }))
 
 describe('blessings-store image upload', () => {
@@ -42,5 +48,25 @@ describe('blessings-store image upload', () => {
     const url = await uploadBlessingPhoto(file)
     expect(url).toBe('https://storage.example.com/blessings/abc')
     expect(uploadImage).toHaveBeenCalledWith('blessings', file)
+  })
+})
+
+describe('blessings-store deleteBlessing', () => {
+  beforeEach(() => {
+    vi.mocked(deleteDoc).mockClear()
+    vi.mocked(deleteStorageFileByUrl).mockClear()
+  })
+
+  it('deletes Storage photo when photoURL provided', async () => {
+    const photoURL = 'https://firebasestorage.googleapis.com/v0/b/bucket/o/blessings/xyz'
+    await deleteBlessing('id-123', photoURL)
+    expect(deleteStorageFileByUrl).toHaveBeenCalledWith(photoURL)
+    expect(deleteDoc).toHaveBeenCalled()
+  })
+
+  it('skips Storage delete when no photoURL', async () => {
+    await deleteBlessing('id-123')
+    expect(deleteStorageFileByUrl).not.toHaveBeenCalled()
+    expect(deleteDoc).toHaveBeenCalled()
   })
 })

@@ -1,6 +1,6 @@
 import { collection, doc, getDocs, setDoc, updateDoc, deleteDoc, query, orderBy, onSnapshot } from 'firebase/firestore'
 import { db } from './firebase'
-import { uploadImage } from './storage-upload'
+import { uploadImage, deleteStorageFileByUrl } from './storage-upload'
 import { withTimeout, omitUndefined } from './utils'
 
 export interface Blessing {
@@ -49,6 +49,7 @@ export async function updateBlessing(id: string, data: Partial<Omit<Blessing, 'i
   await withTimeout(updateDoc(doc(db, COLLECTION, id), clean), 10_000, 'updateBlessing')
 }
 
-export async function deleteBlessing(id: string): Promise<void> {
+export async function deleteBlessing(id: string, photoURL?: string): Promise<void> {
+  if (photoURL) await deleteStorageFileByUrl(photoURL)
   await withTimeout(deleteDoc(doc(db, COLLECTION, id)), 10_000, 'deleteBlessing')
 }
