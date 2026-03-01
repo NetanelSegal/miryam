@@ -10,12 +10,14 @@ import { useInView } from 'motion/react'
 import * as store from '@/lib/store'
 import { subscribeToSocialStats, type SocialStats } from '@/lib/social-stats-store'
 import { subscribeToCaseStudies, getCaseStudyImageSrc, type CaseStudy } from '@/lib/case-studies-store'
-import { getAllBrands } from '@/lib/brands-store'
+import { getAllBrands, type Brand } from '@/lib/brands-store'
 import { LINKS } from '@/config/links'
 
 const BIRTHDAY = new Date('2026-03-05T00:00:00')
 
-const FALLBACK_BRANDS = ["L'Oréal", 'MAC', 'Samsung', 'Fox', 'Castro', 'Adidas', 'Zara', 'H&M']
+const FALLBACK_BRANDS: Brand[] = ["L'Oréal", 'MAC', 'Samsung', 'Fox', 'Castro', 'Adidas', 'Zara', 'H&M'].map(
+  (name, i) => ({ id: `fallback-${i}`, name, order: i }),
+)
 
 function buildDisplayStats(stats: SocialStats) {
   const ig = stats.instagram?.followers ?? 580000
@@ -81,22 +83,22 @@ function StatItem({
 /* ------------------------------------------------------------------ */
 
 function BrandMarqueeSection() {
-  const [brands, setBrands] = useState<string[]>(FALLBACK_BRANDS)
+  const [brands, setBrands] = useState<Brand[]>(FALLBACK_BRANDS)
 
   useEffect(() => {
     getAllBrands()
-      .then((data) => setBrands(data.length > 0 ? data.map((b) => b.name) : FALLBACK_BRANDS))
-      .catch(() => { })
+      .then((data) => setBrands(data.length > 0 ? data : FALLBACK_BRANDS))
+      .catch(() => {})
   }, [])
 
   return (
     <Marquee speed={25}>
-      {brands.map((brand) => (
+      {brands.map((b) => (
         <div
-          key={brand}
+          key={b.id}
           className="shrink-0 w-28 h-12 bg-white/5 flex items-center justify-center text-text-muted text-sm font-medium"
         >
-          {brand}
+          {b.name}
         </div>
       ))}
     </Marquee>
