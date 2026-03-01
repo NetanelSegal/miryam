@@ -20,6 +20,9 @@
 ## Current Focus
 - **הבא:** החלפת נתוני placeholder — סטטיסטיקות מדיה (עוקבים, אחוזי מעורבות), מותגים, case studies. Admin Media Kit מאפשר עריכה; צריך להזין נתונים אמיתיים של מרים.
 
+## Recent
+- **Blessings + Live + Share fixes:** (1) Blessings content now refreshes after add via refetch on success. (2) Live page: clickable prev/next arrows + dots to skip screens. (3) BlessingShareCard + BlessingShareModal — share-to-story after adding a blessing (native share, download, copy link). Trivia already had TriviaShareModal.
+
 ## Tech Stack
 - React 19.1.0, Vite 7.3.1, Tailwind CSS 4, React Router 7.13
 - Firebase (Firestore, Storage — votes/trivia/blessings/contacts use Firestore, not RTDB)
