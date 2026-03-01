@@ -27,42 +27,12 @@ export function YouTubeStatsCard({ stats, setStats, onSave, saving }: YouTubeSta
           dir="ltr"
           className="w-28"
         />
-        <Input
-          type="number"
-          value={stats.youtube?.views ?? ''}
-          onChange={(e) => {
-            const v = e.target.value ? parseInt(e.target.value, 10) : undefined
-            setStats((s) =>
-              s ? { ...s, youtube: { ...(s.youtube ?? { subscribers: 0 }), views: v } } : null
-            )
-          }}
-          placeholder="צפיות"
-          dir="ltr"
-          className="w-28"
-        />
-        <Input
-          type="number"
-          value={stats.youtube?.likes ?? ''}
-          onChange={(e) => {
-            const v = e.target.value ? parseInt(e.target.value, 10) : undefined
-            setStats((s) =>
-              s ? { ...s, youtube: { ...(s.youtube ?? { subscribers: 0 }), likes: v } } : null
-            )
-          }}
-          placeholder="לייקים"
-          dir="ltr"
-          className="w-28"
-        />
         <Button
           variant="primary"
           size="sm"
           onClick={() =>
             onSave({
-              youtube: {
-                subscribers: stats.youtube?.subscribers ?? 0,
-                views: stats.youtube?.views,
-                likes: stats.youtube?.likes,
-              },
+              youtube: { subscribers: stats.youtube?.subscribers ?? 0 },
             })
           }
           disabled={saving}

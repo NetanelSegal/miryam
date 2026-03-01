@@ -8,7 +8,7 @@ import { AnimateOnScroll, StaggerChildren } from '@/components/motion'
 import { useCountUp, useParallax } from '@/hooks'
 import { useInView } from 'motion/react'
 import * as store from '@/lib/store'
-import { subscribeToSocialStats, type SocialStats } from '@/lib/social-stats-store'
+import { subscribeToSocialStats, EMPTY_STATS, type SocialStats } from '@/lib/social-stats-store'
 import { subscribeToCaseStudies, getCaseStudyImageSrc, type CaseStudy } from '@/lib/case-studies-store'
 import { getAllBrands, type Brand } from '@/lib/brands-store'
 import { LINKS } from '@/config/links'
@@ -20,9 +20,9 @@ const FALLBACK_BRANDS: Brand[] = ["L'Oréal", 'MAC', 'Samsung', 'Fox', 'Castro',
 )
 
 function buildDisplayStats(stats: SocialStats) {
-  const ig = stats.instagram?.followers ?? 580000
-  const tt = stats.tiktok?.followers ?? 620000
-  const yt = stats.youtube?.subscribers ?? 45000
+  const ig = stats.instagram?.subscribers ?? 0
+  const tt = stats.tiktok?.subscribers ?? 0
+  const yt = stats.youtube?.subscribers ?? 0
   return [
     { value: ig >= 1000 ? ig / 1000 : ig, suffix: ig >= 1000 ? 'K+' : '', label: 'עוקבים באינסטגרם' },
     { value: tt >= 1000 ? tt / 1000 : tt, suffix: tt >= 1000 ? 'K+' : '', label: 'עוקבים בטיקטוק' },
@@ -37,12 +37,7 @@ function buildDisplayStats(stats: SocialStats) {
 function StatSection() {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, amount: 0.3 })
-  const [stats, setStats] = useState<SocialStats>({
-    instagram: { followers: 580000 },
-    tiktok: { followers: 620000 },
-    youtube: { subscribers: 45000 },
-    updatedAt: 0,
-  })
+  const [stats, setStats] = useState<SocialStats>(EMPTY_STATS)
 
   useEffect(() => {
     return subscribeToSocialStats(setStats)
@@ -175,12 +170,7 @@ function CaseStudiesSection() {
 /* ------------------------------------------------------------------ */
 
 function TiktokTopVideosSection() {
-  const [stats, setStats] = useState<SocialStats>({
-    instagram: { followers: 580000 },
-    tiktok: { followers: 620000 },
-    youtube: { subscribers: 45000 },
-    updatedAt: 0,
-  })
+  const [stats, setStats] = useState<SocialStats>(EMPTY_STATS)
 
   useEffect(() => {
     return subscribeToSocialStats(setStats)

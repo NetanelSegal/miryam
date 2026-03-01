@@ -18,38 +18,12 @@ export function InstagramStatsCard({ stats, setStats, onSave, saving }: Instagra
       <div className="flex flex-wrap gap-2 items-end">
         <Input
           type="number"
-          value={stats.instagram?.followers ?? ''}
+          value={stats.instagram?.subscribers ?? ''}
           onChange={(e) => {
             const v = e.target.value ? parseInt(e.target.value, 10) : undefined
-            setStats((s) => (s ? { ...s, instagram: { ...s.instagram, followers: v ?? 0 } } : null))
+            setStats((s) => (s ? { ...s, instagram: { ...s.instagram, subscribers: v ?? 0 } } : null))
           }}
           placeholder="עוקבים"
-          dir="ltr"
-          className="w-28"
-        />
-        <Input
-          type="number"
-          value={stats.instagram?.views ?? ''}
-          onChange={(e) => {
-            const v = e.target.value ? parseInt(e.target.value, 10) : undefined
-            setStats((s) =>
-              s ? { ...s, instagram: { ...(s.instagram ?? { followers: 0 }), views: v } } : null
-            )
-          }}
-          placeholder="צפיות"
-          dir="ltr"
-          className="w-28"
-        />
-        <Input
-          type="number"
-          value={stats.instagram?.likes ?? ''}
-          onChange={(e) => {
-            const v = e.target.value ? parseInt(e.target.value, 10) : undefined
-            setStats((s) =>
-              s ? { ...s, instagram: { ...(s.instagram ?? { followers: 0 }), likes: v } } : null
-            )
-          }}
-          placeholder="לייקים"
           dir="ltr"
           className="w-28"
         />
@@ -58,11 +32,7 @@ export function InstagramStatsCard({ stats, setStats, onSave, saving }: Instagra
           size="sm"
           onClick={() =>
             onSave({
-              instagram: {
-                followers: stats.instagram?.followers ?? 0,
-                views: stats.instagram?.views,
-                likes: stats.instagram?.likes,
-              },
+              instagram: { subscribers: stats.instagram?.subscribers ?? 0 },
             })
           }
           disabled={saving}

@@ -7,53 +7,29 @@ export interface TikTokVideo {
   likes?: number;
 }
 
+export interface SocialStartItem {
+  subscribers?: number;
+}
+
 export interface SocialStats {
-  youtube?: { subscribers: number; views?: number; likes?: number };
-  instagram?: { followers: number; views?: number; likes?: number };
-  tiktok?: {
-    followers: number;
-    views?: number;
-    likes?: number;
-    videoCount?: number;
-  };
-  engagementPercent?: number;
-  tiktokTopVideos?: TikTokVideo[];
+  youtube: SocialStartItem;
+  instagram: SocialStartItem;
+  tiktok: SocialStartItem;
+  tiktokTopVideos: TikTokVideo[];
   updatedAt: number;
 }
 
-
 const STATS_DOC = doc(db, 'mediaKit', 'socialStats');
 
-const FALLBACK: SocialStats = {
-  youtube: { subscribers: 45000, views: 0 },
-  instagram: { followers: 580000 },
-  tiktok: { followers: 620000 },
-  engagementPercent: 8.2,
+const EMPTY_STATS: SocialStats = {
+  youtube: {},
+  instagram: {},
+  tiktok: {},
+  tiktokTopVideos: [],
   updatedAt: 0,
 };
 
-/**
- * Calculate engagement % from TikTok only.
- * Uses industry-standard "engagement by views" formula: (likes / views) × 100.
- * Typical benchmark: 1.5–6% on TikTok. Returns undefined when views or likes missing.
- */
-export function calcEngagementPercent(stats: {
-  tiktok?: {
-    followers?: number;
-    likes?: number;
-    views?: number;
-    videoCount?: number;
-  };
-}): number | undefined {
-  const tt = stats.tiktok;
-  const likes = tt?.likes ?? 0;
-  const views = tt?.views ?? 0;
-
-  if (likes <= 0 || views <= 0) return undefined;
-
-  const rate = (likes / views) * 100;
-  return Math.round(rate * 100) / 100; // 2 decimals for small %
-}
+export { EMPTY_STATS };
 
 function parseVideo(v: unknown): TikTokVideo | null {
   if (typeof v === 'string') return { url: v };
@@ -70,7 +46,7 @@ function parseVideo(v: unknown): TikTokVideo | null {
 }
 
 function parseStats(data: Record<string, unknown> | undefined): SocialStats {
-  if (!data) return FALLBACK;
+  if (!data) return EMPTY_STATS;
   const y = data.youtube as Record<string, number> | undefined;
   const ig = data.instagram as Record<string, number> | undefined;
   const tt = data.tiktok as Record<string, number> | undefined;
@@ -80,31 +56,16 @@ function parseStats(data: Record<string, unknown> | undefined): SocialStats {
         .map(parseVideo)
         .filter((v): v is TikTokVideo => v != null)
         .slice(0, 3)
-    : undefined;
-  const base = {
-    youtube: y
-      ? { subscribers: y.subscribers ?? 0, views: y.views, likes: y.likes }
-      : undefined,
-    instagram: ig
-      ? { followers: ig.followers ?? 0, views: ig.views, likes: ig.likes }
-      : undefined,
-    tiktok: tt
-      ? {
-          followers: tt.followers ?? 0,
-          views: tt.views,
-          likes: tt.likes,
-          videoCount: tt.videoCount,
-        }
-      : undefined,
-    tiktokTopVideos: videos && videos.length > 0 ? videos : undefined,
+    : [];
+  const subscribers = (v: Record<string, number> | undefined) =>
+    v?.subscribers ?? v?.followers ?? 0;
+  return {
+    youtube: y ? { subscribers: subscribers(y) } : {},
+    instagram: ig ? { subscribers: subscribers(ig) } : {},
+    tiktok: tt ? { subscribers: subscribers(tt) } : {},
+    tiktokTopVideos: videos,
     updatedAt: typeof data.updatedAt === 'number' ? data.updatedAt : 0,
   };
-  const engagementPercent =
-    calcEngagementPercent(base) ??
-    (typeof data.engagementPercent === 'number'
-      ? data.engagementPercent
-      : undefined);
-  return { ...base, engagementPercent };
 }
 
 export function getSocialStats(): Promise<SocialStats> {
@@ -154,13 +115,12 @@ export async function updateSocialStats(
 ): Promise<void> {
   const snap = await getDoc(STATS_DOC);
   const current = snap.exists() ? snap.data() : {};
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- intentional omit engagementPercent from Firestore
-  const { engagementPercent: _removed, ...rest } = {
+  const merged = {
     ...current,
     ...partial,
     updatedAt: Date.now(),
   } as Record<string, unknown>;
-  await setDoc(STATS_DOC, stripUndefined(rest));
+  await setDoc(STATS_DOC, stripUndefined(merged));
 }
 
 /** Format number for display: 580000 -> "580K+", 8.2 -> "8.2%" */
