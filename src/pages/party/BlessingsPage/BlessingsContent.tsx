@@ -3,6 +3,7 @@ import { Camera, Send, X } from 'lucide-react'
 import { Heading, Text, Button, Input, Container, Card, LoadingState } from '@/components/ui'
 import { useToast } from '@/components/ui/Toast'
 import { AnimateOnScroll, StaggerChildren, PageTransition } from '@/components/motion'
+import { BlessingShareModal } from '@/components/party/BlessingShareModal'
 import * as store from '@/lib/store'
 import { timeAgo } from '@/lib/date'
 import { useBlessingForm } from '@/hooks/forms/useBlessingForm'
@@ -12,6 +13,8 @@ export function BlessingsContent() {
   const [blessings, setBlessings] = useState<store.Blessing[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
+  const [shareModalOpen, setShareModalOpen] = useState(false)
+  const [lastSavedBlessing, setLastSavedBlessing] = useState<store.Blessing | null>(null)
 
   useEffect(() => {
     const unsub = store.subscribeToBlessings((data) => {
@@ -20,6 +23,8 @@ export function BlessingsContent() {
     })
     return unsub
   }, [])
+
+  const blessingsUrl = `${window.location.origin}/party/blessings`
 
   const {
     register,
@@ -33,8 +38,11 @@ export function BlessingsContent() {
     clearFile,
     MAX_MESSAGE_LENGTH,
   } = useBlessingForm({
-    onSuccess: (saved) => {
-      setBlessings((prev) => [saved, ...prev])
+    onSuccess: async (saved) => {
+      const refreshed = await store.getAllBlessings()
+      setBlessings(refreshed)
+      setLastSavedBlessing(saved)
+      setShareModalOpen(true)
       toast('success', 'הברכה נוספה בהצלחה! 🎉')
       setShowForm(false)
     },
@@ -156,6 +164,14 @@ export function BlessingsContent() {
             </Card>
           ))}
         </StaggerChildren>
+        )}
+        {lastSavedBlessing && (
+          <BlessingShareModal
+            open={shareModalOpen}
+            onClose={() => setShareModalOpen(false)}
+            blessing={lastSavedBlessing}
+            blessingsUrl={blessingsUrl}
+          />
         )}
       </Container>
     </PageTransition>

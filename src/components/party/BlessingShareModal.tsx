@@ -1,29 +1,26 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import html2canvas from 'html2canvas'
 import { Share2, Copy, Download } from 'lucide-react'
-import { Button, Modal, TriviaShareCard } from '@/components/ui'
+import { Button, Modal, BlessingShareCard } from '@/components/ui'
+import type { Blessing } from '@/lib/store'
 
-export interface TriviaShareModalProps {
+export interface BlessingShareModalProps {
   open: boolean
   onClose: () => void
-  score: number
-  totalQuestions: number
-  participantName: string
-  triviaUrl: string
+  blessing: Blessing
+  blessingsUrl: string
 }
 
 /**
- * Modal for sharing Trivia results via native share, download, or copy link.
+ * Modal for sharing Blessing results via native share, download, or copy link.
  * Encapsulates html2canvas, Web Share API, download, and copy-link logic.
  */
-export function TriviaShareModal({
+export function BlessingShareModal({
   open,
   onClose,
-  score,
-  totalQuestions,
-  participantName,
-  triviaUrl,
-}: TriviaShareModalProps) {
+  blessing,
+  blessingsUrl,
+}: BlessingShareModalProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const [copied, setCopied] = useState(false)
   const copiedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -58,29 +55,29 @@ export function TriviaShareModal({
     if (navigator.share) {
       try {
         await navigator.share({
-          files: [new File([blob], 'trivia-miryam.png', { type: 'image/png' })],
-          title: 'הטריוויה של מרים',
-          text: `קיבלתי ${score}/${totalQuestions}! נסו גם: ${triviaUrl}`,
+          files: [new File([blob], 'blessing-miryam.png', { type: 'image/png' })],
+          title: 'הברכה שלי למרים',
+          text: `השארתי ברכה למרים! כתבו גם אתם: ${blessingsUrl}`,
         })
         onClose()
       } catch (err) {
         if ((err as Error).name !== 'AbortError') throw err
       }
     }
-  }, [captureCard, score, totalQuestions, triviaUrl, onClose])
+  }, [captureCard, blessingsUrl, onClose])
 
   const handleDownload = useCallback(async () => {
     const blob = await captureCard()
     if (!blob) return
     const a = document.createElement('a')
     a.href = URL.createObjectURL(blob)
-    a.download = `trivia-miryam-${score}-${totalQuestions}.png`
+    a.download = `blessing-miryam-${blessing.name}.png`
     a.click()
     URL.revokeObjectURL(a.href)
-  }, [captureCard, score, totalQuestions])
+  }, [captureCard, blessing.name])
 
   const handleCopyLink = useCallback(async () => {
-    const text = `קיבלתי ${score}/${totalQuestions} בטריוויה של מרים! 🎉 נסו גם: ${triviaUrl}`
+    const text = `השארתי ברכה למרים! 🎉 כתבו גם אתם: ${blessingsUrl}`
     try {
       await navigator.clipboard.writeText(text)
       setCopied(true)
@@ -89,20 +86,18 @@ export function TriviaShareModal({
     } catch {
       /* silent */
     }
-  }, [score, totalQuestions, triviaUrl])
+  }, [blessingsUrl])
 
   const canShare = typeof navigator !== 'undefined' && 'share' in navigator && typeof navigator.share === 'function'
 
   return (
-    <Modal open={open} onClose={onClose} title="שתפו את התוצאה" size="lg">
+    <Modal open={open} onClose={onClose} title="שתפו את הברכה" size="lg">
       <div className="flex flex-col items-center gap-6">
         <div className="overflow-auto max-w-full flex justify-center">
-          <TriviaShareCard
+          <BlessingShareCard
             ref={cardRef}
-            score={score}
-            totalQuestions={totalQuestions}
-            participantName={participantName}
-            triviaUrl={triviaUrl}
+            blessing={blessing}
+            blessingsUrl={blessingsUrl}
             size={600}
           />
         </div>

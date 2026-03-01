@@ -43,7 +43,7 @@ export function LivePage() {
   }, [refreshData])
 
   return (
-    <div className="fixed inset-0 bg-[#0a0a0a] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 bg-bg flex flex-col overflow-hidden">
       <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-accent-indigo/5 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-accent-purple/5 blur-[100px] pointer-events-none" />
 
@@ -59,12 +59,40 @@ export function LivePage() {
         </AnimatePresence>
       </div>
 
-      <div className="flex items-center justify-center gap-2 pb-6 relative z-10">
-        {Array.from({ length: SECTION_COUNT }).map((_, i) => (
-          <div key={i} className={`h-1.5 rounded-none transition-all duration-500 ${
-            i === activeIndex ? 'w-8 bg-gradient-brand' : 'w-3 bg-white/20'
-          }`} />
-        ))}
+      <div className="flex items-center justify-center gap-4 pb-6 relative z-10">
+        <button
+          type="button"
+          onClick={() => setActiveIndex((prev) => (prev - 1 + SECTION_COUNT) % SECTION_COUNT)}
+          className="p-2 text-white/60 hover:text-white transition-colors"
+          aria-label="מסך קודם"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <div className="flex items-center gap-2">
+          {Array.from({ length: SECTION_COUNT }).map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setActiveIndex(i)}
+              className={`h-1.5 rounded-none transition-all duration-500 ${
+                i === activeIndex ? 'w-8 bg-gradient-brand' : 'w-3 bg-white/20 hover:bg-white/40'
+              }`}
+              aria-label={`מסך ${i + 1}`}
+            />
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => setActiveIndex((prev) => (prev + 1) % SECTION_COUNT)}
+          className="p-2 text-white/60 hover:text-white transition-colors"
+          aria-label="מסך הבא"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
       </div>
     </div>
   )
