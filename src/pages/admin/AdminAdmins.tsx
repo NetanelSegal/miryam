@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Shield, Plus, Trash2, Loader2, AlertCircle } from 'lucide-react'
 import { Heading, Text, Button, Input, Card, useToast, LoadingState } from '@/components/ui'
+import { useAdminEmailForm } from '@/hooks/forms/useAdminEmailForm'
 import * as adminsStore from '@/lib/admins-store'
 
 export function AdminAdmins() {
@@ -8,8 +9,6 @@ export function AdminAdmins() {
   const [admins, setAdmins] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [newEmail, setNewEmail] = useState('')
-  const [adding, setAdding] = useState(false)
   const [removing, setRemoving] = useState<string | null>(null)
 
   const loadAdmins = useCallback(async () => {
@@ -30,20 +29,14 @@ export function AdminAdmins() {
     loadAdmins()
   }, [loadAdmins])
 
-  const handleAdd = useCallback(async () => {
-    if (!newEmail.trim()) return
-    setAdding(true)
-    try {
-      await adminsStore.addAdmin(newEmail)
-      setAdmins((prev) => [...prev, newEmail.trim().toLowerCase()].sort())
-      setNewEmail('')
-      toast('success', 'האדמין נוסף בהצלחה')
-    } catch (err) {
-      toast('error', err instanceof Error ? err.message : 'שגיאה בהוספת אדמין')
-    } finally {
-      setAdding(false)
-    }
-  }, [newEmail, toast])
+  const emailForm = useAdminEmailForm({
+    onSubmit: async (data) => {
+      await adminsStore.addAdmin(data.email)
+      setAdmins((prev) => [...prev, data.email.trim().toLowerCase()].sort())
+    },
+    onSuccess: () => toast('success', 'האדמין נוסף בהצלחה'),
+    onError: (msg) => toast('error', msg),
+  })
 
   const handleRemove = useCallback(
     async (email: string) => {
@@ -91,25 +84,24 @@ export function AdminAdmins() {
         <Text variant="secondary" size="sm" className="mb-4 block">
           הוספת אדמין חדש — הזינו את כתובת האימייל של חשבון Google. המשתמש יצטרך להתחבר עם Google כדי לגשת לאזור הניהול.
         </Text>
-        <div className="flex gap-2 flex-wrap">
+        <form onSubmit={emailForm.handleSubmit} noValidate className="flex gap-2 flex-wrap">
           <Input
             type="email"
             placeholder="admin@example.com"
-            value={newEmail}
-            onChange={(e) => setNewEmail((e.currentTarget as HTMLInputElement).value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+            {...emailForm.register('email')}
             className="flex-1 min-w-[200px]"
+            error={emailForm.errors.email?.message}
           />
           <Button
             variant="primary"
             size="sm"
-            icon={adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-            onClick={handleAdd}
-            disabled={!newEmail.trim() || adding}
+            type="submit"
+            icon={emailForm.isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+            disabled={emailForm.isSubmitting}
           >
-            {adding ? 'מוסיף...' : 'הוסף אדמין'}
+            {emailForm.isSubmitting ? 'מוסיף...' : 'הוסף אדמין'}
           </Button>
-        </div>
+        </form>
       </Card>
 
       {admins.length === 0 ? (

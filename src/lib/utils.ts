@@ -32,3 +32,9 @@ export function omitUndefined<T extends Record<string, unknown>>(
     Object.entries(obj).filter(([, v]) => v !== undefined),
   );
 }
+
+/** Extract video ID from tiktok.com/@user/video/ID */
+export function extractTiktokVideoId(url: string): string | null {
+  const match = url.match(/(?:www\.|m\.)?tiktok\.com\/[^/]+\/video\/(\d+)/)
+  return match?.[1] ?? null
+}
