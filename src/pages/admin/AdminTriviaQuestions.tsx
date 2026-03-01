@@ -59,11 +59,10 @@ function QuestionEditor({
             <button
               type="button"
               onClick={() => setForm(prev => ({ ...prev, correct: i }))}
-              className={`shrink-0 w-8 h-8 flex items-center justify-center border-2 transition-colors ${
-                form.correct === i
+              className={`shrink-0 w-8 h-8 flex items-center justify-center border-2 transition-colors ${form.correct === i
                   ? 'border-emerald-500 bg-emerald-500/20 text-emerald-400'
                   : 'border-border-neutral text-text-muted hover:border-white/30'
-              }`}
+                }`}
               title={form.correct === i ? 'תשובה נכונה' : 'סמנו כתשובה נכונה'}
             >
               {form.correct === i ? <Check className="w-4 h-4" /> : <span className="text-xs">{i + 1}</span>}
@@ -305,7 +304,7 @@ export function AdminTriviaQuestions() {
                     </div>
                   </div>
 
-                  <div className="flex gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex gap-1 shrink-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => { setEditingId(q.id); setAdding(false) }}
                       className="p-1.5 text-text-muted hover:text-white transition-colors"

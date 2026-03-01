@@ -1,0 +1,188 @@
+{"sessionId":"c50b47","location":"ShareButton.tsx:handleDownload","message":"ShareButton download","data":{"format":"png","hasQrDataUrl":true,"hasQrSvg":true},"timestamp":1772381310202,"hypothesisId":"H5"}
+{"sessionId":"c50b47","location":"ShareButton.tsx:handleDownload","message":"ShareButton download","data":{"format":"svg","hasQrDataUrl":true,"hasQrSvg":true},"timestamp":1772381311085,"hypothesisId":"H5"}
+{"sessionId":"c50b47","location":"ShareButton.tsx:handleDownload","message":"ShareButton download","data":{"format":"png","hasQrDataUrl":true,"hasQrSvg":true},"timestamp":1772381352086,"hypothesisId":"H5"}
+{"sessionId":"c50b47","location":"ShareButton.tsx:handleDownload","message":"ShareButton download","data":{"format":"svg","hasQrDataUrl":true,"hasQrSvg":true},"timestamp":1772381352525,"hypothesisId":"H5"}
+{"sessionId":"c50b47","location":"ShareButton.tsx:handleDownload","message":"ShareButton download","data":{"format":"png","hasQrDataUrl":true,"hasQrSvg":true},"timestamp":1772381371862,"hypothesisId":"H5"}
+{"sessionId":"c50b47","location":"ShareButton.tsx:handleDownload","message":"ShareButton download","data":{"format":"svg","hasQrDataUrl":true,"hasQrSvg":true},"timestamp":1772381372574,"hypothesisId":"H5"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381750661,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381750662,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381751592,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381751592,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381753546,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381753546,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381755220,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381755221,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381755330,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381755330,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381755762,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381755763,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381756286,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381756287,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381756510,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381756510,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381756696,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381756696,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381756868,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381756869,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381756870,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381756871,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381756873,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381756879,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381756879,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381756873,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381756875,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381756878,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381756876,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381756878,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381757081,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381757081,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381757264,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381757264,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381757453,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381757454,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381758044,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381758045,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381758046,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381758047,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381758044,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381758047,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381758050,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381758050,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381760886,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381760886,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381761077,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381761078,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381761279,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381761279,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381761729,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381761730,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381761733,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381761734,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381761736,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381761736,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381777366,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381777367,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381778833,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381778834,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381886810,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381886813,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381889180,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381889181,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381923456,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381923458,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381925218,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381925219,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772381985130,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772381985134,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772381987011,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772381987012,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382008633,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382008637,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382009352,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382009353,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382282067,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382282066,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382282848,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382282849,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382284172,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382284171,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382284893,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382284896,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382284897,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382284894,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382285259,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382285260,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382285488,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382285488,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382285699,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382285700,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382285886,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382285892,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382285891,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382285887,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382285900,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382285901,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382285944,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382285945,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382286149,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382286150,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382286854,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382286855,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382291213,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382291214,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382291387,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382291389,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382291597,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382291599,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382291790,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382291792,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382292022,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382292024,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382292190,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382292203,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382292192,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382292203,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382292211,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382292209,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382292218,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382292220,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382292350,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382292351,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382310302,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382310303,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382311072,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382311074,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382312012,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382312014,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382312677,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382312678,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382312864,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382312865,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382313093,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382313092,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382313265,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382313266,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382313272,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382313273,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382313282,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382313283,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382313420,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382313421,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382313501,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382313502,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382313691,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382313692,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382313853,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382313854,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382314031,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382314032,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382314224,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382314225,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382314234,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382314239,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382314244,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382314233,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382314243,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382314241,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382314430,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382314431,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382315124,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382315126,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382322243,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382322245,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382322411,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382322412,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382322561,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382322561,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382322776,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"captureCard called","data":{"cardRefExists":true},"timestamp":1772382322778,"hypothesisId":"H3"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382323562,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382323563,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382323574,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382323576,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382323589,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382323591,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:captureCard","message":"html2canvas error","data":{"error":"Attempting to parse an unsupported color function \"oklch\""},"timestamp":1772382323601,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download aborted: no blob","data":{},"timestamp":1772382323604,"hypothesisId":"H1"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"handleDownload called","data":{},"timestamp":1772382491518,"hypothesisId":"H2"}
+{"sessionId":"c50b47","location":"BlessingShareModal.tsx:handleDownload","message":"download triggered","data":{"usedDataUrl":true},"timestamp":1772382491660,"hypothesisId":"H2"}
