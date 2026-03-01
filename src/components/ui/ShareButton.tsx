@@ -55,7 +55,7 @@ export function ShareButton() {
       a.href = URL.createObjectURL(blob)
       a.download = `qrcode-miryam-${location.pathname.replace(/\//g, '-') || 'home'}.svg`
       a.click()
-      URL.revokeObjectURL(a.href)
+      setTimeout(() => URL.revokeObjectURL(a.href), 100)
     }
   }
 

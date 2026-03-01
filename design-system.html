@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Design System — מרים סגל</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@400;500;600&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root { --accent-1: #6366f1; --accent-2: #a855f7; --bg: #0a0a0a; --bg-mid: #1a0a2e; }
     * { box-sizing: border-box; }
     .font-rubik { font-family: 'Rubik', sans-serif; }
-    .font-noto { font-family: 'Noto Sans Hebrew', sans-serif; }
+    .font-body { font-family: 'Heebo', sans-serif; }
     .gradient-bg { background: linear-gradient(180deg, var(--bg) 0%, var(--bg-mid) 40%, #0f0f0f 100%); }
     .gradient-text { background: linear-gradient(to left, var(--accent-2), var(--accent-1)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 
@@ -37,7 +37,7 @@
     .img-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent 60%); z-index: 1; }
   </style>
 </head>
-<body class="gradient-bg text-white min-h-screen font-noto overflow-x-hidden">
+<body class="gradient-bg text-white min-h-screen font-body overflow-x-hidden">
 
   <div class="orb w-80 h-80 bg-indigo-600/[0.12] -top-20 -right-20"></div>
   <div class="orb w-64 h-64 bg-violet-600/[0.10] bottom-1/4 -left-16"></div>
@@ -81,7 +81,7 @@
           <p class="font-rubik text-xl font-medium text-white">כותרת משנה — Rubik 500</p>
         </div>
         <div>
-          <p class="font-noto text-base text-zinc-400">טקסט גוף — Noto Sans Hebrew 400. זהו טקסט לדוגמה שממחיש את הפונט בעברית, כולל אורכים שונים של משפטים כדי להבין את הקריאות על רקע כהה.</p>
+          <p class="font-body text-base text-zinc-400">טקסט גוף — Heebo 400. זהו טקסט לדוגמה שממחיש את הפונט בעברית, כולל אורכים שונים של משפטים כדי להבין את הקריאות על רקע כהה.</p>
         </div>
       </div>
     </section>
@@ -91,11 +91,11 @@
       <p class="section-label">3 · כפתור CTA</p>
       <div class="flex flex-wrap gap-12 items-end">
         <div>
-          <a href="#" class="btn-cta font-noto text-lg font-medium text-white">היכנסו למסיבה</a>
+          <a href="#" class="btn-cta font-body text-lg font-medium text-white">היכנסו למסיבה</a>
           <p class="text-zinc-500 text-xs mt-3">ברירת מחדל — קו ניטרלי</p>
         </div>
         <div>
-          <a href="#" class="btn-cta font-noto text-sm font-medium text-violet-300">לפרטים</a>
+          <a href="#" class="btn-cta font-body text-sm font-medium text-violet-300">לפרטים</a>
           <p class="text-zinc-500 text-xs mt-3">קישור משני</p>
         </div>
       </div>
@@ -261,7 +261,7 @@
         <div class="img-overlay"></div>
         <div class="absolute bottom-6 right-6 z-10">
           <p class="font-rubik text-2xl md:text-4xl font-bold text-white">יום הולדת מסיבה</p>
-          <a href="#" class="btn-cta font-noto text-sm text-white inline-block mt-3">היכנסו למסיבה</a>
+          <a href="#" class="btn-cta font-body text-sm text-white inline-block mt-3">היכנסו למסיבה</a>
         </div>
       </div>
 
