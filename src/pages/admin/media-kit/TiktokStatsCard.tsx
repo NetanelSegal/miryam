@@ -18,51 +18,12 @@ export function TiktokStatsCard({ stats, setStats, onSave, saving }: TiktokStats
       <div className="flex flex-wrap gap-2 items-end">
         <Input
           type="number"
-          value={stats.tiktok?.followers ?? ''}
+          value={stats.tiktok?.subscribers ?? ''}
           onChange={(e) => {
             const v = e.target.value ? parseInt(e.target.value, 10) : undefined
-            setStats((s) => (s ? { ...s, tiktok: { ...s.tiktok, followers: v ?? 0 } } : null))
+            setStats((s) => (s ? { ...s, tiktok: { ...s.tiktok, subscribers: v ?? 0 } } : null))
           }}
           placeholder="עוקבים"
-          dir="ltr"
-          className="w-28"
-        />
-        <Input
-          type="number"
-          value={stats.tiktok?.views ?? ''}
-          onChange={(e) => {
-            const v = e.target.value ? parseInt(e.target.value, 10) : undefined
-            setStats((s) =>
-              s ? { ...s, tiktok: { ...(s.tiktok ?? { followers: 0 }), views: v } } : null
-            )
-          }}
-          placeholder="צפיות"
-          dir="ltr"
-          className="w-28"
-        />
-        <Input
-          type="number"
-          value={stats.tiktok?.likes ?? ''}
-          onChange={(e) => {
-            const v = e.target.value ? parseInt(e.target.value, 10) : undefined
-            setStats((s) =>
-              s ? { ...s, tiktok: { ...(s.tiktok ?? { followers: 0 }), likes: v } } : null
-            )
-          }}
-          placeholder="לייקים"
-          dir="ltr"
-          className="w-28"
-        />
-        <Input
-          type="number"
-          value={stats.tiktok?.videoCount ?? ''}
-          onChange={(e) => {
-            const v = e.target.value ? parseInt(e.target.value, 10) : undefined
-            setStats((s) =>
-              s ? { ...s, tiktok: { ...(s.tiktok ?? { followers: 0 }), videoCount: v } } : null
-            )
-          }}
-          placeholder="מספר סרטונים"
           dir="ltr"
           className="w-28"
         />
@@ -71,12 +32,7 @@ export function TiktokStatsCard({ stats, setStats, onSave, saving }: TiktokStats
           size="sm"
           onClick={() =>
             onSave({
-              tiktok: {
-                followers: stats.tiktok?.followers ?? 0,
-                views: stats.tiktok?.views,
-                likes: stats.tiktok?.likes,
-                videoCount: stats.tiktok?.videoCount,
-              },
+              tiktok: { subscribers: stats.tiktok?.subscribers ?? 0 },
             })
           }
           disabled={saving}
