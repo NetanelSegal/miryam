@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import html2canvas from 'html2canvas'
+import { toPng } from 'html-to-image'
 import { Share2, Copy, Download } from 'lucide-react'
 import { Button, Modal, BlessingShareCard } from '@/components/ui'
 import type { Blessing } from '@/lib/store'
@@ -34,12 +35,18 @@ export function BlessingShareModal({
   const captureCard = useCallback(async (): Promise<Blob | null> => {
     if (!cardRef.current) return null
     try {
-      await document.fonts.ready
       const canvas = await html2canvas(cardRef.current, {
         scale: 2,
         useCORS: true,
         backgroundColor: '#0a0a0a',
         logging: false,
+        onclone: (clonedDoc, clonedElement) => {
+          clonedDoc.querySelectorAll('link[href*="fonts.googleapis.com"], link[href*="fonts.gstatic.com"]').forEach((el) => el.remove())
+          clonedElement.style.fontFamily = "'Arial', 'Helvetica Neue', 'Helvetica', sans-serif"
+          clonedElement.querySelectorAll('*').forEach((el) => {
+            ;(el as HTMLElement).style.fontFamily = "'Arial', 'Helvetica Neue', 'Helvetica', sans-serif"
+          })
+        },
       })
       return new Promise<Blob | null>((resolve) => {
         canvas.toBlob((blob) => resolve(blob), 'image/png')
@@ -67,13 +74,34 @@ export function BlessingShareModal({
   }, [captureCard, blessingsUrl, onClose])
 
   const handleDownload = useCallback(async () => {
-    const blob = await captureCard()
-    if (!blob) return
+    if (!cardRef.current) return
+    let dataUrl: string | null = null
+    try {
+      dataUrl = await toPng(cardRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: '#0a0a0a',
+        fontEmbedCSS: '',
+      })
+    } catch {
+      const blob = await captureCard()
+      if (blob) {
+        dataUrl = await new Promise<string | null>((resolve) => {
+          const fr = new FileReader()
+          fr.onload = () => resolve(fr.result as string)
+          fr.onerror = () => resolve(null)
+          fr.readAsDataURL(blob)
+        })
+      }
+    }
+    if (!dataUrl) return
     const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
+    a.href = dataUrl
     a.download = `blessing-miryam-${blessing.name}.png`
+    a.style.display = 'none'
+    document.body.appendChild(a)
     a.click()
-    URL.revokeObjectURL(a.href)
+    document.body.removeChild(a)
   }, [captureCard, blessing.name])
 
   const handleCopyLink = useCallback(async () => {

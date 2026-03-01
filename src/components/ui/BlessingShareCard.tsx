@@ -9,7 +9,7 @@ export interface BlessingShareCardProps {
   size?: number
 }
 
-/** System font stack for html2canvas — avoids Noto Sans Hebrew STAT/nameID warnings. */
+/** System font stack for html2canvas — avoids external font loading/CORS in capture. */
 const SHARE_CARD_FONT = "'Arial', 'Helvetica Neue', 'Helvetica', sans-serif"
 
 /**

@@ -8,7 +8,7 @@ The visual theme is **"Energetic VIP Party"**—luxurious yet warm, modern yet i
 - **Accents:** Neon Violet/Indigo gradients (`#6366f1` to `#a855f7`) used sparingly for CTAs, decorative orbs, and borders.
 - **Typography:**
   - **Headings:** `Rubik` (Bold/Heavy, for impact).
-  - **Body:** `Noto Sans Hebrew` (Regular, for readability).
+  - **Body:** `Heebo` (Regular, for readability).
 - **Layout:** Right-to-Left (RTL) first. Utilizes Bento Grids, Full-bleed Hero sections, and Sticky navigation.
 - **Cards:** Straight corners (`rounded-none`), top accent borders, semi-transparent backgrounds (`bg-white/5`).
 
