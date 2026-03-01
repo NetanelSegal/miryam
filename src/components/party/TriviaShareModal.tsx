@@ -37,6 +37,7 @@ export function TriviaShareModal({
   const captureCard = useCallback(async (): Promise<Blob | null> => {
     if (!cardRef.current) return null
     try {
+      await document.fonts.ready
       const canvas = await html2canvas(cardRef.current, {
         scale: 2,
         useCORS: true,
@@ -90,6 +91,8 @@ export function TriviaShareModal({
     }
   }, [score, totalQuestions, triviaUrl])
 
+  const canShare = typeof navigator !== 'undefined' && 'share' in navigator && typeof navigator.share === 'function'
+
   return (
     <Modal open={open} onClose={onClose} title="שתפו את התוצאה" size="lg">
       <div className="flex flex-col items-center gap-6">
@@ -104,12 +107,17 @@ export function TriviaShareModal({
           />
         </div>
         <div className="flex flex-wrap gap-2 justify-center w-full">
-          {'share' in navigator && typeof navigator.share === 'function' && (
-            <Button variant="primary" size="sm" icon={<Share2 className="w-4 h-4" />} onClick={handleNativeShare}>
-              שתפו
+          {canShare && (
+            <Button variant="primary" size="md" icon={<Share2 className="w-4 h-4" />} onClick={handleNativeShare}>
+              שתפו לסטורי
             </Button>
           )}
-          <Button variant="secondary" size="sm" icon={<Download className="w-4 h-4" />} onClick={handleDownload}>
+          <Button
+            variant={canShare ? 'secondary' : 'primary'}
+            size="md"
+            icon={<Download className="w-4 h-4" />}
+            onClick={handleDownload}
+          >
             הורדת תמונה
           </Button>
           <Button variant="ghost" size="sm" icon={<Copy className="w-4 h-4" />} onClick={handleCopyLink}>

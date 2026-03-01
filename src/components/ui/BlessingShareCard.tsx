@@ -9,9 +9,12 @@ export interface BlessingShareCardProps {
   size?: number
 }
 
+/** System font stack for html2canvas — avoids Noto Sans Hebrew STAT/nameID warnings. */
+const SHARE_CARD_FONT = "'Arial', 'Helvetica Neue', 'Helvetica', sans-serif"
+
 /**
  * Branded square share card for Blessing results.
- * Rendered for html2canvas capture. Uses explicit pixel dimensions.
+ * Rendered for html2canvas capture. Uses system fonts to avoid font-load warnings.
  */
 export const BlessingShareCard = forwardRef<HTMLDivElement, BlessingShareCardProps>(function BlessingShareCard(
   { blessing, blessingsUrl, size = 600 },
@@ -34,14 +37,16 @@ export const BlessingShareCard = forwardRef<HTMLDivElement, BlessingShareCardPro
       style={{
         width: size,
         height: size,
+        fontFamily: SHARE_CARD_FONT,
       }}
     >
-      <div className="text-text-secondary text-sm mb-2" style={{ fontFamily: 'var(--font-family-body)' }}>
+      <div className="text-text-secondary text-sm mb-2" style={{ fontFamily: SHARE_CARD_FONT }}>
         השארתי ברכה למרים 🎉
       </div>
       <div
-        className="font-heading font-bold leading-none mb-3"
+        className="font-bold leading-none mb-3"
         style={{
+          fontFamily: SHARE_CARD_FONT,
           fontSize: size * 0.06,
           background: 'linear-gradient(to left, var(--color-accent-violet), var(--color-accent-indigo))',
           WebkitBackgroundClip: 'text',
@@ -54,7 +59,7 @@ export const BlessingShareCard = forwardRef<HTMLDivElement, BlessingShareCardPro
       <div
         className="text-text-secondary text-base mb-6 leading-relaxed max-w-full overflow-hidden"
         style={{
-          fontFamily: 'var(--font-family-body)',
+          fontFamily: SHARE_CARD_FONT,
           fontSize: size * 0.035,
           lineHeight: 1.6,
         }}
@@ -63,7 +68,7 @@ export const BlessingShareCard = forwardRef<HTMLDivElement, BlessingShareCardPro
       </div>
       <div
         className="text-text-muted text-sm mb-4"
-        style={{ fontFamily: 'var(--font-family-body)' }}
+        style={{ fontFamily: SHARE_CARD_FONT }}
       >
         כתבו גם אתם ברכה
       </div>

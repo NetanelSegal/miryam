@@ -10,9 +10,12 @@ export interface TriviaShareCardProps {
   size?: number
 }
 
+/** System font stack for html2canvas — avoids Noto Sans Hebrew STAT/nameID warnings. */
+const SHARE_CARD_FONT = "'Arial', 'Helvetica Neue', 'Helvetica', sans-serif"
+
 /**
  * Branded square share card for Trivia results.
- * Rendered for html2canvas capture. Uses explicit pixel dimensions.
+ * Rendered for html2canvas capture. Uses system fonts to avoid font-load warnings.
  */
 export const TriviaShareCard = forwardRef<HTMLDivElement, TriviaShareCardProps>(function TriviaShareCard(
   { score, totalQuestions, participantName, triviaUrl, size = 600 },
@@ -29,18 +32,20 @@ export const TriviaShareCard = forwardRef<HTMLDivElement, TriviaShareCardProps>(
   return (
     <div
       ref={ref}
-      className="bg-[#0a0a0a] border-t-[3px] border-t-violet-500 flex flex-col items-center justify-center p-10 text-center"
+      className="bg-bg border-t-[3px] border-t-violet-500 flex flex-col items-center justify-center p-10 text-center"
       style={{
         width: size,
         height: size,
+        fontFamily: SHARE_CARD_FONT,
       }}
     >
-      <div className="text-[#a1a1aa] text-sm mb-1" style={{ fontFamily: 'var(--font-family-body)' }}>
+      <div className="text-text-secondary text-sm mb-1" style={{ fontFamily: SHARE_CARD_FONT }}>
         {participantName},
       </div>
       <div
-        className="font-heading font-bold leading-none mb-2"
+        className="font-bold leading-none mb-2"
         style={{
+          fontFamily: SHARE_CARD_FONT,
           fontSize: size * 0.12,
           background: 'linear-gradient(to left, var(--color-accent-violet), var(--color-accent-indigo))',
           WebkitBackgroundClip: 'text',
@@ -51,8 +56,8 @@ export const TriviaShareCard = forwardRef<HTMLDivElement, TriviaShareCardProps>(
         {score}/{totalQuestions}
       </div>
       <div
-        className="text-[#a1a1aa] text-base mb-6"
-        style={{ fontFamily: 'var(--font-family-body)' }}
+        className="text-text-secondary text-base mb-6"
+        style={{ fontFamily: SHARE_CARD_FONT }}
       >
         נסו את הטריוויה
       </div>
