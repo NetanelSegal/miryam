@@ -1,27 +1,10 @@
 import { useState, useEffect } from 'react'
+import { calculateTimeLeft, type CountdownTimeLeft } from '@/lib/date'
 
 interface CountdownProps {
   targetDate: Date
   onComplete?: () => void
   className?: string
-}
-
-interface TimeLeft {
-  days: number
-  hours: number
-  minutes: number
-  seconds: number
-}
-
-function calculateTimeLeft(target: Date): TimeLeft | null {
-  const diff = target.getTime() - Date.now()
-  if (diff <= 0) return null
-  return {
-    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-    minutes: Math.floor((diff / (1000 * 60)) % 60),
-    seconds: Math.floor((diff / 1000) % 60),
-  }
 }
 
 function Digit({ value, label }: { value: number; label: string }) {
@@ -36,7 +19,7 @@ function Digit({ value, label }: { value: number; label: string }) {
 }
 
 export function Countdown({ targetDate, onComplete, className = '' }: CountdownProps) {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(() => calculateTimeLeft(targetDate))
+  const [timeLeft, setTimeLeft] = useState<CountdownTimeLeft | null>(() => calculateTimeLeft(targetDate))
 
   useEffect(() => {
     const timer = setInterval(() => {

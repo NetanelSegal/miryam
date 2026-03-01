@@ -5,23 +5,16 @@ import { TriviaShareModal } from '@/components/party/TriviaShareModal'
 import { PageTransition } from '@/components/motion'
 import { confetti } from '@/lib/confetti'
 import { useRequiredParticipant } from '@/hooks'
-import { ParticipantGate } from '@/components/guards/ParticipantGate'
 import * as store from '@/lib/store'
 import * as triviaStore from '@/lib/trivia-store'
 import type { TriviaQuestion } from '@/lib/trivia-store'
 import { Share2, ArrowRight, Trophy, Sparkles, AlertCircle } from 'lucide-react'
+import { QuestionScreen } from './QuestionScreen'
+import { getScoreMessage } from './utils'
 
 type Phase = 'loading' | 'error' | 'start' | 'playing' | 'result'
 
-function getScoreMessage(score: number, total: number): string {
-  const pct = total > 0 ? score / total : 0
-  if (pct === 1) return 'מושלם! את/ה מכירים את מרים הכי טוב!'
-  if (pct >= 0.7) return 'כל הכבוד! את/ה ממש מכירים את מרים'
-  if (pct >= 0.4) return 'לא רע! יש עוד מה ללמוד על מרים'
-  return 'אופס... אולי תעקבו אחרי מרים ברשתות?'
-}
-
-function TriviaGame() {
+export function TriviaGame() {
   const participant = useRequiredParticipant()
   const { id: participantId, name: participantName } = participant
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -228,65 +221,5 @@ function TriviaGame() {
         </AnimatePresence>
       </Container>
     </PageTransition>
-  )
-}
-
-function QuestionScreen({
-  question: q, questionIndex, totalQuestions, selectedAnswer, showFeedback, onAnswer,
-}: {
-  question: TriviaQuestion
-  questionIndex: number
-  totalQuestions: number
-  selectedAnswer: number | null
-  showFeedback: boolean
-  onAnswer: (i: number) => void
-}) {
-  const progress = ((questionIndex + 1) / totalQuestions) * 100
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: -40 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 40 }}
-      transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
-      className="w-full space-y-6"
-    >
-      <div className="flex items-center justify-between mb-2">
-        <Text variant="muted" size="sm">{questionIndex + 1} / {totalQuestions}</Text>
-      </div>
-      <div className="w-full h-1.5 bg-white/10 overflow-hidden">
-        <motion.div
-          className="h-full bg-gradient-brand"
-          initial={{ width: `${(questionIndex / totalQuestions) * 100}%` }}
-          animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.4 }}
-        />
-      </div>
-      <Heading level={4} className="text-center py-4">{q.question}</Heading>
-      <div className="grid gap-3">
-        {q.options.map((option, i) => {
-          let cls = 'border-2 border-border-neutral bg-white/5 hover:border-accent-indigo hover:bg-white/10'
-          if (showFeedback) {
-            if (i === q.correct) cls = 'border-2 border-emerald-500 bg-emerald-500/15 text-emerald-300'
-            else if (i === selectedAnswer && i !== q.correct) cls = 'border-2 border-red-500 bg-red-500/15 text-red-300'
-            else cls = 'border-2 border-border-neutral bg-white/5 opacity-50'
-          }
-          return (
-            <button key={i} onClick={() => onAnswer(i)} disabled={showFeedback}
-              className={`w-full px-5 py-4 text-right text-white transition-all duration-200 disabled:cursor-default ${cls}`}>
-              {option}
-            </button>
-          )
-        })}
-      </div>
-    </motion.div>
-  )
-}
-
-export function TriviaPage() {
-  return (
-    <ParticipantGate>
-      <TriviaGame />
-    </ParticipantGate>
   )
 }

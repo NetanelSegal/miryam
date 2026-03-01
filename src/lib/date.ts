@@ -28,3 +28,21 @@ export function timeAgo(timestamp: number): string {
   const days = Math.floor(hours / 24)
   return `לפני ${days} ימים`
 }
+
+export interface CountdownTimeLeft {
+  days: number
+  hours: number
+  minutes: number
+  seconds: number
+}
+
+export function calculateTimeLeft(target: Date): CountdownTimeLeft | null {
+  const diff = target.getTime() - Date.now()
+  if (diff <= 0) return null
+  return {
+    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((diff / (1000 * 60)) % 60),
+    seconds: Math.floor((diff / 1000) % 60),
+  }
+}

@@ -4,6 +4,7 @@ import {
   Loader2, AlertCircle, BookOpen,
 } from 'lucide-react'
 import { Heading, Text, Button, Input, Card, useToast, LoadingState } from '@/components/ui'
+import { useTermForm } from '@/hooks/forms/useTermForm'
 import * as dictionaryStore from '@/lib/dictionary-store'
 import type { DictionaryTerm } from '@/lib/dictionary-store'
 
@@ -18,40 +19,38 @@ function TermEditor({
   onCancel: () => void
   saving: boolean
 }) {
-  const [form, setForm] = useState(initial)
-
-  const isValid = form.term.trim() && form.explanation.trim()
+  const { register, handleSubmit, errors } = useTermForm(initial)
 
   return (
     <Card variant="accent" className="p-5 space-y-4">
-      <Input
-        label="מושג"
-        value={form.term}
-        onChange={(e) => setForm(prev => ({ ...prev, term: (e.target as HTMLInputElement).value }))}
-        placeholder="לדוגמה: פוב"
-        required
-      />
-      <Input
-        label="הסבר"
-        value={form.explanation}
-        onChange={(e) => setForm(prev => ({ ...prev, explanation: (e.target as HTMLInputElement).value }))}
-        placeholder="כתבו את ההסבר..."
-        required
-      />
-      <div className="flex gap-2 justify-end">
-        <Button variant="ghost" size="sm" onClick={onCancel} disabled={saving}>
-          ביטול
-        </Button>
-        <Button
-          variant="primary"
-          size="sm"
-          icon={saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-          onClick={() => onSave(form)}
-          disabled={!isValid || saving}
-        >
-          {saving ? 'שומר...' : 'שמירה'}
-        </Button>
-      </div>
+      <form onSubmit={handleSubmit(onSave)} className="space-y-4">
+        <Input
+          label="מושג"
+          {...register('term')}
+          placeholder="לדוגמה: פוב"
+          error={errors.term?.message}
+        />
+        <Input
+          label="הסבר"
+          {...register('explanation')}
+          placeholder="כתבו את ההסבר..."
+          error={errors.explanation?.message}
+        />
+        <div className="flex gap-2 justify-end">
+          <Button type="button" variant="ghost" size="sm" onClick={onCancel} disabled={saving}>
+            ביטול
+          </Button>
+          <Button
+            type="submit"
+            variant="primary"
+            size="sm"
+            icon={saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            disabled={saving}
+          >
+            {saving ? 'שומר...' : 'שמירה'}
+          </Button>
+        </div>
+      </form>
     </Card>
   )
 }

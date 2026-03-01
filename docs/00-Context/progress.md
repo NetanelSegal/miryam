@@ -1,6 +1,8 @@
 # Progress
 
 ## History
+- **Form Hooks (RHF + Zod):** Complete — React Hook Form + Zod + @hookform/resolvers; Input ref as regular prop (React 19, no forwardRef); useContactForm, useBlessingForm, useCostumeUploadForm, useTermForm, useAdminEmailForm; ContactForm, BlessingsContent, VotingGame, TermEditor, AdminAdmins refactored.
+- **Component Separation Refactor:** Complete — HomePage, LivePage, TriviaPage, VotingPage, BlessingsPage split into folder structures with focused components; SocialIcons and GoogleIcon extracted; Countdown/TiktokEmbed utils moved to lib (calculateTimeLeft in date.ts, extractTiktokVideoId in utils.ts).
 - **Brands Carousel Fix:** Marquee now uses `dir="ltr"` for consistent animation in RTL pages, respects `prefers-reduced-motion`, and uses stable `Brand.id` keys. Fallback brands use full `Brand[]` shape.
 - **Firebase Integration:** Complete — Blessings, Votes, Contacts, Trivia Results, Participants, Costumes, Dictionary, Case Studies, Brands, Social Stats (mediaKit) — all Firestore. Storage for images (blessings, costumes, case-studies).
 - **Admin CRUD:** Complete — AdminBlessings, AdminTriviaQuestions, AdminDictionary, AdminCostumes (approve/reject), AdminMediaKit (stats, brands, case studies). Vote candidates = approved costumes.
@@ -40,5 +42,6 @@ src/
 │   ├── case-studies-store, brands-store, social-stats-store, admins-store
 │   ├── storage-upload, confetti, image, date, utils
 │   └── seed.ts               ← seed brands + case studies
-└── pages/                    ← all lazy-loaded; admin tabs: overview, costumes, trivia, votes, blessings, participants, dictionary, admins, settings, mediakit
+├── icons/                    ← GoogleIcon (shared by AdminGuard, ParticipantGate)
+└── pages/                    ← all lazy-loaded; page folders (HomePage/, LivePage/, party/TriviaPage/, etc.) with index + section components; admin tabs: overview, costumes, trivia, votes, blessings, participants, dictionary, admins, settings, mediakit
 ```

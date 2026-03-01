@@ -1,10 +1,5 @@
 import { useEffect, useState } from 'react'
-
-/** Extract video ID from tiktok.com/@user/video/ID */
-function extractVideoId(url: string): string | null {
-  const match = url.match(/(?:www\.|m\.)?tiktok\.com\/[^/]+\/video\/(\d+)/)
-  return match?.[1] ?? null
-}
+import { extractTiktokVideoId } from '@/lib/utils'
 
 interface TiktokEmbedProps {
   url: string
@@ -23,7 +18,7 @@ export function TiktokEmbed({ url, metric, className = '' }: TiktokEmbedProps) {
   const [error, setError] = useState(false)
 
   useEffect(() => {
-    const id = extractVideoId(url)
+    const id = extractTiktokVideoId(url)
 
     if (id) {
       setVideoId(id)
